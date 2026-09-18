@@ -4,12 +4,12 @@ This is the implementation handoff checklist. Decisions in `docs/migration/adr/`
 
 ## Phase 1 - Astro skeleton
 
-- [ ] Initialize an Astro TypeScript project with `output: 'static'`.
-- [ ] Add `@astrojs/vue` and configure Vue islands without a global Vue mount.
-- [ ] Add `site` and `base` configuration with environment examples for `/` and `/blog/`.
-- [ ] Add the base layout, global Aurora styles, fonts, icons, favicon and default cover.
-- [ ] Add a smoke page that renders the configured base URL through an internal link.
-- [ ] Add typecheck and static build scripts.
+- [x] Initialize an Astro TypeScript project with `output: 'static'`.
+- [x] Add `@astrojs/vue` and configure Vue islands without a global Vue mount.
+- [x] Add `site` and `base` configuration with environment examples for `/` and `/blog/`.
+- [x] Add the base layout (visual styles/assets remain a later UI task).
+- [x] Add a smoke page that renders the configured base URL through an internal link.
+- [x] Add typecheck and static build scripts.
 
 ## Phase 2 - Content pipeline
 
