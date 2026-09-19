@@ -1,5 +1,7 @@
 import type { CollectionEntry } from 'astro:content'
-import { categorySlug, slugify } from './content'
+import { categorySlug, slugify } from './content.ts'
+
+const astroEnv = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env ?? {}
 
 export type PostEntry = CollectionEntry<'posts'>
 export type RouteMode = 'slug' | 'uid' | 'explicit'
@@ -26,14 +28,14 @@ export function normalizeRoutePath(path: string): string {
   return `${normalized.replace(/\/+$/, '')}/`
 }
 
-export function withBase(path: string, base = import.meta.env.BASE_URL): string {
+export function withBase(path: string, base = astroEnv.BASE_URL || '/'): string {
   const normalizedPath = normalizeRoutePath(path)
   const normalizedBase = basePath(base)
   if (normalizedBase === '/' || normalizedPath === normalizedBase || normalizedPath.startsWith(`${normalizedBase}/`)) return normalizedPath
   return normalizeRoutePath(`${normalizedBase}${normalizedPath}`)
 }
 
-export function withoutBase(path: string, base = import.meta.env.BASE_URL): string {
+export function withoutBase(path: string, base = astroEnv.BASE_URL || '/'): string {
   const normalized = normalizeRoutePath(path)
   const normalizedBase = basePath(base)
   if (normalizedBase === '/' || (normalized !== normalizedBase && !normalized.startsWith(`${normalizedBase}/`))) return normalized
@@ -42,13 +44,13 @@ export function withoutBase(path: string, base = import.meta.env.BASE_URL): stri
 
 export function sitePath(path: string): string { return withBase(path) }
 
-export function assetPath(path: string, base = import.meta.env.BASE_URL): string {
+export function assetPath(path: string, base = astroEnv.BASE_URL || '/'): string {
   const clean = path.replace(/^\/+/, '')
   const cleanBase = base === '/' ? '' : base.replace(/^\/+|\/+$/g, '')
   return `/${[cleanBase, clean].filter(Boolean).join('/')}`
 }
 
-export function publicAssetPath(path: string, base = import.meta.env.BASE_URL): string {
+export function publicAssetPath(path: string, base = astroEnv.BASE_URL || '/'): string {
   if (/^(?:[a-z][a-z\d+.-]*:|\/\/|data:|#)/i.test(path)) return path
   return assetPath(path, base)
 }
@@ -57,7 +59,7 @@ function defaultMode(post: PostEntry): RouteMode {
   if (post.data.permalink) return 'explicit'
   if (post.data.permalinkMode === 'uid') return 'uid'
   if (post.data.permalinkMode === 'explicit') return 'explicit'
-  return import.meta.env.ASTRO_PATH_SLUG === 'uid' ? 'uid' : 'slug'
+  return astroEnv.ASTRO_PATH_SLUG === 'uid' ? 'uid' : 'slug'
 }
 
 export function postSlug(post: PostEntry, mode: RouteMode = defaultMode(post)): string {

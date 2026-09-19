@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto'
+import { legacyUid } from './legacy-identity.ts'
 
 export interface AuthorData {
   name: string
@@ -70,18 +70,13 @@ export function asBoolean(value: unknown, fallback: boolean): boolean {
 
 export function slugify(value: string): string {
   return value.normalize('NFKC').trim().toLocaleLowerCase()
+    .replace(/\+\+/g, '-plus-plus').replace(/#/g, '-sharp')
     .replace(/[\s_]+/g, '-').replace(/[^\p{L}\p{N}\-/]+/gu, '')
     .replace(/-+/g, '-').replace(/^-|-$/g, '')
 }
 
 export function categorySlug(value: string): string {
   return value.split('/').map((part) => slugify(part)).filter(Boolean).join('/')
-}
-
-export function legacyUid(title: string, kind: 'post' | 'page' = 'post'): string {
-  return createHash('md5')
-    .update(`${kind === 'page' ? 'page_uid___' : 'post_uid___'}${title}`)
-    .digest('hex')
 }
 
 function normalizeAuthor(value: unknown): AuthorData {
@@ -110,7 +105,9 @@ function firstString(value: unknown): string | undefined {
 export function normalizeLegacyData(
   raw: Record<string, unknown>, kind: 'post' | 'page' = 'post',
 ): NormalizedPostData {
-  const title = String(raw.title ?? '').trim()
+  // Hexo hashes the title exactly as parsed. Do not trim or normalize it here:
+  // whitespace and combining-character differences are part of the legacy key.
+  const title = String(raw.title ?? '')
   const explicitUid = firstString(raw.legacyUid) ?? firstString(raw.uid)
   const uid = explicitUid || legacyUid(title, kind)
   const permalink = firstString(raw.permalink)
