@@ -19,4 +19,6 @@
 | `@astrojs/vue` | ADD | Vue islands only. |
 | `zod` | ADD (via Astro content tooling) | Typed, validated frontmatter compatibility schema. |
 | Shiki / Astro Markdown integrations | KEEP/ADAPT | Build-time highlighting replaces Hexo's deasync renderer. |
-| Pagefind | ADD | Static search index; validate Chinese corpus before locking the fallback. |
+| Pagefind `1.5.2` | ADD | Static search index generated after `astro build`; the Vue island loads only the generated Pagefind runtime. Chinese fixture indexing is verified; MiniSearch is not needed. |
+
+The Phase 2 implementation does not add a UI framework, router, second Markdown renderer, or comment SDK to the production bundle. Provider comment SDKs are loaded only by the opt-in comment island from configured public CDN URLs.
