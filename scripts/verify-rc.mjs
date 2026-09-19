@@ -5,6 +5,7 @@ import { legacyUid } from '../src/lib/legacy-identity.ts'
 import { normalizeLegacyData, slugify } from '../src/lib/content.ts'
 import { commentIdentity, commentIdentityAliases, normalizeCommentPath } from '../src/lib/comments.ts'
 import { assertNoRouteCollisions } from '../src/lib/routing.ts'
+import { paginate } from '../src/lib/posts.ts'
 
 const fixture = JSON.parse(readFileSync(new URL('../tests/fixtures/legacy-title-hash.json', import.meta.url), 'utf8'))
 for (const item of fixture) {
@@ -16,6 +17,8 @@ for (const item of fixture) {
 assert.equal(legacyUid('Hello World', 'page'), createHash('md5').update('page_uid___Hello World').digest('hex'))
 assert.notEqual(legacyUid('café'), legacyUid('café'), 'NFC and NFD titles must remain distinct')
 assert.notEqual(slugify('C++'), slugify('C#'), 'punctuation-heavy taxonomy values must not collapse to one route')
+assert.deepEqual(paginate(['a', 'b', 'c'], 2, 2), { items: ['c'], page: 2, pageSize: 2, pageCount: 2, total: 3 })
+assert.deepEqual(paginate([], 0, 0), { items: [], page: 1, pageSize: 1, pageCount: 1, total: 0 })
 
 const input = { legacyUid: 'legacy-uid', canonicalPath: '/aurora/post/new/', legacyPath: 'https://example.com/post/old/?x=1' }
 assert.equal(normalizeCommentPath(input.legacyPath), '/post/old/')

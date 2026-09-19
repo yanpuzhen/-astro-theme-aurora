@@ -42,6 +42,8 @@ The browser test verifies the comment route manifest without submitting a commen
 - route-manifest comment identity;
 - JavaScript-disabled home, article, tags, categories, and archives.
 
+Pagination boundary behavior (empty collection, clamped page/page-size, and a second-page slice) is covered by `scripts/verify-rc.mjs`. The four-post RC corpus does not generate a public page 2, so no page-2 browser click is claimed.
+
 The root browser suite passed **5/5**. The same suite passed **5/5** under `/aurora/` using a test-only static mount that models a host serving `dist` below that prefix. The mount server is not part of the production site architecture.
 
 Pagefind now reads its generated language manifest and merges non-primary language indexes. This is required because Pagefind otherwise selects the index matching the document's `lang` (`en`) and silently misses Chinese-only content.

@@ -1,5 +1,5 @@
 import type { CollectionEntry } from 'astro:content'
-import { excerptFromBody, isPublicPost } from './content'
+import { excerptFromBody, isPublicPost } from './content.ts'
 
 export type Post = CollectionEntry<'posts'>
 export interface HomeSelection { posts: Post[]; features: Post[]; mode: 'feature' | 'pin' }
