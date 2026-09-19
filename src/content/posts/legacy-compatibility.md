@@ -6,7 +6,7 @@ tags: migration
 categories: [Aurora, compatibility]
 legacyUid: legacy-fixture-uid-001
 permalink: /legacy/custom-route/
-cover: https://images.example.test/aurora-cover.jpg
+cover: /fixtures/aurora-placeholder.svg
 description: "覆盖历史 Aurora frontmatter 的中文兼容 fixture。"
 excerpt: "这篇文章验证中文标题、emoji、自定义 permalink、评论 identity 和旧字段归一化。"
 lang: zh-CN
@@ -18,7 +18,7 @@ author:
 comment: true
 commentPath: /post/legacy-compatibility/
 photos:
-  - https://images.example.test/photo-1.jpg
+  - /fixtures/aurora-placeholder.svg
 ---
 
 # 迁移后的第一篇文章

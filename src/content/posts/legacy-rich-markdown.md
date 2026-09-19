@@ -23,7 +23,7 @@ console.log(greeting);
 | Chinese search | ready |
 
 <figure>
-  <img src="https://images.example.test/inline.jpg" alt="Inline fixture image" />
+  <img src="/fixtures/aurora-placeholder.svg" alt="Inline fixture image" />
   <figcaption>Images remain usable without JavaScript.</figcaption>
 </figure>
 

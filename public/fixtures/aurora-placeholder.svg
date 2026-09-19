@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Aurora fixture image</title>
+  <desc id="desc">A deterministic gradient image used by migration fixtures.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#24c6dc"/>
+      <stop offset="0.45" stop-color="#5433ff"/>
+      <stop offset="1" stop-color="#ff0099"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="#17151d"/>
+  <path d="M0 490C230 310 370 630 610 430s360-110 590 20v225H0z" fill="url(#sky)" opacity=".88"/>
+  <circle cx="920" cy="165" r="78" fill="#fff" opacity=".84"/>
+</svg>

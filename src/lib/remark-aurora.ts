@@ -1,13 +1,33 @@
 interface MarkdownNode {
-  type?: string; value?: string; children?: MarkdownNode[]; data?: Record<string, unknown>; properties?: Record<string, unknown>
+  type?: string; value?: string; meta?: string | null; children?: MarkdownNode[]; data?: Record<string, unknown>; properties?: Record<string, unknown>
 }
 
 const containerPattern = /^:::(tip|warning|danger|details)\s*\n?([\s\S]*?)\n?:::$/i
 interface RemarkOptions { base?: string }
 function textValue(node: MarkdownNode): string { return node.children?.map(textValue).join('') ?? node.value ?? '' }
 
+function fenceMetadata(meta: string): Record<string, string> {
+  const result: Record<string, string> = {}
+  const quoted = /(?:title|filename|file)=(?:"([^"]+)"|'([^']+)'|([^\s]+))/gi
+  for (const match of meta.matchAll(quoted)) result['data-code-title'] = match[1] || match[2] || match[3]
+  if (/\b(?:line-numbers|lineNumbers|ln)\b/i.test(meta)) result['data-line-numbers'] = ''
+  const highlight = meta.match(/\{([\d, -]+)\}/)
+  if (highlight) result['data-highlight-lines'] = highlight[1].replace(/\s+/g, '')
+  return result
+}
+
 function visit(nodes: MarkdownNode[], base: string): void {
   for (const node of nodes) {
+    if (node.type === 'code' && node.meta) {
+      const properties = fenceMetadata(node.meta)
+      if (Object.keys(properties).length > 0) {
+        // Keep the original meta string on the HAST code node. Astro wraps it
+        // for Shiki; the Aurora Shiki transformer parses it and adds the
+        // compatibility attributes to the generated <pre>.
+        node.data = { ...(node.data || {}), hProperties: { metastring: node.meta } }
+        delete node.meta
+      }
+    }
     const url = (node as MarkdownNode & { url?: unknown }).url
     if ((node.type === 'link' || node.type === 'image') && typeof url === 'string' && url.startsWith('/') && !url.startsWith(base)) {
       ;(node as MarkdownNode & { url: string }).url = `${base}${url}`
