@@ -21,6 +21,7 @@ const structuredData = {
   }),
 }
 if (imageUrl && typeof structuredData.image === 'string') structuredData.image = imageUrl.toString()
+const safeJsonLd = JSON.stringify(structuredData).split('<').join('\\u003c').split('>').join('\\u003e').split('&').join('\\u0026')
 const diaEnabled = import.meta.env.PUBLIC_AURORA_DIA === 'true'
 ---
 <!doctype html>
@@ -47,7 +48,7 @@ const diaEnabled = import.meta.env.PUBLIC_AURORA_DIA === 'true'
     {type === 'article' && updated && <meta property="article:modified_time" content={updated.toISOString()} />}
     {type === 'article' && tags?.map((tag) => <meta property="article:tag" content={tag} />)}
     <link rel="icon" href={assetPath('/favicon.svg')} />
-    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    <script type="application/ld+json" set:html={safeJsonLd} />
     <slot name="head" />
   </head>
   <body>

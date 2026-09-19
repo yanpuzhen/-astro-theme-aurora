@@ -7,13 +7,14 @@ import CodeCopyIsland from '../../islands/CodeCopyIsland.vue'
 import { config } from '../../lib/config'
 import { isPublicPost } from '../../lib/content'
 import { previousNext, excerptFor, selectHomePosts } from '../../lib/posts'
-import { postPath, publicAssetPath, resolvePostPath, routeManifestEntry, sitePath } from '../../lib/routing'
+import { assertNoRouteCollisions, postPath, publicAssetPath, resolvePostPath, routeManifestEntry, sitePath } from '../../lib/routing'
 import LightboxIsland from '../../islands/LightboxIsland.vue'
 
 const posts = await getCollection('posts')
 const publicEntries = posts.filter(isPublicPost)
 export async function getStaticPaths() {
   const entries = await getCollection('posts', isPublicPost)
+  assertNoRouteCollisions(entries)
   return entries.filter((post) => resolvePostPath(post).startsWith('/post/')).map((post) => ({
     params: { slug: resolvePostPath(post).replace(/^\/post\//, '').replace(/\/$/, '') }, props: { post },
   }))

@@ -7,11 +7,12 @@ import CodeCopyIsland from '../islands/CodeCopyIsland.vue'
 import { config } from '../lib/config'
 import { isPublicPost } from '../lib/content'
 import { excerptFor, previousNext, selectHomePosts } from '../lib/posts'
-import { postPath, postAliases, publicAssetPath, resolvePostPath, routeManifestEntry, sitePath } from '../lib/routing'
+import { assertNoRouteCollisions, postPath, postAliases, publicAssetPath, resolvePostPath, routeManifestEntry, sitePath } from '../lib/routing'
 import LightboxIsland from '../islands/LightboxIsland.vue'
 
 export async function getStaticPaths() {
   const entries = await getCollection('posts', isPublicPost)
+  assertNoRouteCollisions(entries)
   const paths = new Map<string, CollectionEntry<'posts'>>()
   for (const post of entries) {
     const canonical = resolvePostPath(post)
