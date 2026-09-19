@@ -16,6 +16,14 @@ function fenceMetadata(meta: string): Record<string, string> {
   return result
 }
 
+function prefixRawAssetUrls(value: string, base: string): string {
+  if (!base) return value
+  return value.replace(/(\b(?:href|src)\s*=\s*["'])(\/[^"']*)/gi, (match, prefix: string, path: string) => {
+    if (path.startsWith('//') || path === base || path.startsWith(`${base}/`)) return match
+    return `${prefix}${base}${path}`
+  })
+}
+
 function visit(nodes: MarkdownNode[], base: string): void {
   for (const node of nodes) {
     if (node.type === 'code' && node.meta) {
@@ -41,6 +49,9 @@ function visit(nodes: MarkdownNode[], base: string): void {
           properties[key] = `${base}${value}`
         }
       }
+    }
+    if (node.type === 'html' && typeof node.value === 'string') {
+      node.value = prefixRawAssetUrls(node.value, base)
     }
     if (node.type === 'html' && /<\s*script(?:\s|>)/i.test(node.value || '')) {
       node.type = 'text'; node.value = '[script removed from Markdown]'; delete node.children; continue

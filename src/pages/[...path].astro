@@ -49,7 +49,7 @@ const jsonLd = {
       <h1 class="article-title">{post.data.title}</h1>
       <div class="article-meta"><span>{post.data.author.name}</span><TagList tags={post.data.tags} /></div>
       {description && <p class="article-summary">{description}</p>}
-      {image && <img class="article-cover" src={image} alt={post.data.title} loading="eager" />}
+      {image && <img class="article-cover" src={publicAssetPath(image)} alt={post.data.title} loading="eager" />}
     </header>
     {headings.length > 0 && post.data.toc && <nav class="taxonomy-card" aria-label="Table of contents"><strong>Contents</strong><ul>{headings.map((heading) => <li><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul></nav>}
       {hasCode && <CodeCopyIsland client:load />}

@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config'
 import vue from '@astrojs/vue'
+import rehypeRaw from 'rehype-raw'
 import { remarkAurora } from './src/lib/remark-aurora'
 import { rehypeBasePath } from './src/lib/rehype-base-path'
 import { rehypeCodeMeta } from './src/lib/rehype-code-meta'
@@ -10,7 +11,7 @@ export default defineConfig({
   integrations: [vue()],
   markdown: {
     remarkPlugins: [[remarkAurora, { base: process.env.ASTRO_BASE || '/' }]],
-    rehypePlugins: [[rehypeBasePath, { base: process.env.ASTRO_BASE || '/' }], rehypeCodeMeta],
+    rehypePlugins: [rehypeRaw, [rehypeBasePath, { base: process.env.ASTRO_BASE || '/' }], rehypeCodeMeta],
     syntaxHighlight: 'shiki',
     shikiConfig: { theme: 'github-dark', transformers: [shikiAuroraTransformer] },
   },
