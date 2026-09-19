@@ -13,7 +13,7 @@ Aurora 3.0 is the Astro-based evolution of Aurora: a static, responsive theme wi
 
 ## Quick start
 
-Aurora 3.0 requires Node.js `18.20.8`, Node.js `20.3` or newer within the Node 20 line, or Node.js `22` or newer. Node.js 20 LTS is recommended. Use pnpm `11.19.0` (pnpm `7.1.0` or newer is required by the dependency tree).
+Aurora 3.0 requires Node.js `22.13.0` or newer and pnpm `11.19.0`. This exact toolchain is pinned because pnpm 11 requires Node.js 22.13 or newer; the Astro dependency itself has a broader Node range.
 
 ```sh
 git clone https://github.com/yanpuzhen/-astro-theme-aurora.git

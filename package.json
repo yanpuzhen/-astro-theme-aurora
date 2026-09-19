@@ -22,8 +22,8 @@
     "vue-islands"
   ],
   "engines": {
-    "node": ">=18.20.8 <19 || >=20.3.0 <21 || >=22.0.0",
-    "pnpm": ">=7.1.0"
+    "node": ">=22.13.0",
+    "pnpm": ">=11.19.0"
   },
   "packageManager": "pnpm@11.19.0",
   "scripts": {
