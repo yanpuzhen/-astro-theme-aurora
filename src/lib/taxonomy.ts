@@ -15,7 +15,8 @@ function collect(posts: Post[], field: 'tags' | 'categories'): TaxonomyItem[] {
       groups.set(slug, item)
     }
   }
-  return [...groups.values()].sort((a, b) => a.name.localeCompare(b.name))
+  return [...groups.values()].map((item) => ({ ...item, posts: [...item.posts].sort((a, b) => (b.data.date.valueOf() - a.data.date.valueOf()) || a.id.localeCompare(b.id)) }))
+    .sort((a, b) => a.name.localeCompare(b.name))
 }
 
 export function collectTags(posts: Post[]): TaxonomyItem[] { return collect(posts, 'tags') }

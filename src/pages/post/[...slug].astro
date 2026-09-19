@@ -6,8 +6,8 @@ import Comments from '../../components/Comments.astro'
 import CodeCopyIsland from '../../islands/CodeCopyIsland.vue'
 import { config } from '../../lib/config'
 import { isPublicPost } from '../../lib/content'
-import { archivePosts, previousNext, excerptFor } from '../../lib/posts'
-import { postPath, resolvePostPath, routeManifestEntry, sitePath } from '../../lib/routing'
+import { previousNext, excerptFor, selectHomePosts } from '../../lib/posts'
+import { postPath, publicAssetPath, resolvePostPath, routeManifestEntry, sitePath } from '../../lib/routing'
 import LightboxIsland from '../../islands/LightboxIsland.vue'
 
 const posts = await getCollection('posts')
@@ -20,7 +20,7 @@ export async function getStaticPaths() {
 }
 const { post } = Astro.props as { post: CollectionEntry<'posts'> }
 const { Content, headings } = await render(post)
-const ordered = archivePosts(publicEntries)
+const ordered = selectHomePosts(publicEntries, config.theme.feature).posts
 const { previous, next } = previousNext(ordered, post)
 const manifest = routeManifestEntry(post)
 const description = post.data.description || excerptFor(post)
@@ -29,12 +29,12 @@ const jsonLd = {
   '@context': 'https://schema.org', '@type': 'BlogPosting', headline: post.data.title, description,
   url: new URL(sitePath(manifest.canonicalPath), Astro.site).toString(), datePublished: post.data.date.toISOString(),
   ...(post.data.updated ? { dateModified: post.data.updated.toISOString() } : {}),
-  author: { '@type': 'Person', name: post.data.author.name }, ...(image ? { image } : {}),
+  author: { '@type': 'Person', name: post.data.author.name }, ...(image ? { image: publicAssetPath(image) } : {}),
 }
 ---
 <BaseLayout title={`${post.data.title} · ${config.site.title}`} description={description} canonicalPath={manifest.canonicalPath}
   image={image} type="article" author={post.data.author.name} published={post.data.date} updated={post.data.updated}
-  keywords={post.data.keywords} lang={post.data.lang} jsonLd={jsonLd}>
+  keywords={post.data.keywords} tags={post.data.tags} lang={post.data.lang} jsonLd={jsonLd}>
   <article class="article-shell" data-pagefind-body>
     <header class="article-header">
       <div class="post-card__meta">{post.data.categories[0] && <span>{post.data.categories[0]}</span>}<time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString(post.data.lang)}</time>{post.data.updated && <time datetime={post.data.updated.toISOString()}>Updated {post.data.updated.toLocaleDateString(post.data.lang)}</time>}</div>

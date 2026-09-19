@@ -43,6 +43,11 @@ export function assetPath(path: string, base = import.meta.env.BASE_URL): string
   return `/${[cleanBase, clean].filter(Boolean).join('/')}`
 }
 
+export function publicAssetPath(path: string, base = import.meta.env.BASE_URL): string {
+  if (/^(?:[a-z][a-z\d+.-]*:|\/\/|data:|#)/i.test(path)) return path
+  return assetPath(path, base)
+}
+
 function defaultMode(post: PostEntry): RouteMode {
   if (post.data.permalink) return 'explicit'
   if (post.data.permalinkMode === 'uid') return 'uid'
@@ -91,4 +96,5 @@ export function routeManifestEntry(post: PostEntry): RouteManifestEntry {
 export function tagPath(name: string): string { return sitePath(`/tags/${slugify(name)}/`) }
 export function categoryPath(name: string): string { return sitePath(`/categories/${categorySlug(name)}/`) }
 export function pagePath(page: number): string { return sitePath(page <= 1 ? '/' : `/page/${page}/`) }
+export function customPagePath(slug: string): string { return sitePath(`/page/${slug}/`) }
 export function archivePath(page = 1): string { return sitePath(page <= 1 ? '/archives/' : `/archives/${page}/`) }
