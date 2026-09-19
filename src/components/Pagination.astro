@@ -1,13 +1,16 @@
 ---
 import { archivePath, pagePath } from '../lib/routing'
+import { messagesFor } from '../lib/i18n'
+import { config } from '../lib/config'
 interface Props { page: number; pageCount: number; kind?: 'home' | 'archive' }
 const { page, pageCount, kind = 'home' } = Astro.props
 const pathFor = (value: number) => kind === 'archive' ? archivePath(value) : pagePath(value)
+const messages = messagesFor(config.site.language)
 ---
 {pageCount > 1 && (
   <nav class="pagination" aria-label="Pagination">
-    {page > 1 && <a href={pathFor(page - 1)}>← Newer</a>}
+    {page > 1 && <a href={pathFor(page - 1)}>{messages.newer}</a>}
     <span>Page {page} of {pageCount}</span>
-    {page < pageCount && <a href={pathFor(page + 1)}>Older →</a>}
+    {page < pageCount && <a href={pathFor(page + 1)}>{messages.older}</a>}
   </nav>
 )}

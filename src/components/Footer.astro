@@ -1,7 +1,9 @@
 ---
 import { config } from '../lib/config'
 import { sitePath } from '../lib/routing'
+import { messagesFor } from '../lib/i18n'
+const messages = messagesFor(config.site.language)
 ---
 <footer class="site-footer" id="footer">
-  <p>© {new Date().getFullYear()} <a href={sitePath('/')}>{config.site.author}</a>. Built with Aurora.</p>
+  <p>© {new Date().getFullYear()} <a href={sitePath('/')}>{config.site.author}</a>. {messages.builtWith}</p>
 </footer>
