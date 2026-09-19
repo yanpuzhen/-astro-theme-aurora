@@ -30,6 +30,7 @@
     "build": "astro check && astro build && pagefind --site dist",
     "check": "astro check",
     "test:browser": "playwright test",
+    "pretest": "pnpm build",
     "test": "node scripts/verify-build.mjs && node --experimental-strip-types scripts/verify-rc.mjs",
     "preview": "astro preview"
   },
