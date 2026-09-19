@@ -25,6 +25,8 @@ const { previous, next } = previousNext(ordered, post)
 const manifest = routeManifestEntry(post)
 const description = post.data.description || excerptFor(post)
 const image = post.data.cover
+const hasCode = /```/.test(post.body || '')
+const hasImages = /!\[[^\]]*\]\([^)]*\)|<img\b/i.test(post.body || '')
 const jsonLd = {
   '@context': 'https://schema.org', '@type': 'BlogPosting', headline: post.data.title, description,
   url: new URL(sitePath(manifest.canonicalPath), Astro.site).toString(), datePublished: post.data.date.toISOString(),
@@ -47,7 +49,7 @@ const jsonLd = {
     <div class="post-html"><Content /></div>
     <nav class="article-nav" aria-label="Article navigation">{previous ? <a href={postPath(previous)}>← {previous.data.title}</a> : <span />}{next ? <a href={postPath(next)}>{next.data.title} →</a> : <span />}</nav>
     <Comments enabled={post.data.comments && config.comments.enabled} provider={config.comments.provider} providerId={config.comments.gitalkIdMode} legacyUid={manifest.legacyUid} canonicalPath={manifest.canonicalUrlPath} commentPath={manifest.commentPath} title={post.data.title} />
-    <CodeCopyIsland client:visible />
-    <LightboxIsland client:visible />
+    {hasCode && <CodeCopyIsland client:visible />}
+    {hasImages && <LightboxIsland client:visible />}
   </article>
 </BaseLayout>
