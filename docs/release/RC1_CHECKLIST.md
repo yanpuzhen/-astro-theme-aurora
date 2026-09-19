@@ -55,7 +55,11 @@ This checklist is evidence-driven. Check an item only after the command or inspe
 - [x] Final regression passed after the version change.
 - [x] Final RC1 commit was created without rewriting migration history.
 - [x] Working tree is clean.
-- [ ] `main` was pushed and remote `origin/main` matches the final RC1 commit.
-- [ ] Annotated tag `v3.0.0-rc.1` points to the final RC1 commit and was pushed.
-- [ ] GitHub Release `Aurora 3.0.0 RC1` was created from that tag as a prerelease.
-- [ ] Repository, branch, tag, release, and commit were verified after publication.
+- [x] `main` was pushed and matched the final RC1 commit `3caec65` at publication; `origin/main` is now `3918f79` after the CI-only runner correction.
+- [x] Annotated tag `v3.0.0-rc.1` points to final RC1 commit `3caec65` and was pushed.
+- [x] GitHub Release `Aurora 3.0.0 RC1` was created from that tag as a prerelease.
+- [x] Repository, branch, tag, release, and commit were verified after publication.
+
+## Publication record
+
+The published RC1 tag and prerelease remain immutable at `3caec65`. Follow-up commit `3918f79` only changes the CI runner from Node 20 to Node 22, matching pnpm `11.19.0`; its GitHub Actions run passed and it is now the head of `main`.
