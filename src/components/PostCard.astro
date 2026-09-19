@@ -1,0 +1,23 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import { excerptFor } from '../lib/posts'
+import { categoryPath, postPath } from '../lib/routing'
+import TagList from './TagList.astro'
+interface Props { post: CollectionEntry<'posts'>; feature?: boolean }
+const { post, feature = false } = Astro.props
+const coverStyle = post.data.cover ? `background-image: url("${post.data.cover}")` : undefined
+---
+<article class:list={['post-card', { 'post-card--feature': feature }]}>
+  <a class="post-card__cover" href={postPath(post)} aria-label={post.data.title} style={coverStyle}>
+    <span aria-hidden="true"></span>
+  </a>
+  <div class="post-card__body">
+    <div class="post-card__meta">
+      {post.data.categories[0] && <a href={categoryPath(post.data.categories[0])}>{post.data.categories[0]}</a>}
+      <time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString(post.data.lang)}</time>
+    </div>
+    <h2><a href={postPath(post)}>{post.data.title}</a></h2>
+    <p>{excerptFor(post)}</p>
+    <TagList tags={post.data.tags} limit={3} />
+  </div>
+</article>

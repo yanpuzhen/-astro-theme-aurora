@@ -1,0 +1,7 @@
+---
+import { config } from '../lib/config'
+import { sitePath } from '../lib/routing'
+---
+<footer class="site-footer" id="footer">
+  <p>© {new Date().getFullYear()} <a href={sitePath('/')}>{config.site.author}</a>. Built with Aurora.</p>
+</footer>

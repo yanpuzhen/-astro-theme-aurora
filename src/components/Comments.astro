@@ -1,0 +1,12 @@
+---
+import CommentIsland from '../islands/CommentIsland.vue'
+import type { CommentProvider } from '../lib/comments'
+interface Props { enabled: boolean; provider: CommentProvider; providerId?: 'uid' | 'pathname'; legacyUid: string; canonicalPath: string; commentPath: string; title: string }
+const { enabled, provider, providerId = 'uid', legacyUid, canonicalPath, commentPath, title } = Astro.props
+---
+{enabled && provider !== 'none' && (
+  <section class="comments" id="comments" data-provider={provider} data-legacy-uid={legacyUid} data-canonical-path={canonicalPath} data-legacy-path={commentPath}>
+    <h2>Comments</h2>
+    <CommentIsland client:visible provider={provider} providerId={providerId} legacyUid={legacyUid} canonicalPath={canonicalPath} legacyPath={commentPath} title={title} />
+  </section>
+)}

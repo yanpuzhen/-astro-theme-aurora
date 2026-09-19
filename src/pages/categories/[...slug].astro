@@ -1,0 +1,17 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import PostCard from '../../components/PostCard.astro'
+import { collectCategories } from '../../lib/taxonomy'
+import { isPublicPost } from '../../lib/content'
+import { categoryPath } from '../../lib/routing'
+export async function getStaticPaths() {
+  const entries = (await getCollection('posts')).filter(isPublicPost)
+  return collectCategories(entries).map((category) => ({ params: { slug: category.slug }, props: { category } }))
+}
+const { category } = Astro.props
+---
+<BaseLayout title={`${category.name} · Categories`} canonicalPath={categoryPath(category.name)}>
+  <p class="eyebrow">Category</p><h1 class="page-heading">{category.name}</h1>
+  <div class="post-grid">{category.posts.map((post) => <PostCard post={post} />)}</div>
+</BaseLayout>

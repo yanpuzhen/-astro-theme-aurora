@@ -1,0 +1,16 @@
+---
+import { config } from '../lib/config'
+import { sitePath } from '../lib/routing'
+const currentPath = Astro.url.pathname
+---
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-logo" href={sitePath('/')} aria-label={config.site.title}>{config.site.title}</a>
+    <nav aria-label="Primary navigation">
+      {config.menu.map((item) => (
+        <a class:list={{ active: currentPath === sitePath(item.href) }} href={sitePath(item.href)}>{item.label}</a>
+      ))}
+    </nav>
+    <a class="header-search" href={sitePath('/search/')} aria-label="Search">⌕</a>
+  </div>
+</header>

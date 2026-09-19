@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import PostCard from '../../components/PostCard.astro'
+import Pagination from '../../components/Pagination.astro'
+import { config } from '../../lib/config'
+import { isPublicPost } from '../../lib/content'
+import { paginate, selectHomePosts } from '../../lib/posts'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', isPublicPost)
+  const selection = selectHomePosts(posts, config.theme.feature)
+  const pageSize = selection.mode === 'feature' ? 12 : 13
+  const pageCount = Math.ceil(selection.posts.length / pageSize)
+  return Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) => ({
+    params: { page: String(index + 2) }, props: { posts: selection.posts, page: index + 2, pageCount, pageSize },
+  }))
+}
+const { posts, page: pageNumber, pageCount, pageSize } = Astro.props
+const selectionPage = paginate(posts, pageNumber, pageSize)
+---
+<BaseLayout title={`Page ${pageNumber} · ${config.site.title}`} canonicalPath={`/page/${pageNumber}/`}>
+  <h1 class="page-heading">Latest articles <span>· {pageNumber}</span></h1>
+  <div class="post-grid">{selectionPage.items.map((post) => <PostCard post={post} />)}</div>
+  <Pagination page={pageNumber} pageCount={pageCount} />
+</BaseLayout>

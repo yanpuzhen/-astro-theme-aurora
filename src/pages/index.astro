@@ -1,14 +1,29 @@
 ---
 import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
-import { postPath } from '../lib/routing'
-const posts = (await getCollection('posts', ({ data }) => !data.hidden)).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-)
+import PostCard from '../components/PostCard.astro'
+import Pagination from '../components/Pagination.astro'
+import { config } from '../lib/config'
+import { publicPosts, selectHomePosts, paginate } from '../lib/posts'
+import { categoryPath, pagePath, sitePath } from '../lib/routing'
+const allPosts = await getCollection('posts')
+const selection = selectHomePosts(allPosts, config.theme.feature)
+const pageSize = selection.mode === 'feature' ? 12 : 13
+const page = paginate(selection.posts, 1, pageSize)
+const listing = selection.mode === 'pin' ? page.items.slice(1) : page.items
+const categories = [...new Set(publicPosts(allPosts).flatMap((post) => post.data.categories))].sort()
 ---
-<BaseLayout title="Aurora 3.0">
-  <h1>Aurora 3.0</h1>
-  <ul>
-    {posts.map((post) => <li><a href={postPath(post)}>{post.data.title}</a></li>)}
-  </ul>
+<BaseLayout title={config.site.title} description={config.site.description} canonicalPath="/">
+  <section class="home-intro">
+    <p class="eyebrow">{config.site.subtitle}</p>
+    <h1 class="page-heading">A quiet place for <span>bright ideas</span>.</h1>
+    <p>{config.site.description}</p>
+  </section>
+  {selection.features.length > 0 && <section aria-labelledby="featured-title"><h2 id="featured-title" class="eyebrow">{selection.mode === 'feature' ? 'Featured' : 'Pinned'}</h2><div class="post-grid post-grid--feature">{selection.features.map((post) => <PostCard post={post} feature />)}</div></section>}
+  <section aria-labelledby="articles-title">
+    <div class="section-heading"><h2 id="articles-title" class="eyebrow">Latest articles</h2><a href={sitePath('/archives/')}>View archive →</a></div>
+    {categories.length > 0 && <nav aria-label="Categories"><ul class="tag-list"><li><a href={pagePath(1)}>All</a></li>{categories.map((category) => <li><a href={categoryPath(category)}>{category}</a></li>)}</ul></nav>}
+    <div class="post-grid">{listing.map((post) => <PostCard post={post} />)}</div>
+    <Pagination page={page.page} pageCount={page.pageCount} />
+  </section>
 </BaseLayout>

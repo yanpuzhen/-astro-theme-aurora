@@ -1,0 +1,13 @@
+---
+import { archivePath, pagePath } from '../lib/routing'
+interface Props { page: number; pageCount: number; kind?: 'home' | 'archive' }
+const { page, pageCount, kind = 'home' } = Astro.props
+const pathFor = (value: number) => kind === 'archive' ? archivePath(value) : pagePath(value)
+---
+{pageCount > 1 && (
+  <nav class="pagination" aria-label="Pagination">
+    {page > 1 && <a href={pathFor(page - 1)}>← Newer</a>}
+    <span>Page {page} of {pageCount}</span>
+    {page < pageCount && <a href={pathFor(page + 1)}>Older →</a>}
+  </nav>
+)}
