@@ -52,10 +52,10 @@ const jsonLd = {
       {image && <img class="article-cover" src={image} alt={post.data.title} loading="eager" />}
     </header>
     {headings.length > 0 && post.data.toc && <nav class="taxonomy-card" aria-label="Table of contents"><strong>Contents</strong><ul>{headings.map((heading) => <li><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul></nav>}
+      {hasCode && <CodeCopyIsland client:load />}
+      {hasImages && <LightboxIsland client:load />}
     <div class="post-html"><Content /></div>
     <nav class="article-nav" aria-label="Article navigation">{previous ? <a href={postPath(previous)}>← {previous.data.title}</a> : <span />}{next ? <a href={postPath(next)}>{next.data.title} →</a> : <span />}</nav>
     <Comments enabled={post.data.comments && config.comments.enabled} provider={config.comments.provider} providerId={config.comments.gitalkIdMode} legacyUid={manifest.legacyUid} canonicalPath={manifest.canonicalUrlPath} commentPath={manifest.commentPath} title={post.data.title} />
-    {hasCode && <CodeCopyIsland client:visible />}
-    {hasImages && <LightboxIsland client:visible />}
   </article>
 </BaseLayout>

@@ -1,0 +1,120 @@
+import { test, expect } from '@playwright/test'
+import { mkdirSync } from 'node:fs'
+
+const basePath = (process.env.PLAYWRIGHT_BASE_PATH || '').replace(/\/$/, '')
+const route = (path: string) => `${basePath}${path}` || '/'
+
+test.beforeAll(() => mkdirSync('output/playwright/visual', { recursive: true }))
+
+test('home, article, taxonomy, archive and ordinary navigation load', async ({ page }) => {
+  await page.goto(route('/'))
+  await expect(page).toHaveTitle(/Aurora/)
+  await expect(page.locator('main')).toContainText(/Latest articles|最新文章/)
+  await expect(page.locator('nav[aria-label="Primary navigation"] a')).toHaveCount(4)
+
+  await page.goto(route('/post/legacy-markdown-parity/'))
+  await expect(page.locator('article[data-pagefind-body]')).toContainText('Static HTML')
+  await expect(page.locator('.post-html table')).toBeVisible()
+  await expect(page.locator('.post-html pre')).toHaveAttribute('data-code-title', 'example.ts')
+  const jsonLd = await page.locator('script[type="application/ld+json"]').evaluate((element) => element.textContent || '')
+  expect(jsonLd).toContain('BlogPosting')
+
+  for (const path of ['/tags/', '/tags/中文/', '/categories/', '/categories/engineering/frontend/', '/archives/', '/about/']) {
+    await page.goto(route(path))
+    await expect(page.locator('main')).toBeVisible()
+  }
+})
+
+test('Pagefind search returns a real result and navigates with the configured base', async ({ page }) => {
+  await page.goto(route('/search/'))
+  const input = page.getByRole('searchbox', { name: 'Search' })
+  for (const query of ['Aurora', '迁移', '中文', 'architecture', 'migration', 'Aurora 迁移']) {
+    await input.fill(query)
+    await expect.poll(async () => page.locator('.search-result').count(), { message: `Pagefind query: ${query}` }).toBeGreaterThan(0)
+  }
+  await input.fill('Aurora')
+  const href = await page.locator('.search-result').first().getAttribute('href')
+  expect(href).toContain(basePath)
+  await page.locator('.search-result').first().click()
+  await expect(page.locator('.article-title, .page-heading').first()).toBeVisible()
+})
+
+test('lightbox, code copy, mobile menu and persisted theme work', async ({ browser, page }) => {
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto(route('/post/legacy-markdown-parity/'))
+
+  await page.locator('.post-html pre').scrollIntoViewIfNeeded()
+  await expect(page.locator('.code-copy-button')).toBeVisible()
+  await page.locator('.code-copy-button').click()
+  await expect(page.locator('.code-copy-button')).not.toHaveText('Unavailable')
+
+  await page.locator('.post-html img').click({ force: true })
+  await expect(page.getByRole('button', { name: 'Close image' })).toBeVisible()
+  await page.getByRole('button', { name: 'Close image' }).click()
+
+  const menuTrigger = page.getByRole('button', { name: 'Open menu' })
+  await menuTrigger.click()
+  await expect(page.locator('#mobile-navigation')).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page.locator('#mobile-navigation')).toHaveCount(0)
+
+  const html = page.locator('html')
+  const before = await html.getAttribute('data-theme')
+  await page.getByRole('button', { name: before === 'dark' ? 'Use light theme' : 'Use dark theme' }).click()
+  const after = await html.getAttribute('data-theme')
+  expect(after).not.toBe(before)
+  await page.reload()
+  await expect(html).toHaveAttribute('data-theme', after || '')
+
+  await page.screenshot({ path: 'output/playwright/visual/article-mobile.png', fullPage: true })
+  const visualPages = [
+    ['home', '/'],
+    ['article', '/post/legacy-markdown-parity/'],
+    ['unicode', '/post/unicode-torture/'],
+    ['tags', '/tags/'],
+    ['categories', '/categories/'],
+    ['archives', '/archives/'],
+    ['search', '/search/'],
+  ] as const
+  const viewports = [
+    [1440, 900], [1280, 800], [768, 1024], [390, 844], [375, 812],
+  ] as const
+  for (const [width, height] of viewports) {
+    const visual = await browser.newPage({ viewport: { width, height } })
+    for (const [name, path] of visualPages) {
+      await visual.goto(route(path))
+      await expect(visual.locator('main')).toBeVisible()
+      expect(await visual.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
+      await visual.screenshot({
+        path: `output/playwright/visual/${name}-${width}x${height}.png`,
+        fullPage: true,
+      })
+    }
+    await visual.close()
+  }
+})
+
+test('comment mount exposes the stable identity manifest without submitting', async ({ page }) => {
+  const response = await page.request.get(route('/route-manifest.json'))
+  expect(response.ok()).toBeTruthy()
+  const manifest = await response.json()
+  const legacy = manifest.find((entry: { id: string }) => entry.id === 'legacy-compatibility')
+  expect(legacy).toMatchObject({
+    canonicalPath: '/legacy/custom-route/',
+    legacyUid: 'legacy-fixture-uid-001',
+    commentPath: '/post/legacy-compatibility/',
+  })
+})
+
+test('static article and navigation remain readable with JavaScript disabled', async ({ browser }) => {
+  const noJs = await browser.newContext({ javaScriptEnabled: false })
+  const page = await noJs.newPage()
+  for (const path of ['/', '/post/legacy-markdown-parity/', '/tags/', '/categories/', '/archives/']) {
+    await page.goto(route(path))
+    await expect(page.locator('main')).toBeVisible()
+    await expect(page.locator('body')).not.toContainText('The search index is unavailable')
+  }
+  await expect(page.locator('nav[aria-label="Primary navigation"]')).toBeVisible()
+  await noJs.close()
+})

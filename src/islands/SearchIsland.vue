@@ -3,32 +3,82 @@ import { ref } from 'vue'
 
 interface Props { base: string }
 interface SearchResult { url: string; title: string; excerpt: string }
+interface PagefindResult { score: number; data: () => Promise<SearchResult> }
+interface PagefindSearchResponse { results: PagefindResult[] }
+interface PagefindModule {
+  mergeIndex: (path: string, options: { language: string; baseUrl: string }) => Promise<void>
+  search: (value: string) => Promise<PagefindSearchResponse>
+}
 const props = defineProps<Props>()
 const query = ref('')
 const results = ref<SearchResult[]>([])
 const loading = ref(false)
 const error = ref('')
-let pagefind: { search: (value: string) => Promise<{ results: { data: () => Promise<SearchResult> }[] }> } | undefined
+let pagefindLoading: Promise<PagefindModule> | undefined
+let searchId = 0
 
-async function loadIndex() {
-  if (pagefind) return pagefind
-  const url = new URL(`${props.base.replace(/\/$/, '')}/pagefind/pagefind.js`, window.location.origin).href
-  pagefind = await import(/* @vite-ignore */ url) as typeof pagefind
-  return pagefind
+function pagefindBasePath() {
+  return `${props.base.replace(/\/$/, '')}/pagefind/` || '/pagefind/'
+}
+
+async function loadIndexes() {
+  if (pagefindLoading) return pagefindLoading
+
+  pagefindLoading = (async () => {
+    const basePath = pagefindBasePath()
+    const entryUrl = new URL(`${basePath}pagefind-entry.json`, window.location.origin)
+    const entryResponse = await fetch(entryUrl)
+    if (!entryResponse.ok) throw new Error(`Pagefind metadata request failed: ${entryResponse.status}`)
+    const entry = await entryResponse.json() as { languages?: Record<string, { page_count?: number }> }
+    const languageInfo = entry.languages || {}
+    const languages = Object.keys(languageInfo)
+    if (languages.length === 0) throw new Error('Pagefind did not publish any language indexes.')
+
+    const pagefindUrl = new URL(`${basePath}pagefind.js`, window.location.origin).href
+    const index = await import(/* @vite-ignore */ pagefindUrl) as PagefindModule
+    const requestedLanguage = document.documentElement.lang.toLowerCase()
+    const primaryLanguage = languages.find((language) => language === requestedLanguage)
+      || languages.find((language) => language.split('-')[0] === requestedLanguage.split('-')[0])
+      || [...languages].sort((left, right) => (languageInfo[right].page_count || 0) - (languageInfo[left].page_count || 0))[0]
+    // Pagefind skips merging when the path is exactly its primary base path.
+    // The equivalent dot path keeps the same static files while selecting a second language.
+    const mergeBasePath = `${basePath}./`
+    await Promise.all(languages
+      .filter((language) => language !== primaryLanguage && language.split('-')[0] !== primaryLanguage)
+      .map((language) => index.mergeIndex(mergeBasePath, { language, baseUrl: props.base || '/' })))
+    return index
+  })()
+
+  try {
+    return await pagefindLoading
+  } catch (loadError) {
+    pagefindLoading = undefined
+    throw loadError
+  }
 }
 
 async function search() {
   const value = query.value.trim()
+  const currentSearchId = ++searchId
   if (!value) { results.value = []; error.value = ''; return }
   loading.value = true; error.value = ''
   try {
-    const index = await loadIndex()
-    const response = await index!.search(value)
-    results.value = await Promise.all(response.results.slice(0, 10).map((result) => result.data()))
+    const index = await loadIndexes()
+    const response = await index.search(value)
+    if (currentSearchId !== searchId) return
+    const matches = response.results
+      .sort((left, right) => right.score - left.score)
+      .slice(0, 10)
+    const nextResults = await Promise.all(matches.map((result) => result.data()))
+    if (currentSearchId !== searchId) return
+    results.value = nextResults
   } catch {
+    if (currentSearchId !== searchId) return
     error.value = 'The search index is unavailable in this build.'
     results.value = []
-  } finally { loading.value = false }
+  } finally {
+    if (currentSearchId === searchId) loading.value = false
+  }
 }
 </script>
 
