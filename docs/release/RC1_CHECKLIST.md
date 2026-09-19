@@ -31,6 +31,7 @@ This checklist is evidence-driven. Check an item only after the command or inspe
 ## Clean install and reproducibility
 
 - [ ] Fresh clone equivalent uses `pnpm install --frozen-lockfile`.
+- [ ] Dependency build scripts are explicitly allowlisted in `pnpm-workspace.yaml`.
 - [ ] Generated `dist`, `.astro`, Pagefind output, browser output, and caches were removed before the final build.
 - [ ] `pnpm test` passed.
 - [ ] `pnpm check` passed.
