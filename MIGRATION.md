@@ -1,91 +1,91 @@
-# Aurora 3.0 migration checklist
+# Migrating from Aurora 2.x to Aurora 3.0
 
-This is the implementation handoff checklist. Decisions in `docs/migration/adr/` marked **ACCEPTED** are contractual; update an ADR before changing them. Keep each change small and preserve the visual styles from the legacy theme.
+Aurora 3.0 is a static Astro implementation of Aurora. It preserves the compatibility information that can be established from the legacy theme/plugin and uses Vue only for focused browser interactions. It does not run the old Hexo/Vue SPA at runtime.
 
-## Phase 1 - Astro skeleton
+This guide is written for a real Aurora 2.x site. The repository fixtures prove the migration contract, but no production article corpus or external comment-provider records were available here. Verify representative URLs and comment threads from the site being migrated before switching traffic.
 
-- [x] Initialize an Astro TypeScript project with `output: 'static'`.
-- [x] Add `@astrojs/vue` and configure Vue islands without a global Vue mount.
-- [x] Add `site` and `base` configuration with environment examples for `/` and `/blog/`.
-- [x] Add the base layout (visual styles/assets remain a later UI task).
-- [x] Add a smoke page that renders the configured base URL through an internal link.
-- [x] Add typecheck and static build scripts.
+## Before you migrate
 
-## Phase 2 - Content pipeline
+Record the existing site's generated URLs, titles, frontmatter, comment-provider settings, asset paths, and deployment root. Preserve a copy of the old generated site and provider configuration until the new build has been checked. In particular, collect the current canonical path and comment key for every post whose title or slug will change.
 
-- [x] Define the Zod Content Collections schema for posts and pages.
-- [x] Implement legacy scalar/array normalization for tags and categories.
-- [x] Normalize authors, `comment/comments`, `sticky/pinned`, keywords, dates and visibility.
-- [x] Implement legacy post/page UID generation and explicit UID overrides.
-- [ ] Port excerpt, symbol count, reading time and TOC generation to build-time utilities.
-- [x] Port Aurora containers/blockquotes to one remark/rehype pipeline.
-- [x] Configure Shiki and add a small client copy hook for highlighted code.
-- [x] Add fixtures for raw HTML, script removal/inert behavior and representative fence metadata.
+Install the required toolchain and create a working copy:
 
-## Phase 3 - Core routing/pages
+```sh
+git clone https://github.com/yanpuzhen/-astro-theme-aurora.git
+cd ./-astro-theme-aurora
+pnpm install --frozen-lockfile
+```
 
-- [x] Implement `resolvePostPath` and route-manifest types.
-- [x] Add base-aware URL helpers; ban direct root concatenation in components.
-- [x] Implement static `/post/[...slug]` (or equivalent) with article HTML in the document.
-- [x] Add title/description/canonical/OpenGraph/Twitter/author/date/tag/language metadata.
-- [x] Add Article/BlogPosting JSON-LD.
-- [x] Implement home listing, deterministic feature/pin ordering and pagination.
-- [x] Implement archives and archive pagination.
-- [x] Implement tags index and tag detail pages.
-- [x] Implement categories index and category detail pages.
-- [x] Implement about, links and custom page entries.
-- [ ] Implement optional author pages from normalized author data.
-- [x] Implement previous/next links using the date-sorted archive collection.
+## Automatically compatible
 
-## Phase 4 - Aurora UI migration
+The content adapter accepts the legacy forms covered by the RC fixtures:
 
-- [x] Port header, navigation, logo and footer to Astro components.
-- [x] Port article cards, feature cards, tags, category boxes and TOC to Astro.
-- [x] Port link/friends page shell and page-specific data without runtime article requests.
-- [ ] Import legacy SCSS variables/component styles and verify desktop/mobile screenshots.
-- [x] Preserve the audited gradients, dark mode, cover behavior and responsive spacing vocabulary.
-- [x] Replace lazy-load directives with native HTML behavior; scroll-spy remains unimplemented.
+- scalar or array `tags` and `categories`;
+- `author` strings or objects, with the legacy `blog-author` fallback;
+- `date`, `updated`, `excerpt`/`abstracts`/`preview`, `keywords`, `feature`, `sticky`, `pinned`, `comment`, and `comments` fields;
+- explicit legacy UIDs, or the audited MD5 title hash (`post_uid___<title>` for posts and `page_uid___<title>` for pages);
+- `/post/<slug>/` paths, explicit custom permalinks, and verified `.html` compatibility redirects;
+- Markdown tables, blockquotes, Aurora containers, images, links, Unicode, and Shiki code metadata used by the fixtures.
 
-## Phase 5 - Interactive features
+The build emits a route manifest with canonical paths, legacy paths, UIDs, comment paths, and provider-specific comment aliases. It also generates static tags, categories, archives, pagination, RSS, sitemap, robots, canonical metadata, OpenGraph, and JSON-LD.
 
-- [x] Implement the search island over Pagefind.
-- [x] Implement the comments island and four provider adapters.
-- [ ] Implement comment count/recent-comment behavior only where provider APIs support it.
-- [ ] Implement stable theme preference controls.
-- [ ] Implement locale switching without hydrating static pages.
-- [ ] Implement mobile menu interaction.
-- [x] Implement lightbox interaction over statically rendered image links.
-- [x] Port Dia as an optional island with build-time locale/config props.
-- [x] Add copy-button behavior for highlighted code as a small island.
+## Manual migration required
 
-## Phase 6 - Legacy compatibility
+1. Copy posts into `src/content/posts/` and pages into `src/content/pages/`. Keep their frontmatter until `pnpm test` and `pnpm build` pass.
+2. Review every custom permalink and title-derived UID. A changed title can change the legacy UID even if the visible slug stays the same.
+3. Configure `ASTRO_SITE` and `ASTRO_BASE` for the real deployment. `ASTRO_BASE=/` is the root deployment; a subdirectory must include its trailing slash, for example `/blog/theme/`.
+4. Copy public assets into `public/` and update references to be base-path aware. Do not hard-code root-relative URLs for a subdirectory deployment.
+5. Configure one supported comment provider with [.env.example](.env.example), then compare generated identities with the old site. Existing provider records are not verified by this repository's fixtures.
+6. Run the root and nested-base browser checks against a production-like preview before changing DNS or hosting configuration.
 
-- [x] Collect real Aurora/Hexo-shaped URL and frontmatter fixtures.
-- [x] Generate a route manifest containing canonical paths, old paths, UID and comment aliases.
-- [x] Preserve `/post/<slug>/` and verified `.html`/UID forms where practical.
-- [x] Generate static redirects for URLs that cannot be emitted directly.
-- [ ] Verify Gitalk UID/pathname, Valine, Twikoo and Waline identifiers against existing comments.
-- [ ] Provide a documented migration map for changed slugs/titles and comment keys.
-- [x] Remove legacy `/api/*.json` generation after consumers are migrated; retain only an explicitly requested compatibility export.
-- [x] Document raw HTML/script compatibility differences and trusted embed opt-in.
+## Changed behavior
 
-## Phase 7 - Performance and SEO
+### Astro replaces the Hexo/Vue runtime
 
-- [x] Run Pagefind and inspect index size and Chinese search quality.
-- [x] Confirm no post page requires a client request for article content or metadata.
-- [x] Audit shipped JavaScript and list each island's reason for hydration.
-- [ ] Validate image dimensions, lazy loading, responsive sources and default cover fallback.
-- [x] Validate sitemap, robots, canonical URLs and RSS/feeds if enabled.
-- [x] Build with `base: '/'` and `base: '/aurora/'` and inspect representative internal links/assets.
+Astro owns content collections, routing, pagination, taxonomy, metadata, and article HTML. The generated page contains the article body without a client request. Vue is limited to search, comments, lightbox, code copy, Dia, theme persistence, and mobile navigation. There is no Vue Router, SPA shell, runtime article JSON fetch, or global Vue mount.
 
-## Phase 8 - Tests and documentation
+### Markdown scripts are disabled by default
 
-- [ ] Add schema normalization tests for all legacy forms.
-- [ ] Add route resolver tests for slug, UID, explicit, `.html`, query/hash and base paths.
-- [ ] Add feature/pin, pagination, tag/category/archive and previous/next tests.
-- [x] Add rendered HTML assertions proving article content and SEO metadata are static.
-- [x] Add redirect and route/comment identity manifest assertions.
-- [x] Add Markdown/highlighting/raw HTML security fixtures.
-- [x] Run typecheck, build assertions and production build; static preview smoke remains for Astra review.
-- [ ] Update README/configuration docs with Astro setup and migration limits.
-- [ ] Review all accepted ADRs and record any superseding decisions.
+Legacy Markdown that contains a `<script>` element is removed or made inert by the default pipeline. This is an intentional security and compatibility change: a content file cannot silently execute arbitrary browser code during migration. Use a reviewed Astro/Vue integration or an explicit trusted-embed path for content that genuinely needs a script. Do not re-enable arbitrary Markdown scripts globally.
+
+### Search is build-time Pagefind
+
+Pagefind indexes the generated HTML, including the configured language indexes. The old search JSON/API and client-side article store are not generated. Rebuild after changing content so the search index reflects the site.
+
+### URLs and base paths
+
+The canonical URL is composed from `ASTRO_SITE` and `ASTRO_BASE`. The legacy `/api/articles/<slug>.json` endpoint is not emitted. `/post/<slug>/`, custom permalinks, and proven `.html` aliases remain the compatibility surface; route collisions and reserved taxonomy paths fail the build.
+
+## Comments and identity
+
+| Provider | Aurora 3.0 default identity | Migration action |
+| --- | --- | --- |
+| Gitalk | Preserved legacy UID; explicit pathname mode is available | Compare UID/pathname with the existing issue records. A trusted OAuth/proxy service is required; no client secret is serialized. |
+| Valine | Historical pathname without trailing slash | Compare the old pathname for representative posts. |
+| Twikoo | Historical pathname with trailing slash | Compare the old pathname and environment ID. |
+| Waline | Historical pathname with trailing slash | Compare the old pathname and server URL. |
+
+The route manifest provides aliases, but it cannot prove that an external provider's records still resolve. Production continuity is therefore a required site-specific sign-off, not an automatic RC claim.
+
+## Deprecated and removed
+
+- Hexo generators, filters, injectors, and the legacy Vue SPA runtime are not part of Aurora 3.0.
+- Legacy `/api/*.json` output is removed unless a future release explicitly adds a separately audited compatibility export.
+- Runtime search/article data stores and Vue Router are removed.
+- Automatic execution of Markdown scripts is removed.
+- Author pages, comment counts/recent-comment data, complete legacy fence metadata, and responsive image-source migration remain conditional or incomplete until a real production corpus requires them; do not assume those behaviors from the fixtures.
+
+## Verification checklist
+
+```sh
+pnpm install --frozen-lockfile
+pnpm test
+pnpm check
+pnpm build
+ASTRO_SITE=https://example.com ASTRO_BASE=/aurora/ pnpm build
+ASTRO_SITE=https://example.com ASTRO_BASE=/blog/theme/ pnpm build
+PLAYWRIGHT_BASE_PATH= pnpm run test:browser
+PLAYWRIGHT_BASE_PATH=/aurora pnpm run test:browser
+```
+
+Do not publish until generated URLs/assets, no-JavaScript content, browser console output, search, and the real comment-provider identities have been checked for the target site.
