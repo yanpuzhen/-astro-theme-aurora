@@ -4,26 +4,27 @@ This is the implementation ledger for Phase 2. It records work in the repository
 
 | Legacy feature | Legacy file/module | Astro target | Status | Notes | Verification method |
 |---|---|---|---|---|---|
-| Post frontmatter and UID mapping | `hexo-plugin-aurora/lib/helpers/mapper.js`, `utils.js` | `src/content.config.ts`, `src/lib/content.ts` | In progress | Preserve scalar/array fields, legacy UID hash, author fallback and compatibility extras. | Collection fixtures and normalized-data checks |
-| Post URL generation | `postMapper`, `site.pathSlug` | `src/lib/routing.ts`, route manifest | In progress | Slug, UID, explicit permalink and `.html` aliases are centralized. | Route fixtures and generated paths |
-| Home post ordering | `generators/post.js` | `src/lib/posts.ts`, home routes | Planned | Keep feature/pin fallback, date ordering and legacy page sizes. | Ordering and pagination assertions |
-| Article body | Vue `pages/post/[slug].vue`, Hexo Markdown | Astro post route and Content Collections | Skeleton only | Article HTML must remain in the initial document. | `dist` HTML assertions |
-| Aurora layout and visual system | `theme/src/styles/**`, layout components | `src/styles/global.css`, Astro layouts/components | Planned | Migrate class vocabulary and gradient variables without introducing a UI framework. | Build plus responsive visual review |
-| Tags and categories | `generators/tag.js`, `category.js` | Static taxonomy routes | Planned | Derive indexes from the same normalized collection. | Route and count assertions |
-| Archives | `generators/post.js` archive pagination | Static archive routes | Planned | Preserve date-sorted, feature-independent archive ordering. | Archive fixture assertions |
-| Markdown containers and highlighting | `filters/afterPostRender/quote.js`, `highlighter/index.js` | Astro Markdown pipeline and build-time transforms | Planned | One Remark/Rehype/Shiki pipeline; scripts remain inert by default. | Markdown fixture output |
-| Search | `generators/search.js`, `SearchModal.vue` | Pagefind build output and search island | Planned | No legacy full-content JSON endpoint. | Pagefind index and Chinese fixture search |
-| Comments | `Comment.vue`, `utils/comments/*` | Comment identity adapter and island | Planned | Preserve provider-specific UID/path semantics; secrets never become props. | Identity manifest fixtures |
-| Lightbox | `useLightBox.ts`, `VueEasyLightbox` | Small Vue island over static image links | Planned | Images remain usable without JavaScript. | Static HTML and browser interaction |
-| Dia | `Dia.vue`, `utils/aurora-dia/*` | Optional Vue island | Planned | Build-time config and locale props only. | Island smoke check |
-| SEO and feeds | `injector/index.js`, route metadata | Base layout, RSS, sitemap, robots | Planned | All URLs derive from `site` and `base`. | Generated HTML/feed checks |
+| Post frontmatter and UID mapping | `hexo-plugin-aurora/lib/helpers/mapper.js`, `utils.js` | `src/content.config.ts`, `src/lib/content.ts` | Implemented | Scalar/array fields, legacy UID hash, author fallback, visibility and compatibility extras are normalized. | Legacy-shaped fixtures, generated manifest and static HTML |
+| Post URL generation | `postMapper`, `site.pathSlug` | `src/lib/routing.ts`, route manifest | Implemented | Slug, UID, explicit permalink, `.html` aliases and base-aware paths are centralized. | Route manifest plus root/non-root builds |
+| Home post ordering | `generators/post.js` | `src/lib/posts.ts`, home routes | Implemented | Feature capacity/fill and pin fallback preserve the audited 12/13 page-size behavior. | Fixture build and generated home/archive routes |
+| Article body | Vue `pages/post/[slug].vue`, Hexo Markdown | Astro post routes and Content Collections | Implemented | Article HTML, metadata, TOC and navigation are in the initial document. | `scripts/verify-build.mjs` |
+| Aurora layout and visual system | `theme/src/styles/**`, layout components | `src/styles/global.css`, Astro layouts/components | Implemented, visual review pending | Static Aurora-inspired shell, gradients, typography, cards and responsive rules are restored; exact screenshot parity remains review work. | Build plus source audit; screenshot review pending |
+| Tags and categories | `generators/tag.js`, `category.js` | Static taxonomy routes | Implemented | Derived from the normalized collection, including nested category paths. | Generated route tree and build |
+| Archives | `generators/post.js` archive pagination | Static archive routes | Implemented | Date-sorted list and static pagination; archive page 1 is sliced before grouping. | Generated archive routes and build |
+| Markdown containers and highlighting | `filters/afterPostRender/quote.js`, `highlighter/index.js` | Astro Markdown pipeline and build-time transforms | Implemented, parity review pending | One Remark/Rehype/Shiki pipeline, Aurora containers, tables, heading IDs and inert scripts; legacy fence title/line metadata needs review. | Rich Markdown fixture in `dist` |
+| Search | `generators/search.js`, `SearchModal.vue` | Pagefind build output and search island | Implemented | Pagefind indexes rendered canonical HTML; no legacy full-content JSON endpoint. | Pagefind output and Chinese language index |
+| Comments | `Comment.vue`, `utils/comments/*` | Comment identity adapter and island | Implemented, provider verification pending | Gitalk, Valine, Twikoo and Waline identity modes are explicit; secrets are not serialized. Gitalk OAuth proxy is documented as a blocker when enabled. | Manifest identity assertions; real provider records pending |
+| Lightbox | `useLightBox.ts`, `VueEasyLightbox` | Small Vue island over static image links | Implemented | Static image remains present; only the dialog/listener logic hydrates. | Rich Markdown output and island bundle |
+| Dia | `Dia.vue`, `utils/aurora-dia/*` | Optional Vue island | Implemented | Opt-in `PUBLIC_AURORA_DIA=true`; locale/tip are serializable props. | Bundle inspection and build |
+| SEO and feeds | `injector/index.js`, route metadata | Base layout, RSS, sitemap, robots | Implemented | Metadata and feed URLs derive from `site` plus `base`; JSON-LD is emitted server-side. | Generated HTML/feed checks |
 
 ## Current baseline
 
-- The repository was clean at the start of Phase 2 and remains based on `cbfe173`.
-- The existing smoke post is retained while real compatibility fixtures are added.
+- The repository was clean at the start of Phase 2 and remains based on `cbfe173`; implementation tracking itself was committed as `4228345`.
+- The existing smoke post is retained alongside legacy-shaped compatibility fixtures.
 - The upstream legacy repositories referenced by `LEGACY_AUDIT.md` were inspected at their current shallow HEADs on 2026-09-19. Their source is not copied into the Astro repository.
-- Exact provider-side comment records cannot be proven from theme source alone; the implementation will expose an explicit migration manifest and mark site-specific values for operator verification.
+- Exact provider-side comment records cannot be proven from theme source alone; the implementation exposes an explicit migration manifest and marks site-specific values for operator verification.
+- The current static Gitalk integration intentionally omits `clientSecret`; a trusted OAuth/proxy endpoint is required before enabling Gitalk in production. See `docs/migration/BLOCKERS.md`.
 
 ## Verification convention
 
