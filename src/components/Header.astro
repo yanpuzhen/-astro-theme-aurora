@@ -4,7 +4,10 @@ import { sitePath } from '../lib/routing'
 import ThemeIsland from '../islands/ThemeIsland.vue'
 import MobileMenuIsland from '../islands/MobileMenuIsland.vue'
 const currentPath = Astro.url.pathname
-const menu = config.menu.map((item) => ({ ...item, href: sitePath(item.href) }))
+const menu = config.menu.map((item) => ({
+  ...item,
+  href: /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(item.href) ? item.href : sitePath(item.href),
+}))
 ---
 <header class="site-header">
   <div class="site-header__inner">

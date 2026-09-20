@@ -105,7 +105,7 @@ main { width: min(calc(100% - 2rem), var(--max-width)); margin: 0 auto; padding:
 
 .taxonomy-grid, .archive-list { display: grid; gap: 1rem; }
 .taxonomy-grid { grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); }
-.taxonomy-card, .archive-year { padding: 1.25rem; border-radius: .75rem; background: var(--background-secondary); }
+.taxonomy-card, .archive-year { min-width: 0; padding: 1.25rem; border-radius: .75rem; background: var(--background-secondary); overflow-wrap: anywhere; }
 .taxonomy-card strong { display: block; color: var(--text-bright); font-size: 1.2rem; }
 .archive-year h2 { margin-top: 0; color: var(--text-accent); }
 .archive-year ul { padding-left: 1.2rem; }
