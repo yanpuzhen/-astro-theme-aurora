@@ -20,7 +20,7 @@ test('home, article, taxonomy, archive and ordinary navigation load', async ({ p
   const jsonLd = await page.locator('script[type="application/ld+json"]').evaluate((element) => element.textContent || '')
   expect(jsonLd).toContain('BlogPosting')
 
-  for (const path of ['/tags/', '/tags/中文/', '/categories/', '/categories/engineering/frontend/', '/archives/', '/about/']) {
+  for (const path of ['/tags/', '/tags/中文/', '/categories/', '/categories/engineering/frontend/', '/archives/', '/about/', '/links/']) {
     await page.goto(route(path))
     await expect(page.locator('main')).toBeVisible()
   }
@@ -39,6 +39,27 @@ test('Pagefind search returns a real result and navigates with the configured ba
   expect(href).toContain(basePath)
   await page.locator('.search-result').first().click()
   await expect(page.locator('.article-title, .page-heading').first()).toBeVisible()
+})
+
+test('header search keeps a static fallback and opens the Aurora modal', async ({ browser, page }) => {
+  test.skip(Boolean(process.env.PLAYWRIGHT_PAGES), 'The RC suite targets the standalone Astro build.')
+  await page.goto(route('/'))
+  const trigger = page.getByRole('link', { name: 'Open search' })
+  await expect(trigger).toHaveAttribute('href', `${basePath}/search/`)
+  await trigger.click()
+  await expect(page.locator('.search-modal')).toBeVisible()
+  const input = page.getByRole('searchbox', { name: 'Search' })
+  await expect(input).toBeFocused()
+  await input.fill('Aurora')
+  await expect.poll(() => page.locator('.search-modal .search-result').count()).toBeGreaterThan(0)
+  await page.keyboard.press('Escape')
+  await expect(page.locator('.search-modal')).toHaveCount(0)
+
+  const noJs = await browser.newContext({ javaScriptEnabled: false })
+  const noJsPage = await noJs.newPage()
+  await noJsPage.goto(route('/'))
+  await expect(noJsPage.getByRole('link', { name: 'Open search' })).toHaveAttribute('href', `${basePath}/search/`)
+  await noJs.close()
 })
 
 test('lightbox, code copy, mobile menu and persisted theme work', async ({ browser, page }) => {

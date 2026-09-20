@@ -37,6 +37,7 @@
     "test:pages": "node scripts/verify-pages.mjs",
     "test:readme": "node scripts/verify-readme.mjs",
     "test:browser:pages": "PLAYWRIGHT_PAGES=true playwright test",
+    "visual:capture": "node scripts/capture-visual.mjs",
     "check": "astro check",
     "test:browser": "pnpm build && playwright test",
     "pretest": "pnpm build",
