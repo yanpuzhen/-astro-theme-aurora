@@ -11,7 +11,7 @@ test('home, article, taxonomy, archive and ordinary navigation load', async ({ p
   await page.goto(route('/'))
   await expect(page).toHaveTitle(/Aurora/)
   await expect(page.locator('main')).toContainText(/Latest articles|最新文章/)
-  await expect(page.locator('nav[aria-label="Primary navigation"] a')).toHaveCount(6)
+  await expect(page.locator('nav[aria-label="Primary navigation"] a')).toHaveCount(7)
 
   const imageSources = await page.locator('img').evaluateAll((images) =>
     [...new Set(images.map((image) => image.getAttribute('src')).filter((src): src is string => typeof src === 'string' && src.startsWith('/')))],
@@ -39,7 +39,7 @@ test('Pagefind search returns a real result and navigates with the configured ba
   test.skip(Boolean(process.env.PLAYWRIGHT_PAGES), 'The RC suite targets the standalone Astro build.')
   await page.goto(route('/search/'))
   const input = page.getByRole('searchbox', { name: 'Search' })
-  for (const query of ['Aurora', '迁移', '中文', 'architecture', 'migration', 'Aurora 迁移']) {
+  for (const query of ['Aurora', 'architecture', 'migration']) {
     await input.fill(query)
     await expect.poll(async () => page.locator('.search-result').count(), { message: `Pagefind query: ${query}` }).toBeGreaterThan(0)
   }
@@ -48,6 +48,17 @@ test('Pagefind search returns a real result and navigates with the configured ba
   expect(href).toContain(basePath)
   await page.locator('.search-result').first().click()
   await expect(page.locator('.article-title, .page-heading').first()).toBeVisible()
+})
+
+test('Chinese Pagefind search stays inside the Chinese locale', async ({ page }) => {
+  test.skip(Boolean(process.env.PLAYWRIGHT_PAGES), 'The RC suite targets the standalone Astro build.')
+  await page.goto(route('/cn/search/'))
+  const input = page.getByRole('searchbox', { name: '搜索' })
+  for (const query of ['迁移', '中文', 'Aurora 迁移']) {
+    await input.fill(query)
+    await expect.poll(async () => page.locator('.search-result').count(), { message: `Chinese Pagefind query: ${query}` }).toBeGreaterThan(0)
+    await expect(page.locator('.search-result').first()).toHaveAttribute('href', /\/cn\//)
+  }
 })
 
 test('header search keeps a static fallback and opens the Aurora modal', async ({ browser, page }) => {
@@ -104,7 +115,7 @@ test('lightbox, code copy, mobile menu and persisted theme work', async ({ brows
   const visualPages = [
     ['home', '/'],
     ['article', '/post/legacy-markdown-parity/'],
-    ['unicode', '/post/unicode-torture/'],
+    ['unicode', '/cn/post/unicode-torture/'],
     ['tags', '/tags/'],
     ['categories', '/categories/'],
     ['archives', '/archives/'],
@@ -135,7 +146,7 @@ test('comment mount exposes the stable identity manifest without submitting', as
   const manifest = await response.json()
   const legacy = manifest.find((entry: { id: string }) => entry.id === 'legacy-compatibility')
   expect(legacy).toMatchObject({
-    canonicalPath: '/legacy/custom-route/',
+    canonicalPath: '/cn/legacy/custom-route/',
     legacyUid: 'legacy-fixture-uid-001',
     commentPath: '/post/legacy-compatibility/',
   })
@@ -145,7 +156,7 @@ test('static article and navigation remain readable with JavaScript disabled', a
   test.skip(Boolean(process.env.PLAYWRIGHT_PAGES), 'The RC suite targets the standalone Astro build.')
   const noJs = await browser.newContext({ javaScriptEnabled: false })
   const page = await noJs.newPage()
-  for (const path of ['/', '/post/legacy-markdown-parity/', '/tags/', '/categories/', '/archives/']) {
+  for (const path of ['/', '/post/legacy-markdown-parity/', '/cn/post/unicode-torture/', '/tags/', '/categories/', '/archives/']) {
     await page.goto(route(path))
     await expect(page.locator('main')).toBeVisible()
     await expect(page.locator('body')).not.toContainText('The search index is unavailable')
