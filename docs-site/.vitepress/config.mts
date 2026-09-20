@@ -80,6 +80,41 @@ const cnNav = [
   { text: 'GitHub', link: repository },
 ]
 
+const enLocaleThemeConfig = {
+  nav: enNav,
+  sidebar: { '/': enSidebar },
+  outline: { label: 'On this page' },
+  lastUpdatedText: 'Last updated',
+  editLink: { pattern: `${repository}/edit/dev/docs-site/:path`, text: 'Edit this page on GitHub' },
+  docFooter: { prev: 'Previous page', next: 'Next page' },
+  langMenuLabel: 'Change language',
+  search: { provider: 'local' },
+}
+
+const cnLocaleThemeConfig = {
+  nav: cnNav,
+  sidebar: { '/cn/': cnSidebar },
+  outline: { label: '本页目录' },
+  lastUpdatedText: '最后更新',
+  editLink: { pattern: `${repository}/edit/dev/docs-site/:path`, text: '在 GitHub 上编辑此页' },
+  docFooter: { prev: '上一页', next: '下一页' },
+  langMenuLabel: '切换语言',
+  search: {
+    provider: 'local',
+    options: {
+      locales: {
+        cn: { translations: { button: { buttonText: '搜索', buttonAriaLabel: '搜索' } } },
+      },
+    },
+  },
+  darkModeSwitchLabel: '外观',
+  lightModeSwitchTitle: '切换到浅色主题',
+  darkModeSwitchTitle: '切换到深色主题',
+  sidebarMenuLabel: '目录',
+  returnToTopLabel: '返回顶部',
+  skipToContentLabel: '跳转到正文',
+}
+
 function writeCompatibilityRedirect(file: string, destination: string) {
   mkdirSync(dirname(file), { recursive: true })
   const target = `${base}${destination.replace(/^\//, '')}`
@@ -98,8 +133,8 @@ export default defineConfig({
   lastUpdated: true,
   head: [['link', { rel: 'icon', href: `${base}favicon.svg` }]],
   locales: {
-    root: { label: 'English', lang: 'en', link: '/' },
-    cn: { label: '中文', lang: 'zh-CN', link: '/cn/' },
+    root: { label: 'English', lang: 'en', link: '/', themeConfig: enLocaleThemeConfig },
+    cn: { label: '中文', lang: 'zh-CN', link: '/cn/', themeConfig: cnLocaleThemeConfig },
   },
   themeConfig: {
     logo: '/favicon.svg',
@@ -107,29 +142,6 @@ export default defineConfig({
     sidebar: {
       '/': enSidebar,
       '/en/': enSidebar,
-      '/cn/': cnSidebar,
-    },
-    locales: {
-      root: {
-        nav: enNav,
-        sidebar: { '/': enSidebar },
-        outline: { label: 'On this page' },
-        lastUpdatedText: 'Last updated',
-        editLink: { pattern: `${repository}/edit/dev/docs-site/:path`, text: 'Edit this page on GitHub' },
-        docFooter: { prev: 'Previous page', next: 'Next page' },
-        langMenuLabel: 'Change language', search: { provider: 'local' },
-      },
-      cn: {
-        nav: cnNav,
-        sidebar: { '/cn/': cnSidebar },
-        outline: { label: '本页目录' },
-        lastUpdatedText: '最后更新',
-        editLink: { pattern: `${repository}/edit/dev/docs-site/:path`, text: '在 GitHub 上编辑此页' },
-        docFooter: { prev: '上一页', next: '下一页' },
-        langMenuLabel: '切换语言', search: { provider: 'local' },
-        darkModeSwitchLabel: '外观', lightModeSwitchTitle: '切换到浅色主题', darkModeSwitchTitle: '切换到深色主题',
-        sidebarMenuLabel: '目录', returnToTopLabel: '返回顶部', skipToContentLabel: '跳转到正文',
-      },
     },
     socialLinks: [{ icon: 'github', link: repository }],
     editLink: {
