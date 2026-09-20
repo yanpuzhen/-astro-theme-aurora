@@ -1,6 +1,6 @@
 ---
 import { config } from '../lib/config'
-import { sitePath } from '../lib/routing'
+import { publicAssetPath, sitePath } from '../lib/routing'
 import ThemeIsland from '../islands/ThemeIsland.vue'
 import MobileMenuIsland from '../islands/MobileMenuIsland.vue'
 import SearchIsland from '../islands/SearchIsland.vue'
@@ -14,7 +14,7 @@ const menu = config.menu.map((item) => ({
 <header class="site-header">
   <div class="site-header__inner">
     <a class="site-logo" href={sitePath('/')} aria-label={config.site.title}>
-      <img src={sitePath('/favicon.svg')} alt="" />
+      <img src={publicAssetPath('/favicon.svg')} alt="" />
       <span><strong>{config.site.author}</strong><small>AURORA 3.0</small></span>
     </a>
     <nav class="desktop-navigation" aria-label="Primary navigation">
@@ -27,6 +27,6 @@ const menu = config.menu.map((item) => ({
       <span class="header-control header-language" aria-label="Language"><Icon name="language" /><span>{config.site.language === 'zh-CN' ? '简体' : 'En'}</span></span>
       <ThemeIsland client:load />
     </div>
-    <MobileMenuIsland client:load menu={menu} logo={sitePath('/favicon.svg')} />
+    <MobileMenuIsland client:load menu={menu} logo={publicAssetPath('/favicon.svg')} />
   </div>
 </header>

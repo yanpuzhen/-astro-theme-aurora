@@ -50,6 +50,7 @@ for (const html of [docs, docsEnglish, docsChinese]) {
 }
 for (const html of [demo, demoPost]) {
   assert.ok(html.includes(demoBase), 'Demo HTML does not contain the configured nested base')
+  assert.doesNotMatch(html, /(?:src|href)="[^" ]+\.(?:svg|png|jpe?g|webp|css|js|woff2)\//i, 'Demo static file URLs must not receive a route trailing slash')
   assert.doesNotMatch(html, /(?:href|src)="\/(?!-astro-theme-aurora\/|\/\/)/, 'Found an unbased root-relative asset/link')
 }
 for (const path of htmlFiles(root)) {

@@ -13,6 +13,15 @@ test('home, article, taxonomy, archive and ordinary navigation load', async ({ p
   await expect(page.locator('main')).toContainText(/Latest articles|最新文章/)
   await expect(page.locator('nav[aria-label="Primary navigation"] a')).toHaveCount(6)
 
+  const imageSources = await page.locator('img').evaluateAll((images) =>
+    [...new Set(images.map((image) => image.getAttribute('src')).filter((src): src is string => typeof src === 'string' && src.startsWith('/')))],
+  )
+  expect(imageSources.length).toBeGreaterThan(0)
+  for (const source of imageSources) {
+    expect(source).not.toMatch(/\.[a-z0-9]+\/$/i)
+    expect((await page.request.get(source)).ok()).toBeTruthy()
+  }
+
   await page.goto(route('/post/legacy-markdown-parity/'))
   await expect(page.locator('article[data-pagefind-body]')).toContainText('Static HTML')
   await expect(page.locator('.post-html table')).toBeVisible()

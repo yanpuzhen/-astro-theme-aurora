@@ -1,6 +1,6 @@
 ---
 import { config } from '../lib/config'
-import { sitePath } from '../lib/routing'
+import { publicAssetPath, sitePath } from '../lib/routing'
 ---
 <footer class="site-footer" id="footer">
   <div class="site-footer__rule" aria-hidden="true"></div>
@@ -15,6 +15,6 @@ import { sitePath } from '../lib/routing'
       <a href={sitePath('/tags/')}>Tags</a>
       <a href={sitePath('/links/')}>Links</a>
     </div>
-    <img class="footer-avatar diamond-avatar" src={sitePath('/favicon.svg')} alt="" />
+    <img class="footer-avatar diamond-avatar" src={publicAssetPath('/favicon.svg')} alt="" />
   </div>
 </footer>

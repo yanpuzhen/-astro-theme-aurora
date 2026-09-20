@@ -22,6 +22,7 @@ const custom = read(withBase('/legacy/custom-route/'))
 
 assert.match(post, /This fixture proves that the post body is rendered at build time\./)
 assert.match(post, /<link rel="canonical" href="https:\/\/example\.com\//)
+assert.doesNotMatch(post, /(?:src|href)="[^" ]+\.(?:svg|png|jpe?g|webp|css|js|woff2)\//i, 'static file URLs must not receive a route trailing slash')
 assert.match(rich, /Static HTML/)
 assert.match(rich, /legacy-markdown-parity/)
 assert.ok(rich.includes(`src="${withBase('/fixtures/aurora-placeholder.svg')}"`), 'raw HTML image assets must include the configured base path')
