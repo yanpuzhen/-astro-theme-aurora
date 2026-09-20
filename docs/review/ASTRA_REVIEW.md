@@ -135,7 +135,7 @@ Minor typography and pixel-level differences were not pursued.
 - `fix(theme): use asset paths for static favicon references`
   - Replaced route-normalizing `sitePath('/favicon.svg')` with `publicAssetPath('/favicon.svg')` in Header and Footer.
   - Added generated-output and browser assertions preventing file-extension URLs with an accidental trailing slash.
-  - Final commit SHA will be recorded after commit.
+  - Commit: `11fdfac448663a1216e2e48de6f24fbdaf96a9c8`.
 
 ## Remaining gaps
 
@@ -150,4 +150,3 @@ The code, generated artifact and browser checks are ready. Before merge/deploy, 
 ## PR state
 
 **OPEN — NOT MERGED**
-
