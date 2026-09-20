@@ -81,7 +81,7 @@ ASTRO_BASE=/astro-theme-aurora/ \
 pnpm build
 ```
 
-Create posts in `src/content/posts/` and pages in `src/content/pages/`. See the [Getting Started guide](https://yanpuzhen.github.io/astro-theme-aurora/en/guide/getting-started) for frontmatter, migration, and deployment details.
+Create posts in `src/content/posts/` and pages in `src/content/pages/`. See the [Getting Started guide](https://yanpuzhen.github.io/astro-theme-aurora/guide/getting-started) for frontmatter, migration, and deployment details, and the [Internationalization guide](https://yanpuzhen.github.io/astro-theme-aurora/guide/internationalization) for English/简体中文 content pairs.
 
 ### 🚫 Current architecture boundaries
 

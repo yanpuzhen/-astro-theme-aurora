@@ -1,6 +1,6 @@
 # Aurora 3 RC
 
-当前版本为 `3.0.0-rc.1`，适合迁移测试和反馈，不能直接视为无条件的生产兼容保证。
+当前版本为 `3.0.0-rc.2`，适合迁移测试和反馈，不能直接视为无条件的生产兼容保证。
 
 RC 已验证静态 HTML、route manifest、legacy title-hash identity、显式 permalink、Pagefind、中英文内容、nested base、响应式交互和无 JavaScript 可读性。由于没有生产评论数据库，未验证真实评论 provider 的连续性。
 
