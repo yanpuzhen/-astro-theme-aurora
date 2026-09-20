@@ -16,7 +16,7 @@ Example:
 
 ```sh
 ASTRO_SITE=https://yanpuzhen.github.io \
-ASTRO_BASE=/-astro-theme-aurora/demo/ \
+ASTRO_BASE=/astro-theme-aurora/demo/ \
 PUBLIC_AURORA_LOCALE=en \
 pnpm build
 ```

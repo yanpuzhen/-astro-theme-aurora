@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://yanpuzhen.github.io/-astro-theme-aurora/" target="_blank" rel="noopener noreferrer">
+  <a href="https://yanpuzhen.github.io/astro-theme-aurora/" target="_blank" rel="noopener noreferrer">
     <img width="120" alt="Aurora 3.0 logo" src="./public/favicon.svg">
   </a>
   <br/>
@@ -10,24 +10,24 @@
 <br/>
 
 <p align="center">
-  <a href="https://github.com/yanpuzhen/-astro-theme-aurora"><img alt="GitHub stars" src="https://img.shields.io/github/stars/yanpuzhen/-astro-theme-aurora"></a>
-  <a href="https://github.com/yanpuzhen/-astro-theme-aurora/network/members"><img alt="GitHub forks" src="https://img.shields.io/github/forks/yanpuzhen/-astro-theme-aurora"></a>
-  <a href="https://github.com/yanpuzhen/-astro-theme-aurora/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/yanpuzhen/-astro-theme-aurora"></a>
-  <a href="https://github.com/yanpuzhen/-astro-theme-aurora/releases"><img alt="GitHub release" src="https://img.shields.io/github/v/release/yanpuzhen/-astro-theme-aurora"></a>
-  <a href="https://github.com/yanpuzhen/-astro-theme-aurora/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/yanpuzhen/-astro-theme-aurora/main"></a>
-  <a href="https://github.com/yanpuzhen/-astro-theme-aurora/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/yanpuzhen/-astro-theme-aurora"></a>
-  <a href="https://github.com/yanpuzhen/-astro-theme-aurora/actions/workflows/rc.yml"><img alt="CI" src="https://github.com/yanpuzhen/-astro-theme-aurora/actions/workflows/rc.yml/badge.svg"></a>
+  <a href="https://github.com/yanpuzhen/astro-theme-aurora"><img alt="GitHub stars" src="https://img.shields.io/github/stars/yanpuzhen/astro-theme-aurora"></a>
+  <a href="https://github.com/yanpuzhen/astro-theme-aurora/network/members"><img alt="GitHub forks" src="https://img.shields.io/github/forks/yanpuzhen/astro-theme-aurora"></a>
+  <a href="https://github.com/yanpuzhen/astro-theme-aurora/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/yanpuzhen/astro-theme-aurora"></a>
+  <a href="https://github.com/yanpuzhen/astro-theme-aurora/releases"><img alt="GitHub release" src="https://img.shields.io/github/v/release/yanpuzhen/astro-theme-aurora"></a>
+  <a href="https://github.com/yanpuzhen/astro-theme-aurora/commits/main"><img alt="Last commit" src="https://img.shields.io/github/last-commit/yanpuzhen/astro-theme-aurora/main"></a>
+  <a href="https://github.com/yanpuzhen/astro-theme-aurora/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/yanpuzhen/astro-theme-aurora"></a>
+  <a href="https://github.com/yanpuzhen/astro-theme-aurora/actions/workflows/rc.yml"><img alt="CI" src="https://github.com/yanpuzhen/astro-theme-aurora/actions/workflows/rc.yml/badge.svg"></a>
 </p>
 
 <div align="center">
 
-**[Preview](https://yanpuzhen.github.io/-astro-theme-aurora/demo/)** |
+**[Preview](https://yanpuzhen.github.io/astro-theme-aurora/demo/)** |
 **[Change Log](./CHANGELOG.md)** |
-**[Document](https://yanpuzhen.github.io/-astro-theme-aurora/)**
+**[Document](https://yanpuzhen.github.io/astro-theme-aurora/)**
 
-**[预览](https://yanpuzhen.github.io/-astro-theme-aurora/demo/)** |
+**[预览](https://yanpuzhen.github.io/astro-theme-aurora/demo/)** |
 **[更新日志](./CHANGELOG.md)** |
-**[使用文档](https://yanpuzhen.github.io/-astro-theme-aurora/cn/)**
+**[使用文档](https://yanpuzhen.github.io/astro-theme-aurora/cn/)**
 
 </div>
 
@@ -77,11 +77,11 @@ ASTRO_SITE=https://example.com ASTRO_BASE=/ pnpm build
 
 # GitHub Pages project site
 ASTRO_SITE=https://yanpuzhen.github.io \
-ASTRO_BASE=/-astro-theme-aurora/ \
+ASTRO_BASE=/astro-theme-aurora/ \
 pnpm build
 ```
 
-Create posts in `src/content/posts/` and pages in `src/content/pages/`. See the [Getting Started guide](https://yanpuzhen.github.io/-astro-theme-aurora/en/guide/getting-started) for frontmatter, migration, and deployment details.
+Create posts in `src/content/posts/` and pages in `src/content/pages/`. See the [Getting Started guide](https://yanpuzhen.github.io/astro-theme-aurora/en/guide/getting-started) for frontmatter, migration, and deployment details.
 
 ### 🚫 Current architecture boundaries
 
@@ -89,13 +89,13 @@ Aurora 3.0 does not run the old Vue SPA, Vue Router, runtime article JSON API, o
 
 ## 🍼 Feedback
 
-- Please search the [existing issues](https://github.com/yanpuzhen/-astro-theme-aurora/issues) before opening a new one.
-- Report Aurora 3.0 bugs through a [new issue](https://github.com/yanpuzhen/-astro-theme-aurora/issues/new).
+- Please search the [existing issues](https://github.com/yanpuzhen/astro-theme-aurora/issues) before opening a new one.
+- Report Aurora 3.0 bugs through a [new issue](https://github.com/yanpuzhen/astro-theme-aurora/issues/new).
 - Repository discussions may be used if enabled by GitHub; they are not assumed to be available in this release.
 
 ## 💬 Join the Community
 
-The original Aurora community links belong to the upstream project and are not presented as official support channels for this repository. For current Aurora 3.0 support, use the repository's [Issues](https://github.com/yanpuzhen/-astro-theme-aurora/issues) and [Discussions](https://github.com/yanpuzhen/-astro-theme-aurora/discussions) when enabled.
+The original Aurora community links belong to the upstream project and are not presented as official support channels for this repository. For current Aurora 3.0 support, use the repository's [Issues](https://github.com/yanpuzhen/astro-theme-aurora/issues) and [Discussions](https://github.com/yanpuzhen/astro-theme-aurora/discussions) when enabled.
 
 ## Development
 

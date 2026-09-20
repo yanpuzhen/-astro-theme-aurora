@@ -6,7 +6,7 @@ The menu is a typed list in `src/lib/config.ts`. Each item has a `label` and an 
 menu: [
   { label: 'Home', href: '/' },
   { label: 'Tags', href: '/tags/' },
-  { label: 'Docs', href: 'https://yanpuzhen.github.io/-astro-theme-aurora/' },
+  { label: 'Docs', href: 'https://yanpuzhen.github.io/astro-theme-aurora/' },
 ]
 ```
 

@@ -5,10 +5,10 @@ import { resolve } from 'node:path'
 const root = resolve(new URL('..', import.meta.url).pathname)
 const readme = readFileSync(resolve(root, 'README.md'), 'utf8')
 const expectedLinks = [
-  'https://yanpuzhen.github.io/-astro-theme-aurora/',
-  'https://yanpuzhen.github.io/-astro-theme-aurora/demo/',
-  'https://yanpuzhen.github.io/-astro-theme-aurora/cn/',
-  'https://github.com/yanpuzhen/-astro-theme-aurora',
+  'https://yanpuzhen.github.io/astro-theme-aurora/',
+  'https://yanpuzhen.github.io/astro-theme-aurora/demo/',
+  'https://yanpuzhen.github.io/astro-theme-aurora/cn/',
+  'https://github.com/yanpuzhen/astro-theme-aurora',
   './CHANGELOG.md',
 ]
 for (const link of expectedLinks) assert.ok(readme.includes(link), `README link missing: ${link}`)

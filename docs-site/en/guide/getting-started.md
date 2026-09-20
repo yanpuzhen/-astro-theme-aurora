@@ -9,8 +9,8 @@
 ## Clone and install
 
 ```sh
-git clone https://github.com/yanpuzhen/-astro-theme-aurora.git
-cd -astro-theme-aurora
+git clone https://github.com/yanpuzhen/astro-theme-aurora.git
+cd astro-theme-aurora
 pnpm install --frozen-lockfile
 ```
 
@@ -70,6 +70,6 @@ The repository's public Demo build is produced by:
 pnpm demo:build
 ```
 
-It uses `https://yanpuzhen.github.io` as `ASTRO_SITE` and `/-astro-theme-aurora/demo/` as `ASTRO_BASE`. The `pages:build` script then stages this output below the VitePress documentation output as one artifact.
+It uses `https://yanpuzhen.github.io` as `ASTRO_SITE` and `/astro-theme-aurora/demo/` as `ASTRO_BASE`. The `pages:build` script then stages this output below the VitePress documentation output as one artifact.
 
 The demo build selects only entries with `demo: true`. Migration fixtures remain available to regression tests but are not published as Demo content.

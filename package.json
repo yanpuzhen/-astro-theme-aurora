@@ -7,11 +7,11 @@
   "license": "GPL-2.0-only",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yanpuzhen/-astro-theme-aurora.git"
+    "url": "https://github.com/yanpuzhen/astro-theme-aurora.git"
   },
-  "homepage": "https://github.com/yanpuzhen/-astro-theme-aurora",
+  "homepage": "https://github.com/yanpuzhen/astro-theme-aurora",
   "bugs": {
-    "url": "https://github.com/yanpuzhen/-astro-theme-aurora/issues"
+    "url": "https://github.com/yanpuzhen/astro-theme-aurora/issues"
   },
   "keywords": [
     "aurora",
@@ -29,7 +29,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build && pagefind --site dist",
-    "demo:build": "ASTRO_SITE=https://yanpuzhen.github.io ASTRO_BASE=/-astro-theme-aurora/demo/ ASTRO_DEMO_BUILD=true pnpm build",
+    "demo:build": "ASTRO_SITE=https://yanpuzhen.github.io ASTRO_BASE=/astro-theme-aurora/demo/ ASTRO_DEMO_BUILD=true pnpm build",
     "docs:dev": "vitepress dev docs-site",
     "docs:build": "vitepress build docs-site",
     "docs:preview": "vitepress preview docs-site",

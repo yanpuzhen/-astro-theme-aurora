@@ -18,7 +18,7 @@ export default defineConfig({
   use: { baseURL: origin, trace: 'retain-on-failure', screenshot: 'only-on-failure' },
   webServer: {
     command: serverCommand,
-    url: `${origin}${pagesBuild ? '/-astro-theme-aurora/' : basePath || '/'}`,
+    url: `${origin}${pagesBuild ? '/astro-theme-aurora/' : basePath || '/'}`,
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,
   },

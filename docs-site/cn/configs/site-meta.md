@@ -9,4 +9,4 @@
 - JSON-LD 对普通页面生成 `WebSite`，对文章生成 `BlogPosting`。
 - `rss.xml`、`sitemap.xml` 和 `robots.txt` 由 Astro routes 生成。
 
-project site 使用 `ASTRO_SITE=https://yanpuzhen.github.io` 与 `ASTRO_BASE=/-astro-theme-aurora/`；Demo 额外使用 `/demo/`。两个值必须与实际公开部署一致，开发 server 能监听不代表 canonical URL 正确。
+project site 使用 `ASTRO_SITE=https://yanpuzhen.github.io` 与 `ASTRO_BASE=/astro-theme-aurora/`；Demo 额外使用 `/demo/`。两个值必须与实际公开部署一致，开发 server 能监听不代表 canonical URL 正确。

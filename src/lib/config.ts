@@ -30,8 +30,8 @@ export const config: AuroraConfig = {
   menu: [
     { label: labels.home, href: '/' }, { label: labels.tags, href: '/tags/' },
     { label: labels.archives, href: '/archives/' }, { label: labels.about, href: '/about/' },
-    { label: 'Docs', href: 'https://yanpuzhen.github.io/-astro-theme-aurora/' },
-    { label: 'GitHub', href: 'https://github.com/yanpuzhen/-astro-theme-aurora' },
+    { label: 'Docs', href: 'https://yanpuzhen.github.io/astro-theme-aurora/' },
+    { label: 'GitHub', href: 'https://github.com/yanpuzhen/astro-theme-aurora' },
   ],
   comments: { provider, enabled: provider !== 'none', gitalkIdMode: import.meta.env.PUBLIC_GITALK_ID_MODE === 'pathname' ? 'pathname' : 'uid' },
 }

@@ -5,14 +5,14 @@ This checklist is evidence-driven. Check an item only after the command or inspe
 ## Repository and history
 
 - [x] Working tree was clean before release changes.
-- [x] `origin` targets `https://github.com/yanpuzhen/-astro-theme-aurora.git`.
+- [x] `origin` targets `https://github.com/yanpuzhen/astro-theme-aurora.git`.
 - [x] Existing remote bootstrap history is preserved; no force push, rebase, squash, or amend was used.
 - [x] Current branch is `main`.
 - [x] Target repository visibility and default branch are verified.
 
 ## Source and packaging
 
-- [x] Repository links, issue links, homepage, and clone instructions point to `yanpuzhen/-astro-theme-aurora`.
+- [x] Repository links, issue links, homepage, and clone instructions point to `yanpuzhen/astro-theme-aurora`.
 - [x] Upstream Aurora attribution and license are preserved.
 - [x] `package.json` metadata and README requirements agree.
 - [x] `.env.example` documents every public build-time configuration value without real credentials.

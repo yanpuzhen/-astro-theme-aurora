@@ -10,6 +10,6 @@ Before using this release on a real site:
 - verify representative URLs and the generated route manifest;
 - compare Gitalk, Valine, Twikoo, or Waline identities with existing provider records;
 - test root and nested-base previews on the browsers and devices that matter to the site;
-- report bugs and migration issues at https://github.com/yanpuzhen/-astro-theme-aurora/issues.
+- report bugs and migration issues at https://github.com/yanpuzhen/astro-theme-aurora/issues.
 
 Known limitations are documented in [MIGRATION.md](../../MIGRATION.md) and the RC validation record. Production comment records were unavailable, and visual parity was source-based because the old runtime and production corpus were unavailable.

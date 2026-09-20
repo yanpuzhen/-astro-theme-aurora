@@ -5,7 +5,7 @@ Reference inspected from `auroral-ui/hexo-theme-aurora` at the RC1 implementatio
 | Upstream README section | Aurora 3 implementation | Status | Notes |
 | --- | --- | --- | --- |
 | Centered Aurora logo, title, subtitle | Centered local `public/favicon.svg`, Aurora 3.0 title, Astro subtitle | Complete | Uses repository-owned branding asset. |
-| Stars, forks, issues | Same shields, pointed at `yanpuzhen/-astro-theme-aurora` | Complete | Repository identity changed intentionally. |
+| Stars, forks, issues | Same shields, pointed at `yanpuzhen/astro-theme-aurora` | Complete | Repository identity changed intentionally. |
 | npm version/downloads | Removed | Intentional | Aurora 3 is not published to npm. |
 | Release, last commit, license, CI | Added GitHub release, last-commit, license, and Actions badges | Complete | No npm claims. |
 | Preview / Change Log / Document | Final GitHub Pages Preview, repository Change Log, Pages Document | Complete | URLs are authoritative after main merge and deployment. |

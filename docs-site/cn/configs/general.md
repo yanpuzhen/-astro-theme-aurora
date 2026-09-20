@@ -16,7 +16,7 @@ Aurora 3.0 从 `ASTRO_SITE` 和 `ASTRO_BASE` 读取公开站点地址与部署�
 
 ```sh
 ASTRO_SITE=https://yanpuzhen.github.io \
-ASTRO_BASE=/-astro-theme-aurora/demo/ \
+ASTRO_BASE=/astro-theme-aurora/demo/ \
 PUBLIC_AURORA_LOCALE=en \
 pnpm build
 ```

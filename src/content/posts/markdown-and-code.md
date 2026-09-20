@@ -23,7 +23,7 @@ Aurora supports headings, links, tables, task lists, blockquotes, images, and fe
 ```ts title="aurora.config.ts" {1,3}
 const site = {
   title: 'Aurora 3.0',
-  base: '/-astro-theme-aurora/demo/',
+  base: '/astro-theme-aurora/demo/',
 }
 
 export default site

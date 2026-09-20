@@ -14,7 +14,7 @@ hero:
       link: /cn/guide/getting-started
     - theme: alt
       text: 在线预览
-      link: https://yanpuzhen.github.io/-astro-theme-aurora/demo/
+      link: https://yanpuzhen.github.io/astro-theme-aurora/demo/
 
 features:
   - icon: 🎨
@@ -37,4 +37,4 @@ features:
     details: 中英文文档使用相同的 Aurora 3 实现作为事实来源。
 ---
 
-Aurora 3.0 保留 Aurora 的视觉方向，同时使用 Astro Content Collections、文件路由和聚焦型 Vue islands 替代旧的 Hexo/Vue runtime。请从[开始使用](/cn/guide/getting-started)开始，或打开[在线预览](https://yanpuzhen.github.io/-astro-theme-aurora/demo/)。
+Aurora 3.0 保留 Aurora 的视觉方向，同时使用 Astro Content Collections、文件路由和聚焦型 Vue islands 替代旧的 Hexo/Vue runtime。请从[开始使用](/cn/guide/getting-started)开始，或打开[在线预览](https://yanpuzhen.github.io/astro-theme-aurora/demo/)。
