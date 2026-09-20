@@ -28,7 +28,7 @@ This branch contains the requested documentation, Demo, README parity, Pages sta
     tags/
 ```
 
-Documentation uses `/-astro-theme-aurora/`. Demo uses `/-astro-theme-aurora/demo/`. `scripts/verify-pages.mjs` checks both paths, required pages, Pagefind metadata, and unbased root-relative links.
+Documentation uses `/astro-theme-aurora/`. Demo uses `/astro-theme-aurora/demo/`. `scripts/verify-pages.mjs` checks both paths, required pages, Pagefind metadata, and unbased root-relative links.
 
 `.github/workflows/pages.yml` uses official checkout, pnpm, Node, configure-pages, upload-pages-artifact, and deploy-pages actions with `pages` concurrency and `contents: read`, `pages: write`, `id-token: write` permissions.
 

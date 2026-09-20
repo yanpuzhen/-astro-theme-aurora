@@ -1,8 +1,8 @@
 import { defineConfig } from 'vitepress'
 
-const repository = 'https://github.com/yanpuzhen/-astro-theme-aurora'
-const demo = 'https://yanpuzhen.github.io/-astro-theme-aurora/demo/'
-const base = '/-astro-theme-aurora/'
+const repository = 'https://github.com/yanpuzhen/astro-theme-aurora'
+const demo = 'https://yanpuzhen.github.io/astro-theme-aurora/demo/'
+const base = '/astro-theme-aurora/'
 
 const enSidebar = [
   {

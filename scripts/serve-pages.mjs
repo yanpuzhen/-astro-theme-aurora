@@ -5,7 +5,7 @@ import { extname, join, normalize, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(fileURLToPath(new URL('../.pages-dist/', import.meta.url)))
-const base = '/-astro-theme-aurora'
+const base = '/astro-theme-aurora'
 const portIndex = process.argv.indexOf('--port')
 const port = Number(portIndex >= 0 ? process.argv[portIndex + 1] : 4321)
 const contentTypes = {

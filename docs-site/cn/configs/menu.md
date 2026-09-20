@@ -6,7 +6,7 @@
 menu: [
   { label: '首页', href: '/' },
   { label: '标签', href: '/tags/' },
-  { label: '文档', href: 'https://yanpuzhen.github.io/-astro-theme-aurora/' },
+  { label: '文档', href: 'https://yanpuzhen.github.io/astro-theme-aurora/' },
 ]
 ```
 

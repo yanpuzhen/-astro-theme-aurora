@@ -11,8 +11,8 @@ Record the existing site's generated URLs, titles, frontmatter, comment-provider
 Install the required toolchain and create a working copy:
 
 ```sh
-git clone https://github.com/yanpuzhen/-astro-theme-aurora.git
-cd ./-astro-theme-aurora
+git clone https://github.com/yanpuzhen/astro-theme-aurora.git
+cd ./astro-theme-aurora
 pnpm install --frozen-lockfile
 ```
 

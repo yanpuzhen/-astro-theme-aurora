@@ -80,7 +80,7 @@ Legacy route aliases, UID/comment identity manifest, nested base composition and
 
 ## GitHub Pages
 
-**PASS in code/artifact; manual setting remains unverified.** The workflow deploys only from `main`, grants `contents: read`, `pages: write`, and `id-token: write`, and stages docs plus Demo under one `.pages-dist` artifact. Generated docs base is `/-astro-theme-aurora/`; Demo base is `/-astro-theme-aurora/demo/`. Pagefind, canonical/metadata URLs, static assets and internal links passed artifact and browser checks. The repository Pages source setting cannot be confirmed from this local review.
+**PASS in code/artifact; manual setting remains unverified.** The workflow deploys only from `main`, grants `contents: read`, `pages: write`, and `id-token: write`, and stages docs plus Demo under one `.pages-dist` artifact. Generated docs base is `/astro-theme-aurora/`; Demo base is `/astro-theme-aurora/demo/`. Pagefind, canonical/metadata URLs, static assets and internal links passed artifact and browser checks. The repository Pages source setting cannot be confirmed from this local review.
 
 ## Licensing
 

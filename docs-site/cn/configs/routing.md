@@ -16,9 +16,9 @@
 `ASTRO_BASE=/` 是根部署。GitHub Pages project site 使用完整项目路径：
 
 ```sh
-ASTRO_BASE=/-astro-theme-aurora/demo/
+ASTRO_BASE=/astro-theme-aurora/demo/
 ```
 
-此时 `src/content/posts/welcome-to-aurora-3.md` 的生成地址是 `/-astro-theme-aurora/demo/post/welcome-to-aurora-3/`。不要在内容或模板中假定站点总是在 `/`。
+此时 `src/content/posts/welcome-to-aurora-3.md` 的生成地址是 `/astro-theme-aurora/demo/post/welcome-to-aurora-3/`。不要在内容或模板中假定站点总是在 `/`。
 
 路由冲突、保留 taxonomy 路径和重复别名会让构建失败。静态 `route-manifest.json` 记录规范路径、别名、UID 和评论路径。

@@ -3,8 +3,8 @@ import { strict as assert } from 'node:assert'
 import { resolve } from 'node:path'
 
 const root = resolve(new URL('../.pages-dist/', import.meta.url).pathname)
-const docsBase = '/-astro-theme-aurora/'
-const demoBase = '/-astro-theme-aurora/demo/'
+const docsBase = '/astro-theme-aurora/'
+const demoBase = '/astro-theme-aurora/demo/'
 const read = (relative) => readFileSync(resolve(root, relative), 'utf8')
 const requiredFiles = [
   'index.html', 'en/index.html', 'cn/index.html',
@@ -35,7 +35,7 @@ function htmlFiles(directory) {
 assert.match(docs, /Aurora 3\.0/)
 assert.match(docsEnglish, /Documentation|Aurora 3\.0/)
 assert.match(docsChinese, /使用文档|Aurora 3\.0/)
-assert.match(docs, /https:\/\/yanpuzhen\.github\.io\/\-astro-theme-aurora\/demo\//)
+assert.match(docs, /https:\/\/yanpuzhen\.github\.io\/astro-theme-aurora\/demo\//)
 assert.match(demo, /Welcome to Aurora 3\.0/)
 assert.match(demoSearch, /SearchIsland/)
 assert.match(demoSearch, new RegExp(demoBase.replaceAll('/', '\\/')))
@@ -51,11 +51,11 @@ for (const html of [docs, docsEnglish, docsChinese]) {
 for (const html of [demo, demoPost]) {
   assert.ok(html.includes(demoBase), 'Demo HTML does not contain the configured nested base')
   assert.doesNotMatch(html, /(?:src|href)="[^" ]+\.(?:svg|png|jpe?g|webp|css|js|woff2)\//i, 'Demo static file URLs must not receive a route trailing slash')
-  assert.doesNotMatch(html, /(?:href|src)="\/(?!-astro-theme-aurora\/|\/\/)/, 'Found an unbased root-relative asset/link')
+  assert.doesNotMatch(html, /(?:href|src)="\/(?!astro-theme-aurora\/|\/\/)/, 'Found an unbased root-relative asset/link')
 }
 for (const path of htmlFiles(root)) {
   const html = readFileSync(path, 'utf8')
-  assert.doesNotMatch(html, /(?:href|src)="\/(?!-astro-theme-aurora\/|\/|#)/, `Found an unbased Pages URL in ${path}`)
+  assert.doesNotMatch(html, /(?:href|src)="\/(?!astro-theme-aurora\/|\/|#)/, `Found an unbased Pages URL in ${path}`)
 }
 
 console.log(`Verified Pages artifact: docs ${docsBase}, Demo ${demoBase}`)

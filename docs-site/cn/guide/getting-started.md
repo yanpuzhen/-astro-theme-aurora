@@ -9,8 +9,8 @@
 ## 克隆与安装
 
 ```sh
-git clone https://github.com/yanpuzhen/-astro-theme-aurora.git
-cd -astro-theme-aurora
+git clone https://github.com/yanpuzhen/astro-theme-aurora.git
+cd astro-theme-aurora
 pnpm install --frozen-lockfile
 ```
 
@@ -70,6 +70,6 @@ ASTRO_SITE=https://example.com ASTRO_BASE=/blog/ pnpm build
 pnpm demo:build
 ```
 
-它使用 `https://yanpuzhen.github.io` 作为 `ASTRO_SITE`，使用 `/-astro-theme-aurora/demo/` 作为 `ASTRO_BASE`。随后 `pages:build` 会把 Demo 放到 VitePress 文档输出的 `demo/` 下，形成一个 Pages artifact。
+它使用 `https://yanpuzhen.github.io` 作为 `ASTRO_SITE`，使用 `/astro-theme-aurora/demo/` 作为 `ASTRO_BASE`。随后 `pages:build` 会把 Demo 放到 VitePress 文档输出的 `demo/` 下，形成一个 Pages artifact。
 
 Demo 构建只选择 `demo: true` 的条目。迁移 fixtures 仍用于回归测试，但不会发布到 Demo。
