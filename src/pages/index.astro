@@ -9,26 +9,30 @@ import Sidebar from '../components/Sidebar.astro'
 import { config } from '../lib/config'
 import { publicPosts, selectHomePosts, paginate } from '../lib/posts'
 import { collectCategories } from '../lib/taxonomy'
-import { sitePath } from '../lib/routing'
+import { localizedSitePath, sitePath } from '../lib/routing'
+import { isLocale } from '../lib/content'
+import { messagesFor } from '../lib/i18n'
 
-const allPosts = await getCollection('posts')
+const messages = messagesFor('en')
+const allPosts = (await getCollection('posts')).filter((post) => isLocale(post, 'en'))
 const selection = selectHomePosts(allPosts, config.theme.feature)
 const pageSize = selection.mode === 'feature' ? 12 : 13
 const page = paginate(selection.posts, 1, pageSize)
 const featureIds = new Set(selection.features.map((post) => post.id))
 const listing = page.items.filter((post) => !featureIds.has(post.id))
 const categories = collectCategories(publicPosts(allPosts)).map((item) => ({ name: item.name, count: item.posts.length }))
+const localeLinks = { en: localizedSitePath('/', 'en'), 'zh-CN': localizedSitePath('/', 'zh-CN') }
 ---
 
-<BaseLayout title={config.site.title} description={config.site.description} canonicalPath="/">
+<BaseLayout title={config.site.title} description={config.site.description} canonicalPath="/" lang="en" localeLinks={localeLinks} alternateLocaleLinks={localeLinks}>
   {selection.features.length > 0 && <Feature posts={selection.features} />}
   <div class="main-grid" id="article-list">
     <section class="article-list" aria-labelledby="articles-title">
-      <div class="section-heading"><h2 id="articles-title" class="section-title">Latest articles</h2><a class="section-link" href={sitePath('/archives/')}>View archive <span aria-hidden="true">→</span></a></div>
-      {categories.length > 0 && <CategoryTabs categories={categories} />}
+      <div class="section-heading"><h2 id="articles-title" class="section-title">{messages.latestArticles}</h2><a class="section-link" href={sitePath('/archives/')}>{messages.viewArchive.split(' →')[0]} <span aria-hidden="true">→</span></a></div>
+      {categories.length > 0 && <CategoryTabs categories={categories} locale="en" />}
       <div class="post-grid">{listing.map((post) => <PostCard post={post} />)}</div>
       <Pagination page={page.page} pageCount={page.pageCount} />
     </section>
-    <Sidebar posts={publicPosts(allPosts)} />
+    <Sidebar posts={publicPosts(allPosts)} locale="en" />
   </div>
 </BaseLayout>

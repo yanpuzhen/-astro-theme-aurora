@@ -23,7 +23,7 @@ photos:
 
 # 迁移后的第一篇文章
 
-这是一篇来自 Aurora 旧字段形状的最小兼容 fixture。它包含一个 [站内链接](/post/architecture-smoke/) 和一个 [外部链接](https://astro.build/)。
+这是一篇来自 Aurora 旧字段形状的最小兼容 fixture。它包含一个 [站内链接](/cn/post/welcome-to-aurora-3-cn/) 和一个 [外部链接](https://astro.build/)。
 
 :::tip
 迁移后的 Markdown 仍然可以使用 Aurora 的提示容器语法。

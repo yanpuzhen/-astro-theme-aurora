@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import PostCard from '../../../components/PostCard.astro'
+import Pagination from '../../../components/Pagination.astro'
+import { config } from '../../../lib/config'
+import { isLocale, isPublicPost } from '../../../lib/content'
+import { messagesFor, type AuroraLocale } from '../../../lib/i18n'
+import { localizedSitePath } from '../../../lib/routing'
+import { paginate, selectHomePosts } from '../../../lib/posts'
+
+export async function getStaticPaths() {
+  const locale = 'zh-CN' as const
+  const posts = (await getCollection('posts', isPublicPost)).filter((post) => isLocale(post, locale))
+  const selection = selectHomePosts(posts, config.theme.feature)
+  const pageSize = selection.mode === 'feature' ? 12 : 13
+  const pageCount = Math.ceil(selection.posts.length / pageSize)
+  return Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) => ({ params: { locale: 'cn', page: String(index + 2) }, props: { locale, page: index + 2, pageCount, pageSize } }))
+}
+const { locale, page: pageNumber, pageCount, pageSize } = Astro.props as { locale: AuroraLocale; page: number; pageCount: number; pageSize: number }
+const posts = (await getCollection('posts', isPublicPost)).filter((post) => isLocale(post, locale))
+const selectionPage = paginate(selectHomePosts(posts, config.theme.feature).posts, pageNumber, pageSize)
+const messages = messagesFor(locale)
+const localeLinks = { en: localizedSitePath(`/page/${pageNumber}/`, 'en'), 'zh-CN': localizedSitePath(`/page/${pageNumber}/`, 'zh-CN') }
+---
+<BaseLayout title={`${messages.latestArticles} ${pageNumber} · ${config.site.title}`} canonicalPath={localizedSitePath(`/page/${pageNumber}/`, locale)} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={localeLinks}>
+  <h1 class="page-heading">{messages.latestArticles} <span>· {pageNumber}</span></h1>
+  <div class="post-grid">{selectionPage.items.map((post) => <PostCard post={post} locale={locale} />)}</div>
+  <Pagination page={pageNumber} pageCount={pageCount} locale={locale} />
+</BaseLayout>

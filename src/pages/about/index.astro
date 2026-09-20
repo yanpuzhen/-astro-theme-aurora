@@ -1,7 +1,9 @@
 ---
 import { getCollection, render } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
+import { localizedSitePath } from '../../lib/routing'
 const page = (await getCollection('pages')).find((entry) => entry.id === 'about') || (await getCollection('pages'))[0]
 const { Content } = await render(page)
+const localeLinks = { en: localizedSitePath('/about/', 'en'), 'zh-CN': localizedSitePath('/about/', 'zh-CN') }
 ---
-<BaseLayout title={page.data.title} description={page.data.description} canonicalPath="/about/"><article class="article-shell"><h1 class="article-title">{page.data.title}</h1><div class="post-html"><Content /></div></article></BaseLayout>
+<BaseLayout title={page.data.title} description={page.data.description} canonicalPath="/about/" lang="en" localeLinks={localeLinks} alternateLocaleLinks={localeLinks}><article class="article-shell"><h1 class="article-title">{page.data.title}</h1><div class="post-html"><Content /></div></article></BaseLayout>

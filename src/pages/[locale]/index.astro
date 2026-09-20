@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import PostCard from '../../components/PostCard.astro'
+import Pagination from '../../components/Pagination.astro'
+import Feature from '../../components/Feature.astro'
+import CategoryTabs from '../../components/CategoryTabs.astro'
+import Sidebar from '../../components/Sidebar.astro'
+import { config } from '../../lib/config'
+import { isLocale } from '../../lib/content'
+import { messagesFor, type AuroraLocale } from '../../lib/i18n'
+import { localizedSitePath } from '../../lib/routing'
+import { collectCategories } from '../../lib/taxonomy'
+import { paginate, publicPosts, selectHomePosts } from '../../lib/posts'
+
+export function getStaticPaths() { return [{ params: { locale: 'cn' }, props: { locale: 'zh-CN' as AuroraLocale } }] }
+const { locale } = Astro.props as { locale: AuroraLocale }
+const messages = messagesFor(locale)
+const allPosts = (await getCollection('posts')).filter((post) => isLocale(post, locale))
+const selection = selectHomePosts(allPosts, config.theme.feature)
+const pageSize = selection.mode === 'feature' ? 12 : 13
+const page = paginate(selection.posts, 1, pageSize)
+const featureIds = new Set(selection.features.map((post) => post.id))
+const categories = collectCategories(publicPosts(allPosts)).map((item) => ({ name: item.name, count: item.posts.length }))
+const currentPath = localizedSitePath('/', locale)
+const localeLinks = { en: localizedSitePath('/', 'en'), 'zh-CN': localizedSitePath('/', 'zh-CN') }
+---
+
+<BaseLayout title={`${config.site.title} · ${messages.home}`} description={config.site.description} canonicalPath={currentPath} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={localeLinks}>
+  {selection.features.length > 0 && <Feature posts={selection.features} locale={locale} />}
+  <div class="main-grid" id="article-list">
+    <section class="article-list" aria-labelledby="articles-title">
+      <div class="section-heading"><h2 id="articles-title" class="section-title">{messages.latestArticles}</h2><a class="section-link" href={localizedSitePath('/archives/', locale)}>{messages.viewArchive.split(' →')[0]} <span aria-hidden="true">→</span></a></div>
+      {categories.length > 0 && <CategoryTabs categories={categories} locale={locale} />}
+      <div class="post-grid">{page.items.filter((post) => !featureIds.has(post.id)).map((post) => <PostCard post={post} locale={locale} />)}</div>
+      <Pagination page={page.page} pageCount={page.pageCount} locale={locale} />
+    </section>
+    <Sidebar posts={publicPosts(allPosts)} locale={locale} />
+  </div>
+</BaseLayout>

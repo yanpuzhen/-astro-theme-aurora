@@ -4,27 +4,35 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import Pagination from '../../components/Pagination.astro'
 import { archivePosts, paginate } from '../../lib/posts'
 import { isPublicPost } from '../../lib/content'
-import { archivePath, postPath } from '../../lib/routing'
+import { archivePath, localizedSitePath, postPath } from '../../lib/routing'
+import { isLocale } from '../../lib/content'
+import { messagesFor } from '../../lib/i18n'
 export async function getStaticPaths() {
   const archivePageSize = 12
-  const posts = archivePosts((await getCollection('posts')).filter(isPublicPost))
+  const posts = archivePosts((await getCollection('posts')).filter(isPublicPost).filter((post) => isLocale(post, 'en')))
   const pageCount = Math.ceil(posts.length / archivePageSize)
   return Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) => ({ params: { page: String(index + 2) }, props: { page: index + 2, pageCount } }))
 }
-const posts = archivePosts((await getCollection('posts')).filter(isPublicPost))
+const locale = 'en' as const
+const messages = messagesFor(locale)
+const posts = archivePosts((await getCollection('posts')).filter(isPublicPost).filter((post) => isLocale(post, locale)))
 const archivePageSize = 12
 const { page } = Astro.props
 const pageCount = Astro.props.pageCount as number
 const current = paginate(posts, page, archivePageSize)
+const chinesePosts = archivePosts((await getCollection('posts')).filter(isPublicPost).filter((post) => isLocale(post, 'zh-CN')))
+const chinesePageCount = Math.ceil(chinesePosts.length / archivePageSize)
+const hasChineseCounterpart = page <= chinesePageCount
+const localeLinks = { en: archivePath(page, locale), 'zh-CN': hasChineseCounterpart ? archivePath(page, 'zh-CN') : localizedSitePath('/archives/', 'zh-CN') }
 ---
 
-<BaseLayout title={`Archive ${page} · Aurora`} canonicalPath={archivePath(page)}>
+<BaseLayout title={`${messages.archives} ${page} · Aurora`} canonicalPath={archivePath(page, locale)} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={hasChineseCounterpart ? localeLinks : {}}>
   <section class="taxonomy-page">
-    <p class="eyebrow">Timeline</p>
-    <h1 class="page-heading">Archives <span>· {page}</span></h1>
+    <p class="eyebrow">{messages.timeline}</p>
+    <h1 class="page-heading">{messages.archives} <span>· {page}</span></h1>
     <div class="archive-timeline">
-      {current.items.map((post) => <article class="timeline-year timeline-year--single"><div class="timeline-marker" aria-hidden="true"></div><time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString(post.data.lang)}</time><h2><a href={postPath(post)}>{post.data.title}</a></h2><p>{post.data.description}</p></article>)}
+      {current.items.map((post) => <article class="timeline-year timeline-year--single"><div class="timeline-marker" aria-hidden="true"></div><time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString(post.data.lang)}</time><h2><a href={postPath(post, { locale })}>{post.data.title}</a></h2><p>{post.data.description}</p></article>)}
     </div>
-    <Pagination page={page} pageCount={pageCount} kind="archive" />
+    <Pagination page={page} pageCount={pageCount} kind="archive" locale={locale} />
   </section>
 </BaseLayout>

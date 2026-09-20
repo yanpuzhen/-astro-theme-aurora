@@ -1,14 +1,16 @@
 import type { CollectionEntry } from 'astro:content'
 import { categorySlug, slugify } from './content.ts'
+import { defaultLocale, localeSegments, type AuroraLocale } from './i18n.ts'
 
 const astroEnv = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env ?? {}
 
 export type PostEntry = CollectionEntry<'posts'>
 export type RouteMode = 'slug' | 'uid' | 'explicit'
-export interface RouteOptions { mode?: RouteMode; base?: string; htmlExtension?: boolean }
+export interface RouteOptions { mode?: RouteMode; base?: string; htmlExtension?: boolean; locale?: AuroraLocale }
 export interface RouteManifestEntry {
   id: string; title: string; canonicalPath: string; canonicalUrlPath: string; aliases: string[]
   legacyUid: string; commentId: string; commentPath: string
+  locale: AuroraLocale; translationKey?: string
 }
 
 function basePath(base: string): string {
@@ -44,6 +46,26 @@ export function withoutBase(path: string, base = astroEnv.BASE_URL || '/'): stri
 
 export function sitePath(path: string): string { return withBase(path) }
 
+export function localeFromPath(path: string): AuroraLocale {
+  const normalized = withoutBase(path)
+  return normalized === '/cn/' || normalized.startsWith('/cn/') ? 'zh-CN' : defaultLocale
+}
+
+export function stripLocalePath(path: string): string {
+  const normalized = normalizeRoutePath(withoutBase(path))
+  return normalized === '/cn/' ? '/' : normalized.startsWith('/cn/') ? normalizeRoutePath(normalized.slice('/cn'.length)) : normalized
+}
+
+export function localePath(path: string, locale: AuroraLocale): string {
+  const unprefixed = stripLocalePath(path)
+  const segment = localeSegments[locale]
+  return normalizeRoutePath(segment ? `/${segment}${unprefixed}` : unprefixed)
+}
+
+export function localizedSitePath(path: string, locale: AuroraLocale): string {
+  return sitePath(localePath(path, locale))
+}
+
 export function assetPath(path: string, base = astroEnv.BASE_URL || '/'): string {
   const clean = path.replace(/^\/+/, '')
   const cleanBase = base === '/' ? '' : base.replace(/^\/+|\/+$/g, '')
@@ -69,9 +91,9 @@ export function postSlug(post: PostEntry, mode: RouteMode = defaultMode(post)): 
 
 export function resolvePostPath(post: PostEntry, options: RouteOptions = {}): string {
   const mode = options.mode ?? defaultMode(post)
-  if (mode === 'explicit' && post.data.permalink) return normalizeRoutePath(post.data.permalink)
+  if (mode === 'explicit' && post.data.permalink) return localePath(post.data.permalink, options.locale || defaultLocale)
   const path = `/post/${postSlug(post, mode)}`
-  return normalizeRoutePath(options.htmlExtension ? `${path}.html` : path)
+  return localePath(normalizeRoutePath(options.htmlExtension ? `${path}.html` : path), options.locale || defaultLocale)
 }
 
 export function postPath(post: PostEntry, options: RouteOptions = {}): string {
@@ -79,10 +101,14 @@ export function postPath(post: PostEntry, options: RouteOptions = {}): string {
 }
 
 export function postAliases(post: PostEntry): string[] {
-  const canonical = resolvePostPath(post)
-  const aliases = new Set<string>(post.data.legacyPermalinks.map(normalizeRoutePath))
-  const slugPath = resolvePostPath(post, { mode: 'slug' })
-  const uidPath = resolvePostPath(post, { mode: 'uid' })
+  return postAliasesForLocale(post, defaultLocale)
+}
+
+export function postAliasesForLocale(post: PostEntry, locale: AuroraLocale): string[] {
+  const canonical = resolvePostPath(post, { locale })
+  const aliases = new Set<string>(post.data.legacyPermalinks.map((path) => localePath(path, locale)))
+  const slugPath = resolvePostPath(post, { mode: 'slug', locale })
+  const uidPath = resolvePostPath(post, { mode: 'uid', locale })
   aliases.add(`${slugPath.replace(/\/$/, '')}.html`)
   if (uidPath !== canonical) aliases.add(uidPath)
   if (slugPath !== canonical) aliases.add(slugPath)
@@ -91,13 +117,19 @@ export function postAliases(post: PostEntry): string[] {
 }
 
 export function routeManifestEntry(post: PostEntry): RouteManifestEntry {
-  const canonicalPath = resolvePostPath(post)
+  return routeManifestEntryForLocale(post, defaultLocale)
+}
+
+export function routeManifestEntryForLocale(post: PostEntry, locale: AuroraLocale): RouteManifestEntry {
+  const canonicalPath = resolvePostPath(post, { locale })
   const historicalPath = post.data.legacyPermalinks.find((path) => path.startsWith('/'))
-  const commentPath = normalizeRoutePath(post.data.commentPath || historicalPath || canonicalPath)
+  const explicitCommentPath = post.data.commentPath
+  const commentPath = normalizeRoutePath(explicitCommentPath || (locale === defaultLocale ? historicalPath || canonicalPath : canonicalPath))
   return {
     id: post.id, title: post.data.title, canonicalPath, canonicalUrlPath: sitePath(canonicalPath),
-    aliases: postAliases(post), legacyUid: post.data.legacyUid,
-    commentId: post.data.commentId || post.data.legacyUid, commentPath,
+    aliases: postAliasesForLocale(post, locale), legacyUid: post.data.legacyUid,
+    commentId: post.data.commentId || (locale === defaultLocale ? post.data.legacyUid : `${post.data.legacyUid}:${locale}`), commentPath,
+    locale, translationKey: post.data.translationKey,
   }
 }
 
@@ -122,8 +154,8 @@ export function assertNoRouteCollisions(posts: PostEntry[]): void {
   }
 }
 
-export function tagPath(name: string): string { return sitePath(`/tags/${slugify(name)}/`) }
-export function categoryPath(name: string): string { return sitePath(`/categories/${categorySlug(name)}/`) }
-export function pagePath(page: number): string { return sitePath(page <= 1 ? '/' : `/page/${page}/`) }
-export function customPagePath(slug: string): string { return sitePath(`/page/${slug}/`) }
-export function archivePath(page = 1): string { return sitePath(page <= 1 ? '/archives/' : `/archives/${page}/`) }
+export function tagPath(name: string, locale = defaultLocale): string { return localizedSitePath(`/tags/${slugify(name)}/`, locale) }
+export function categoryPath(name: string, locale = defaultLocale): string { return localizedSitePath(`/categories/${categorySlug(name)}/`, locale) }
+export function pagePath(page: number, locale = defaultLocale): string { return localizedSitePath(page <= 1 ? '/' : `/page/${page}/`, locale) }
+export function customPagePath(slug: string, locale = defaultLocale): string { return localizedSitePath(`/page/${slug}/`, locale) }
+export function archivePath(page = 1, locale = defaultLocale): string { return localizedSitePath(page <= 1 ? '/archives/' : `/archives/${page}/`, locale) }

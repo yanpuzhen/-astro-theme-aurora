@@ -3,13 +3,18 @@ import { getCollection } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import { collectCategories } from '../../lib/taxonomy'
 import { isPublicPost } from '../../lib/content'
-import { categoryPath } from '../../lib/routing'
-const categories = collectCategories((await getCollection('posts')).filter(isPublicPost))
+import { categoryPath, localizedSitePath } from '../../lib/routing'
+import { messagesFor } from '../../lib/i18n'
+import { isLocale } from '../../lib/content'
+const locale = 'en' as const
+const messages = messagesFor(locale)
+const categories = collectCategories((await getCollection('posts')).filter(isPublicPost).filter((post) => isLocale(post, locale)))
+const localeLinks = { en: localizedSitePath('/categories/', 'en'), 'zh-CN': localizedSitePath('/categories/', 'zh-CN') }
 ---
 
-<BaseLayout title="Categories · Aurora" canonicalPath="/categories/">
+<BaseLayout title={`${messages.categories} · Aurora`} canonicalPath="/categories/" lang={locale} localeLinks={localeLinks} alternateLocaleLinks={localeLinks}>
   <section class="taxonomy-page">
-    <p class="eyebrow">Taxonomy</p><h1 class="page-heading">Categories</h1>
-    <div class="category-cloud">{categories.map((category) => <a href={categoryPath(category.name)}><strong>{category.name}</strong><span>{category.posts.length} articles</span></a>)}</div>
+    <p class="eyebrow">{messages.taxonomy}</p><h1 class="page-heading">{messages.categories}</h1>
+    <div class="category-cloud">{categories.map((category) => <a href={categoryPath(category.name, locale)}><strong>{category.name}</strong><span>{category.posts.length} {messages.articles.toLowerCase()}</span></a>)}</div>
   </section>
 </BaseLayout>

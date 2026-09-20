@@ -1,4 +1,5 @@
 import { legacyUid } from './legacy-identity.ts'
+import { defaultLocale, normalizeLocale, type AuroraLocale } from './i18n.ts'
 
 export interface AuthorData {
   name: string
@@ -34,6 +35,7 @@ export interface NormalizedPostData {
   commentId?: string
   commentPath?: string
   lang: string
+  translationKey?: string
   hidden: boolean
   published: boolean
   draft: boolean
@@ -47,7 +49,7 @@ const KNOWN_FIELDS = new Set([
   'title', 'date', 'updated', 'tags', 'categories', 'cover', 'description', 'excerpt',
   'abstracts', 'preview', 'keywords', 'author', 'feature', 'sticky', 'pinned', 'slug',
   'permalink', 'permalinkMode', 'uid', 'legacyUid', 'legacyPermalink', 'legacyPermalinks',
-  'aliases', 'photos', 'toc', 'comment', 'comments', 'commentId', 'commentPath', 'lang',
+  'aliases', 'photos', 'toc', 'comment', 'comments', 'commentId', 'commentPath', 'lang', 'translationKey',
   'hidden', 'published', 'draft', 'rawHtml', 'allowHtml', 'type', 'categoryMode', 'data', 'demo',
 ])
 
@@ -131,7 +133,8 @@ export function normalizeLegacyData(
     photos: asStringList(raw.photos),
     toc: typeof raw.toc === 'string' || typeof raw.toc === 'boolean' ? raw.toc : false,
     comments: asBoolean(raw.comment ?? raw.comments, true), commentId: firstString(raw.commentId),
-    commentPath: firstString(raw.commentPath), lang: firstString(raw.lang) || 'en',
+    commentPath: firstString(raw.commentPath), lang: normalizeLocale(firstString(raw.lang) || defaultLocale),
+    translationKey: firstString(raw.translationKey),
     hidden: asBoolean(raw.hidden, false), published: asBoolean(raw.published, true),
     draft: asBoolean(raw.draft, false), rawHtml: asBoolean(raw.rawHtml ?? raw.allowHtml, true),
     demo: asBoolean(raw.demo, false),
@@ -143,6 +146,18 @@ export function isPublicPost(post: { data: Pick<NormalizedPostData, 'hidden' | '
   const demoBuild = process.env.ASTRO_DEMO_BUILD === 'true'
   const demo = post.data.demo
   return post.data.published && !post.data.hidden && !post.data.draft && (!demoBuild || demo)
+}
+
+export function isLocale<T extends { data: { lang: string } }>(post: T, locale: AuroraLocale): boolean {
+  return normalizeLocale(post.data.lang) === locale
+}
+
+export function translationFor<T extends { data: { lang: string; translationKey?: string } }>(
+  entries: T[], post: T, locale: AuroraLocale,
+): T | undefined {
+  if (!post.data.translationKey) return undefined
+  return entries.find((entry) => entry !== post
+    && entry.data.translationKey === post.data.translationKey && isLocale(entry, locale))
 }
 
 export function excerptFromBody(body: string, limit = 160): string {

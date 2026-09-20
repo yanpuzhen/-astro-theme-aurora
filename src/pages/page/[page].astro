@@ -6,9 +6,12 @@ import Pagination from '../../components/Pagination.astro'
 import { config } from '../../lib/config'
 import { isPublicPost } from '../../lib/content'
 import { paginate, selectHomePosts } from '../../lib/posts'
+import { isLocale } from '../../lib/content'
+import { messagesFor } from '../../lib/i18n'
+import { localizedSitePath } from '../../lib/routing'
 
 export async function getStaticPaths() {
-  const posts = await getCollection('posts', isPublicPost)
+  const posts = (await getCollection('posts', isPublicPost)).filter((post) => isLocale(post, 'en'))
   const selection = selectHomePosts(posts, config.theme.feature)
   const pageSize = selection.mode === 'feature' ? 12 : 13
   const pageCount = Math.ceil(selection.posts.length / pageSize)
@@ -18,9 +21,11 @@ export async function getStaticPaths() {
 }
 const { posts, page: pageNumber, pageCount, pageSize } = Astro.props
 const selectionPage = paginate(posts, pageNumber, pageSize)
+const messages = messagesFor('en')
+const localeLinks = { en: localizedSitePath(`/page/${pageNumber}/`, 'en'), 'zh-CN': localizedSitePath(`/page/${pageNumber}/`, 'zh-CN') }
 ---
-<BaseLayout title={`Page ${pageNumber} · ${config.site.title}`} canonicalPath={`/page/${pageNumber}/`}>
-  <h1 class="page-heading">Latest articles <span>· {pageNumber}</span></h1>
-  <div class="post-grid">{selectionPage.items.map((post) => <PostCard post={post} />)}</div>
-  <Pagination page={pageNumber} pageCount={pageCount} />
+<BaseLayout title={`${messages.article} ${pageNumber} · ${config.site.title}`} canonicalPath={`/page/${pageNumber}/`} lang="en" localeLinks={localeLinks} alternateLocaleLinks={localeLinks}>
+  <h1 class="page-heading">{messages.latestArticles} <span>· {pageNumber}</span></h1>
+  <div class="post-grid">{selectionPage.items.map((post) => <PostCard post={post} locale="en" />)}</div>
+  <Pagination page={pageNumber} pageCount={pageCount} locale="en" />
 </BaseLayout>

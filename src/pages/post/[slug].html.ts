@@ -1,10 +1,10 @@
 import { getCollection } from 'astro:content'
-import { isPublicPost } from '../../lib/content'
+import { isLocale, isPublicPost } from '../../lib/content'
 import { assertNoRouteCollisions, postAliases, postPath } from '../../lib/routing'
 
 export const prerender = true
 export async function getStaticPaths() {
-  const entries = await getCollection('posts', isPublicPost)
+  const entries = (await getCollection('posts', isPublicPost)).filter((post) => isLocale(post, 'en'))
   assertNoRouteCollisions(entries)
   const paths = new Map<string, typeof entries[number]>()
   for (const post of entries) {
