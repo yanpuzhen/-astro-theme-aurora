@@ -11,6 +11,22 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
+Development is integrated on `dev`; `main` is the release-ready branch. Keep RC1 tags immutable and do not force-push either branch. Documentation and Demo changes should be validated together because GitHub Pages publishes one combined artifact.
+
+For documentation and Pages work, use:
+
+```sh
+pnpm docs:dev
+pnpm docs:build
+pnpm demo:build
+pnpm pages:build
+pnpm test:pages
+pnpm run test:browser
+pnpm run test:browser:pages
+```
+
+The production Pages workflow runs only on `main`; `dev` and pull requests validate the artifact without publishing it.
+
 Before opening a pull request, run:
 
 ```sh

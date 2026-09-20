@@ -7,10 +7,11 @@ const route = (path: string) => `${basePath}${path}` || '/'
 test.beforeAll(() => mkdirSync('output/playwright/visual', { recursive: true }))
 
 test('home, article, taxonomy, archive and ordinary navigation load', async ({ page }) => {
+  test.skip(Boolean(process.env.PLAYWRIGHT_PAGES), 'The RC suite targets the standalone Astro build.')
   await page.goto(route('/'))
   await expect(page).toHaveTitle(/Aurora/)
   await expect(page.locator('main')).toContainText(/Latest articles|最新文章/)
-  await expect(page.locator('nav[aria-label="Primary navigation"] a')).toHaveCount(4)
+  await expect(page.locator('nav[aria-label="Primary navigation"] a')).toHaveCount(6)
 
   await page.goto(route('/post/legacy-markdown-parity/'))
   await expect(page.locator('article[data-pagefind-body]')).toContainText('Static HTML')
@@ -26,6 +27,7 @@ test('home, article, taxonomy, archive and ordinary navigation load', async ({ p
 })
 
 test('Pagefind search returns a real result and navigates with the configured base', async ({ page }) => {
+  test.skip(Boolean(process.env.PLAYWRIGHT_PAGES), 'The RC suite targets the standalone Astro build.')
   await page.goto(route('/search/'))
   const input = page.getByRole('searchbox', { name: 'Search' })
   for (const query of ['Aurora', '迁移', '中文', 'architecture', 'migration', 'Aurora 迁移']) {
@@ -40,6 +42,7 @@ test('Pagefind search returns a real result and navigates with the configured ba
 })
 
 test('lightbox, code copy, mobile menu and persisted theme work', async ({ browser, page }) => {
+  test.skip(Boolean(process.env.PLAYWRIGHT_PAGES), 'The RC suite targets the standalone Astro build.')
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(route('/post/legacy-markdown-parity/'))
@@ -96,6 +99,7 @@ test('lightbox, code copy, mobile menu and persisted theme work', async ({ brows
 })
 
 test('comment mount exposes the stable identity manifest without submitting', async ({ page }) => {
+  test.skip(Boolean(process.env.PLAYWRIGHT_PAGES), 'The RC suite targets the standalone Astro build.')
   const response = await page.request.get(route('/route-manifest.json'))
   expect(response.ok()).toBeTruthy()
   const manifest = await response.json()
@@ -108,6 +112,7 @@ test('comment mount exposes the stable identity manifest without submitting', as
 })
 
 test('static article and navigation remain readable with JavaScript disabled', async ({ browser }) => {
+  test.skip(Boolean(process.env.PLAYWRIGHT_PAGES), 'The RC suite targets the standalone Astro build.')
   const noJs = await browser.newContext({ javaScriptEnabled: false })
   const page = await noJs.newPage()
   for (const path of ['/', '/post/legacy-markdown-parity/', '/tags/', '/categories/', '/archives/']) {
