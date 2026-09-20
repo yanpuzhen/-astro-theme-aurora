@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import Pagination from '../../../components/Pagination.astro'
+import { archivePosts, paginate } from '../../../lib/posts'
+import { isLocale, isPublicPost } from '../../../lib/content'
+import { messagesFor, type AuroraLocale } from '../../../lib/i18n'
+import { localizedSitePath, postPath } from '../../../lib/routing'
+
+export function getStaticPaths() { return [{ params: { locale: 'cn' }, props: { locale: 'zh-CN' as AuroraLocale } }] }
+const { locale } = Astro.props as { locale: AuroraLocale }
+const messages = messagesFor(locale)
+const posts = archivePosts((await getCollection('posts')).filter(isPublicPost).filter((post) => isLocale(post, locale)))
+const pageSize = 12
+const current = paginate(posts, 1, pageSize)
+const years = new Map<number, typeof posts>()
+for (const post of current.items) { const year = post.data.date.getFullYear(); years.set(year, [...(years.get(year) || []), post]) }
+const localeLinks = { en: localizedSitePath('/archives/', 'en'), 'zh-CN': localizedSitePath('/archives/', 'zh-CN') }
+---
+<BaseLayout title={`${messages.archives} · Aurora`} canonicalPath={localizedSitePath('/archives/', locale)} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={localeLinks}>
+  <section class="taxonomy-page">
+    <p class="eyebrow">{messages.timeline}</p><h1 class="page-heading">{messages.archives}</h1>
+    <div class="archive-timeline">
+      {[...years.entries()].map(([year, yearPosts]) => <section class="timeline-year"><div class="timeline-marker" aria-hidden="true"></div><h2>{year}</h2><ol>{yearPosts.map((post) => <li><time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString(post.data.lang, { month: 'short', day: 'numeric' })}</time><a href={postPath(post, { locale })}>{post.data.title}</a><span>{post.data.categories[0] || messages.defaultCategory}</span></li>)}</ol></section>)}
+    </div>
+    <Pagination page={1} pageCount={Math.max(1, Math.ceil(posts.length / pageSize))} kind="archive" locale={locale} />
+  </section>
+</BaseLayout>

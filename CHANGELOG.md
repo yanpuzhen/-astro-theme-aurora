@@ -1,5 +1,33 @@
 # Changelog
 
+## 3.0.0-rc.2
+
+Aurora 3.0 RC2 is a release candidate for migration testing and bilingual site validation. It is not a stable release.
+
+### Internationalization
+
+- Added static English and Simplified Chinese route families while retaining unprefixed English URLs.
+- Added localized Aurora UI, accessible desktop/mobile language switching, and translated content pairs through optional `lang` and `translationKey` frontmatter.
+- Added locale-aware listings, taxonomy counts, RSS, sitemap, canonical/hreflang metadata, HTML language, OpenGraph locale, and Pagefind indexes.
+- Added a bilingual Demo and a bilingual VitePress documentation site with an internationalization guide.
+
+### Compatibility
+
+- Preserved legacy slugs, permalinks, title-hash UID inputs, `.html` aliases, route manifests, and default-locale comment identity behavior.
+- Kept Astro responsible for static routing, content, HTML, SEO, taxonomy, and Markdown rendering; Vue remains limited to focused islands.
+
+### Infrastructure and validation
+
+- Updated current repository metadata and Pages links to `yanpuzhen/astro-theme-aurora` and its canonical GitHub Pages site.
+- Added static i18n, Docs, Demo, Pages artifact, and README verification gates.
+- Verified root and nested-base builds, bilingual browser switching/search, no-JavaScript readability, and the combined GitHub Pages artifact.
+
+### Known limitations
+
+- Production comment-provider records and continuity were not available for direct verification.
+- Pixel-level parity against the old runtime remains source-based because the old runtime and production corpus were unavailable.
+- Optional author routes, comment counts/recent-comment data, math, complete fence metadata, and responsive image-source coverage remain conditional on a real migration corpus.
+
 ## 3.0.0-rc.1 - Release Candidate
 
 Aurora 3.0 is the Astro-based evolution of Aurora. This release candidate is intended for migration testing and feedback; it is not a stable release.

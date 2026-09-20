@@ -5,13 +5,14 @@ import TagList from '../components/TagList.astro'
 import Comments from '../components/Comments.astro'
 import CodeCopyIsland from '../islands/CodeCopyIsland.vue'
 import { config } from '../lib/config'
-import { isPublicPost } from '../lib/content'
+import { isLocale, isPublicPost, translationFor } from '../lib/content'
 import { excerptFor, previousNext, selectHomePosts } from '../lib/posts'
 import { assertNoRouteCollisions, postPath, postAliases, publicAssetPath, resolvePostPath, routeManifestEntry, sitePath } from '../lib/routing'
 import LightboxIsland from '../islands/LightboxIsland.vue'
+import { messagesFor, type AuroraLocale } from '../lib/i18n'
 
 export async function getStaticPaths() {
-  const entries = await getCollection('posts', isPublicPost)
+  const entries = (await getCollection('posts', isPublicPost)).filter((post) => isLocale(post, 'en'))
   assertNoRouteCollisions(entries)
   const paths = new Map<string, CollectionEntry<'posts'>>()
   for (const post of entries) {
@@ -26,13 +27,21 @@ export async function getStaticPaths() {
 
 const { post, isAlias } = Astro.props as { post: CollectionEntry<'posts'>; isAlias: boolean }
 const { Content, headings } = await render(post)
-const allPosts = await getCollection('posts')
+const allContentPosts = await getCollection('posts')
+const allPosts = allContentPosts.filter((entry) => isLocale(entry, 'en'))
 const { previous, next } = previousNext(selectHomePosts(allPosts.filter(isPublicPost), config.theme.feature).posts, post)
 const manifest = routeManifestEntry(post)
+const counterpart = translationFor(allContentPosts, post, 'zh-CN')
+const localeLinks: Record<AuroraLocale, string> = {
+  en: sitePath(manifest.canonicalPath),
+  'zh-CN': counterpart ? postPath(counterpart, { locale: 'zh-CN' }) : sitePath('/cn/'),
+}
+const alternateLocaleLinks = counterpart ? localeLinks : {}
 const description = post.data.description || excerptFor(post)
 const image = post.data.cover
 const hasCode = /```/.test(post.body || '')
 const hasImages = /!\[[^\]]*\]\([^)]*\)|<img\b/i.test(post.body || '')
+const messages = messagesFor('en')
 const jsonLd = {
   '@context': 'https://schema.org', '@type': 'BlogPosting', headline: post.data.title, description,
   url: new URL(sitePath(manifest.canonicalPath), Astro.site).toString(), datePublished: post.data.date.toISOString(),
@@ -42,20 +51,20 @@ const jsonLd = {
 ---
 <BaseLayout title={`${post.data.title} · ${config.site.title}`} description={description} canonicalPath={manifest.canonicalPath}
   image={image} type="article" author={post.data.author.name} published={post.data.date} updated={post.data.updated}
-  keywords={post.data.keywords} tags={post.data.tags} lang={post.data.lang} jsonLd={jsonLd}>
+  keywords={post.data.keywords} tags={post.data.tags} lang={post.data.lang} jsonLd={jsonLd} localeLinks={localeLinks} alternateLocaleLinks={alternateLocaleLinks}>
   <article class="article-shell" data-pagefind-body={!isAlias ? true : undefined}>
     <header class="article-header">
-      <div class="post-card__meta">{post.data.categories[0] && <span>{post.data.categories[0]}</span>}<time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString(post.data.lang)}</time>{post.data.updated && <time datetime={post.data.updated.toISOString()}>Updated {post.data.updated.toLocaleDateString(post.data.lang)}</time>}</div>
+      <div class="post-card__meta">{post.data.categories[0] && <span>{post.data.categories[0]}</span>}<time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString(post.data.lang)}</time>{post.data.updated && <time datetime={post.data.updated.toISOString()}>{messages.updated} {post.data.updated.toLocaleDateString(post.data.lang)}</time>}</div>
       <h1 class="article-title">{post.data.title}</h1>
-      <div class="article-meta"><span>{post.data.author.name}</span><TagList tags={post.data.tags} /></div>
+      <div class="article-meta"><span>{messages.author}: {post.data.author.name}</span><TagList tags={post.data.tags} locale="en" /></div>
       {description && <p class="article-summary">{description}</p>}
       {image && <img class="article-cover" src={publicAssetPath(image)} alt={post.data.title} loading="eager" />}
     </header>
-    {headings.length > 0 && post.data.toc && <nav class="taxonomy-card" aria-label="Table of contents"><strong>Contents</strong><ul>{headings.map((heading) => <li><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul></nav>}
-      {hasCode && <CodeCopyIsland client:load />}
-      {hasImages && <LightboxIsland client:load />}
+    {headings.length > 0 && post.data.toc && <nav class="taxonomy-card" aria-label={messages.tableOfContents}><strong>{messages.tableOfContents}</strong><ul>{headings.map((heading) => <li><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul></nav>}
+      {hasCode && <CodeCopyIsland client:load messages={messages} />}
+      {hasImages && <LightboxIsland client:load messages={messages} />}
     <div class="post-html"><Content /></div>
-    <nav class="article-nav" aria-label="Article navigation">{previous ? <a href={postPath(previous)}>← {previous.data.title}</a> : <span />}{next ? <a href={postPath(next)}>{next.data.title} →</a> : <span />}</nav>
-    <Comments enabled={post.data.comments && config.comments.enabled} provider={config.comments.provider} providerId={config.comments.gitalkIdMode} legacyUid={manifest.legacyUid} canonicalPath={manifest.canonicalUrlPath} commentPath={manifest.commentPath} title={post.data.title} />
+    <nav class="article-nav" aria-label={messages.article}>{previous ? <a href={postPath(previous)}><small>{messages.previousArticle}</small><span>← {previous.data.title}</span></a> : <span />}{next ? <a href={postPath(next)}><small>{messages.nextArticle}</small><span>{next.data.title} →</span></a> : <span />}</nav>
+    <Comments enabled={post.data.comments && config.comments.enabled} provider={config.comments.provider} providerId={config.comments.gitalkIdMode} legacyUid={manifest.commentId} canonicalPath={manifest.canonicalUrlPath} commentPath={manifest.commentPath} title={post.data.title} locale="en" />
   </article>
 </BaseLayout>

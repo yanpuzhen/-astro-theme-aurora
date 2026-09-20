@@ -11,7 +11,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /en/guide/getting-started
+      link: /guide/getting-started
     - theme: alt
       text: Live Demo
       link: https://yanpuzhen.github.io/astro-theme-aurora/demo/
@@ -41,6 +41,6 @@ features:
 
 Aurora 3.0 is the Astro implementation of Aurora: a static-first theme that keeps the original visual identity while moving content, routing, and metadata into a typed build pipeline. Vue is used only where interaction adds value.
 
-Read the [English guide](/en/guide/getting-started), [中文文档](/cn/guide/getting-started), or visit the [Live Demo](https://yanpuzhen.github.io/astro-theme-aurora/demo/).
+Read the [English guide](/guide/getting-started), [中文文档](/cn/guide/getting-started), or visit the [Live Demo](https://yanpuzhen.github.io/astro-theme-aurora/demo/).
 
 The original Aurora project was created by TriDiamond / Benny Guo. This repository is the current Aurora 3.0 implementation and keeps that attribution distinct from current project ownership.

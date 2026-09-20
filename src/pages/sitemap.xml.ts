@@ -1,16 +1,38 @@
-import { getCollection } from 'astro:content'
+import { getCollection, type CollectionEntry } from 'astro:content'
 import { isPublicPost } from '../lib/content'
 import { collectCategories, collectTags } from '../lib/taxonomy'
 import { archivePosts } from '../lib/posts'
-import { categoryPath, routeManifestEntry, sitePath, tagPath } from '../lib/routing'
+import { config } from '../lib/config'
+import { selectHomePosts } from '../lib/posts'
+import { categoryPath, customPagePath, archivePath, pagePath, routeManifestEntry, routeManifestEntryForLocale, sitePath, tagPath } from '../lib/routing'
+import type { AuroraLocale } from '../lib/i18n'
 
 export const prerender = true
 export async function GET({ site }: { site?: URL }) {
-  const posts = archivePosts((await getCollection('posts')).filter(isPublicPost))
-  const urls = new Set(['/','/about/','/links/','/tags/','/categories/','/archives/','/search/'])
-  for (const post of posts) urls.add(routeManifestEntry(post).canonicalPath)
-  for (const tag of collectTags(posts)) urls.add(tagPath(tag.name))
-  for (const category of collectCategories(posts)) urls.add(categoryPath(category.name))
+  const allPosts = (await getCollection('posts')).filter(isPublicPost)
+  const english = archivePosts(allPosts.filter((post) => post.data.lang === 'en'))
+  const chinese = archivePosts(allPosts.filter((post) => post.data.lang === 'zh-CN'))
+  const urls = new Set(['/','/about/','/links/','/tags/','/categories/','/archives/','/search/','/cn/','/cn/about/','/cn/links/','/cn/tags/','/cn/categories/','/cn/archives/','/cn/search/'])
+  const addPagination = (posts: CollectionEntry<'posts'>[], locale: AuroraLocale) => {
+    const selection = selectHomePosts(posts, config.theme.feature)
+    const pageSize = selection.mode === 'feature' ? 12 : 13
+    const pageCount = Math.ceil(selection.posts.length / pageSize)
+    for (let page = 2; page <= pageCount; page += 1) urls.add(pagePath(page, locale))
+  }
+  const addArchivePagination = (posts: CollectionEntry<'posts'>[], locale: AuroraLocale) => {
+    const pageCount = Math.ceil(posts.length / 12)
+    for (let page = 2; page <= pageCount; page += 1) urls.add(archivePath(page, locale))
+  }
+  addPagination(english, 'en'); addPagination(chinese, 'zh-CN')
+  addArchivePagination(english, 'en'); addArchivePagination(chinese, 'zh-CN')
+  for (const post of english) urls.add(routeManifestEntry(post).canonicalPath)
+  for (const post of chinese) urls.add(routeManifestEntryForLocale(post, 'zh-CN').canonicalPath)
+  for (const tag of collectTags(english)) urls.add(tagPath(tag.name))
+  for (const tag of collectTags(chinese)) urls.add(tagPath(tag.name, 'zh-CN'))
+  for (const category of collectCategories(english)) urls.add(categoryPath(category.name))
+  for (const category of collectCategories(chinese)) urls.add(categoryPath(category.name, 'zh-CN'))
+  for (const page of (await getCollection('pages')).filter((entry) => entry.id !== 'about' && entry.data.lang === 'en')) urls.add(customPagePath(page.id, 'en'))
+  for (const page of (await getCollection('pages')).filter((entry) => entry.id !== 'about' && entry.data.lang === 'zh-CN')) urls.add(customPagePath(page.id, 'zh-CN'))
   const origin = site?.toString() || 'https://example.com/'
   const body = [...urls].map((path) => `<url><loc>${new URL(sitePath(path), origin).toString()}</loc></url>`).join('')
   return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${body}</urlset>`, { headers: { 'Content-Type': 'application/xml; charset=utf-8' } })

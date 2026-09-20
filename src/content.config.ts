@@ -23,6 +23,7 @@ const sharedSchema = z.object({
   legacyPermalinks: scalarOrList, aliases: scalarOrList, photos: z.array(z.string()).optional(),
   toc: z.union([z.boolean(), z.string()]).optional(), comment: booleanLike, comments: booleanLike,
   commentId: z.string().optional(), commentPath: z.string().optional(), lang: z.string().optional(),
+  translationKey: z.string().optional(),
   hidden: booleanLike, published: booleanLike, draft: booleanLike, rawHtml: booleanLike,
   allowHtml: booleanLike, type: z.string().optional(), categoryMode: z.string().optional(),
   data: z.unknown().optional(), demo: booleanLike,

@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { localizedSitePath } from '../lib/routing'
+import { messagesFor } from '../lib/i18n'
+const messages = messagesFor('en')
+const localeLinks = { en: localizedSitePath('/404/', 'en'), 'zh-CN': localizedSitePath('/404/', 'zh-CN') }
+---
+<BaseLayout title="404 · Aurora" canonicalPath="/404/" lang="en" localeLinks={localeLinks}>
+  <article class="article-shell"><div class="post-html"><h1 class="page-heading">{messages.notFoundTitle}</h1><p>{messages.notFoundMessage}</p><a href={localizedSitePath('/', 'en')}>{messages.home}</a></div></article>
+</BaseLayout>

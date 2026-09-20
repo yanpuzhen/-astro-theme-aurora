@@ -2,13 +2,14 @@
 import { archivePath, pagePath } from '../lib/routing'
 import { messagesFor } from '../lib/i18n'
 import { config } from '../lib/config'
-interface Props { page: number; pageCount: number; kind?: 'home' | 'archive' }
-const { page, pageCount, kind = 'home' } = Astro.props
-const pathFor = (value: number) => kind === 'archive' ? archivePath(value) : pagePath(value)
-const messages = messagesFor(config.site.language)
+import type { AuroraLocale } from '../lib/i18n'
+interface Props { page: number; pageCount: number; kind?: 'home' | 'archive'; locale?: AuroraLocale }
+const { page, pageCount, kind = 'home', locale = config.site.language } = Astro.props
+const pathFor = (value: number) => kind === 'archive' ? archivePath(value, locale) : pagePath(value, locale)
+const messages = messagesFor(locale)
 ---
 {pageCount > 1 && (
-  <nav class="pagination" aria-label="Pagination">
+  <nav class="pagination" aria-label={messages.articles}>
     {page > 1 && <a class="page-navigator" href={pathFor(page - 1)} aria-label={messages.newer}>←</a>}
     <span class="pagination-pages">
       {Array.from({ length: pageCount }, (_, index) => index + 1).map((number) => (

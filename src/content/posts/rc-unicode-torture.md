@@ -20,7 +20,7 @@ comment: false
 
 Tags include C++, C#, Node.js, and emoji 🚀 without taxonomy collisions.
 
-The body contains an [internal article link](/post/architecture-smoke/) and an [external link](https://astro.build/).
+The body contains an [internal article link](/cn/post/welcome-to-aurora-3-cn/) and an [external link](https://astro.build/).
 
 <figure>
   <img src="/fixtures/aurora-placeholder.svg" alt="中文 Test 🚀 café 日本語" />

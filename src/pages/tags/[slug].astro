@@ -4,15 +4,22 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import PostCard from '../../components/PostCard.astro'
 import { collectTags } from '../../lib/taxonomy'
 import { isPublicPost } from '../../lib/content'
-import { tagPath } from '../../lib/routing'
+import { localizedSitePath, tagPath } from '../../lib/routing'
+import { isLocale } from '../../lib/content'
+import { messagesFor } from '../../lib/i18n'
 export async function getStaticPaths() {
-  const entries = (await getCollection('posts')).filter(isPublicPost)
+  const entries = (await getCollection('posts')).filter(isPublicPost).filter((post) => isLocale(post, 'en'))
   return collectTags(entries).map((tag) => ({ params: { slug: tag.slug }, props: { tag } }))
 }
 const { tag } = Astro.props
+const locale = 'en' as const
+const messages = messagesFor(locale)
+const chineseTags = collectTags((await getCollection('posts')).filter(isPublicPost).filter((post) => isLocale(post, 'zh-CN')))
+const chineseCounterpart = chineseTags.some((item) => item.slug === tag.slug)
+const localeLinks = { en: tagPath(tag.name, locale), 'zh-CN': chineseCounterpart ? tagPath(tag.name, 'zh-CN') : localizedSitePath('/tags/', 'zh-CN') }
 ---
-<BaseLayout title={`${tag.name} · Tags`} canonicalPath={tagPath(tag.name)}>
-  <section class="taxonomy-page"><p class="eyebrow">Tag</p><h1 class="page-heading">{tag.name}</h1>
-    <div class="post-grid">{tag.posts.map((post) => <PostCard post={post} />)}</div>
+<BaseLayout title={`${tag.name} · ${messages.tags}`} canonicalPath={tagPath(tag.name, locale)} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={chineseCounterpart ? localeLinks : {}}>
+  <section class="taxonomy-page"><p class="eyebrow">{messages.tag}</p><h1 class="page-heading">{tag.name}</h1>
+    <div class="post-grid">{tag.posts.map((post) => <PostCard post={post} locale={locale} />)}</div>
   </section>
 </BaseLayout>

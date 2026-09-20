@@ -1,0 +1,148 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import PostCard from '../../components/PostCard.astro'
+import SearchIsland from '../../islands/SearchIsland.vue'
+import CodeCopyIsland from '../../islands/CodeCopyIsland.vue'
+import LightboxIsland from '../../islands/LightboxIsland.vue'
+import TagList from '../../components/TagList.astro'
+import Comments from '../../components/Comments.astro'
+import { config } from '../../lib/config'
+import { excerptFor, previousNext, selectHomePosts } from '../../lib/posts'
+import { isLocale, isPublicPost, translationFor } from '../../lib/content'
+import { collectCategories, collectTags } from '../../lib/taxonomy'
+import { messagesFor, type AuroraLocale } from '../../lib/i18n'
+import { categoryPath, localePath, localizedSitePath, normalizeRoutePath, postPath, postAliasesForLocale, publicAssetPath, resolvePostPath, routeManifestEntryForLocale, sitePath, stripLocalePath, tagPath } from '../../lib/routing'
+
+type Post = CollectionEntry<'posts'>
+
+export async function getStaticPaths() {
+  const locale = 'zh-CN' as const
+  const posts = (await getCollection('posts', isPublicPost)).filter((post) => isLocale(post, locale))
+  const pages = (await getCollection('pages')).filter((page) => isLocale(page, locale))
+  const paths = new Set<string>(['search', 'tags', 'categories', 'about', 'links'])
+  for (const tag of collectTags(posts)) paths.add(`tags/${tag.slug}`)
+  for (const category of collectCategories(posts)) paths.add(`categories/${category.slug}`)
+  for (const page of pages.filter((entry) => entry.id !== 'about')) paths.add(`page/${page.id}`)
+  for (const post of posts) {
+    const candidates = [resolvePostPath(post, { locale }), ...postAliasesForLocale(post, locale)]
+    for (const candidate of candidates.filter((path) => !path.endsWith('.html'))) {
+      paths.add(stripLocalePath(candidate).replace(/^\//, '').replace(/\/$/, ''))
+    }
+  }
+  return [...paths].map((path) => ({ params: { locale: 'cn', path }, props: { locale } }))
+}
+
+const locale = 'zh-CN' as const
+const messages = messagesFor(locale)
+const path = normalizeRoutePath(`/${Astro.params.path || ''}`)
+const posts = (await getCollection('posts', isPublicPost)).filter((post) => isLocale(post, locale))
+const allPosts = await getCollection('posts')
+const pages = (await getCollection('pages')).filter((page) => isLocale(page, locale))
+const tags = collectTags(posts)
+const categories = collectCategories(posts)
+const tag = path.startsWith('/tags/') && path !== '/tags/' ? tags.find((item) => `/tags/${item.slug}/` === path) : undefined
+const category = path.startsWith('/categories/') && path !== '/categories/' ? categories.find((item) => `/categories/${item.slug}/` === path) : undefined
+const isSearch = path === '/search/'
+const isTags = path === '/tags/'
+const isCategories = path === '/categories/'
+const isAbout = path === '/about/'
+const isLinks = path === '/links/'
+const isNotFound = path === '/404/'
+const pageEntry = path.startsWith('/page/') ? pages.find((entry) => `/page/${entry.id}/` === path) : undefined
+const routeMap = new Map<string, Post>()
+for (const entry of posts) {
+  for (const candidate of [resolvePostPath(entry, { locale }), ...postAliasesForLocale(entry, locale)]) {
+    if (!candidate.endsWith('.html')) routeMap.set(stripLocalePath(candidate), entry)
+  }
+}
+const post = routeMap.get(path)
+const otherLocale: AuroraLocale = 'en'
+const counterpart = post ? translationFor(allPosts, post, otherLocale) : undefined
+const manifest = post ? routeManifestEntryForLocale(post, locale) : undefined
+const rendered = post ? await render(post) : undefined
+const Content = rendered?.Content
+const headings = rendered?.headings || []
+const renderedPage = pageEntry ? await render(pageEntry) : undefined
+const PageContent = renderedPage?.Content
+const description = post ? post.data.description || excerptFor(post) : undefined
+const hasCode = /```/.test(post?.body || '')
+const hasImages = /!\[[^\]]*\]\([^)]*\)|<img\b/i.test(post?.body || '')
+const jsonLd = post && manifest ? {
+  '@context': 'https://schema.org', '@type': 'BlogPosting', headline: post.data.title, description,
+  url: new URL(sitePath(manifest.canonicalPath), Astro.site).toString(), datePublished: post.data.date.toISOString(),
+  ...(post.data.updated ? { dateModified: post.data.updated.toISOString() } : {}),
+  author: { '@type': 'Person', name: post.data.author.name }, ...(post.data.cover ? { image: publicAssetPath(post.data.cover) } : {}),
+} : undefined
+const defaultCurrentPath = localePath(path, locale)
+const counterpartPath = counterpart ? routeManifestEntryForLocale(counterpart, otherLocale).canonicalPath : undefined
+const localeLinks: Record<AuroraLocale, string> = {
+  en: counterpartPath ? sitePath(counterpartPath) : localizedSitePath('/', 'en'),
+  'zh-CN': sitePath(manifest?.canonicalPath || defaultCurrentPath),
+}
+const alternateLocaleLinks: Partial<Record<AuroraLocale, string>> = counterpartPath
+  ? { en: sitePath(counterpartPath), 'zh-CN': sitePath(manifest?.canonicalPath || defaultCurrentPath) }
+  : (isSearch || isTags || isCategories || isAbout || isLinks || Boolean(pageEntry) || Boolean(tag) || Boolean(category)
+    ? { 'zh-CN': sitePath(defaultCurrentPath) }
+    : {})
+const englishEquivalent = (candidate: string) => sitePath(candidate)
+const englishPosts = (await getCollection('posts')).filter(isPublicPost).filter((entry) => isLocale(entry, 'en'))
+const hasEnglishTag = tag && collectTags(englishPosts).some((item) => item.slug === tag.slug)
+const hasEnglishCategory = category && collectCategories(englishPosts).some((item) => item.slug === category.slug)
+if (tag && hasEnglishTag) { localeLinks.en = englishEquivalent(`/tags/${tag.slug}/`); alternateLocaleLinks.en = localeLinks.en }
+if (category && hasEnglishCategory) { localeLinks.en = englishEquivalent(`/categories/${category.slug}/`); alternateLocaleLinks.en = localeLinks.en }
+if (pageEntry) { localeLinks.en = englishEquivalent(`/page/${pageEntry.id}/`); alternateLocaleLinks.en = localeLinks.en }
+if (isSearch || isTags || isCategories || isAbout || isLinks) { localeLinks.en = englishEquivalent(path); alternateLocaleLinks.en = localeLinks.en }
+const ordered = selectHomePosts(posts, config.theme.feature).posts
+const navigation = post ? previousNext(ordered, post) : {}
+const localePostPath = (entry: Post) => postPath(entry, { locale })
+---
+
+{isNotFound ? (
+  <BaseLayout title={`404 · Aurora`} canonicalPath={defaultCurrentPath} lang={locale} localeLinks={localeLinks}>
+    <article class="article-shell"><div class="post-html"><h1 class="page-heading">{messages.notFoundTitle}</h1><p>{messages.notFoundMessage}</p><a href={localizedSitePath('/', locale)}>{messages.home}</a></div></article>
+  </BaseLayout>
+) : isSearch ? (
+  <BaseLayout title={`${messages.search} · Aurora`} canonicalPath={defaultCurrentPath} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={alternateLocaleLinks}>
+    <section class="search-page"><h1 class="page-heading">{messages.search}</h1><SearchIsland client:idle base={import.meta.env.BASE_URL} locale={locale} messages={messages} /></section>
+  </BaseLayout>
+) : isTags ? (
+  <BaseLayout title={`${messages.tags} · Aurora`} canonicalPath={defaultCurrentPath} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={alternateLocaleLinks}>
+    <section class="taxonomy-page"><p class="eyebrow">{messages.taxonomy}</p><h1 class="page-heading">{messages.tags}</h1><div class="tag-cloud">{tags.map((item) => <a href={tagPath(item.name, locale)}>{item.name}<sup>{item.posts.length}</sup></a>)}</div></section>
+  </BaseLayout>
+) : tag ? (
+  <BaseLayout title={`${tag.name} · ${messages.tags}`} canonicalPath={defaultCurrentPath} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={alternateLocaleLinks}>
+    <section class="taxonomy-page"><p class="eyebrow">{messages.tag}</p><h1 class="page-heading">{tag.name}</h1><div class="post-grid">{tag.posts.map((entry) => <PostCard post={entry} locale={locale} />)}</div></section>
+  </BaseLayout>
+) : isCategories ? (
+  <BaseLayout title={`${messages.categories} · Aurora`} canonicalPath={defaultCurrentPath} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={alternateLocaleLinks}>
+    <section class="taxonomy-page"><p class="eyebrow">{messages.taxonomy}</p><h1 class="page-heading">{messages.categories}</h1><div class="category-cloud">{categories.map((item) => <a href={categoryPath(item.name, locale)}><strong>{item.name}</strong><span>{item.posts.length} {messages.articles}</span></a>)}</div></section>
+  </BaseLayout>
+) : category ? (
+  <BaseLayout title={`${category.name} · ${messages.categories}`} canonicalPath={defaultCurrentPath} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={alternateLocaleLinks}>
+    <section class="taxonomy-page"><p class="eyebrow">{messages.category}</p><h1 class="page-heading">{category.name}</h1><div class="post-grid">{category.posts.map((entry) => <PostCard post={entry} locale={locale} />)}</div></section>
+  </BaseLayout>
+) : isAbout ? (
+  <BaseLayout title={`${messages.about} Aurora`} description={config.site.description} canonicalPath={defaultCurrentPath} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={alternateLocaleLinks}>
+    <article class="article-shell"><header class="article-header"><h1 class="article-title">{messages.about} Aurora</h1></header><div class="post-html"><p>这是 Aurora 3.0 的简体中文静态主题页面。</p><p>Astro 在构建时负责内容、路由、搜索和 SEO；Vue 只增强必要的交互。</p></div></article>
+  </BaseLayout>
+) : isLinks ? (
+  <BaseLayout title={`${messages.links} · Aurora`} description={messages.linksDescription} canonicalPath={defaultCurrentPath} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={alternateLocaleLinks}>
+    <section class="links-page" aria-labelledby="links-title"><header class="links-page__intro"><p class="eyebrow">Aurora / {messages.friends}</p><h1 id="links-title">{messages.links}</h1></header><section class="links-hero highlighted"><div class="links-hero__inner"><div class="links-hero__heading"><span class="eyebrow">{messages.friends}</span><h2 id="links-hero-title">{messages.connectCreators}</h2><span class="gradient-rule" aria-hidden="true"></span></div><div class="links-wall" aria-label={messages.friends}>{Array.from({ length: 24 }).map(() => <span class="links-avatar--empty" aria-hidden="true"></span>)}</div></div></section><section class="links-empty-state"><h2>{messages.noFriendLinks}</h2><p>{messages.linksDescription}</p></section></section>
+  </BaseLayout>
+) : pageEntry ? (
+  <BaseLayout title={pageEntry.data.title} description={pageEntry.data.description} canonicalPath={defaultCurrentPath} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={alternateLocaleLinks}>
+    <article class="article-shell"><header class="article-header"><h1 class="article-title">{pageEntry.data.title}</h1></header><div class="post-html">{PageContent && <PageContent />}</div></article>
+  </BaseLayout>
+) : post && manifest && Content ? (
+  <BaseLayout title={`${post.data.title} · ${config.site.title}`} description={description} canonicalPath={manifest.canonicalPath} image={post.data.cover} type="article" author={post.data.author.name} published={post.data.date} updated={post.data.updated} keywords={post.data.keywords} tags={post.data.tags} lang={locale} jsonLd={jsonLd} localeLinks={localeLinks} alternateLocaleLinks={alternateLocaleLinks}>
+    <article class="article-shell" data-pagefind-body>
+      <header class="article-hero highlighted"><img class="article-cover" src={publicAssetPath(post.data.cover || '/assets/default-cover.jpg')} alt="" loading="eager" /><div class="article-hero__veil" aria-hidden="true"></div><div class="article-hero__content"><div class="article-labels">{post.data.categories[0] && <span class="article-category">{post.data.categories[0]}</span>}<time datetime={post.data.date.toISOString()}>{messages.published} {post.data.date.toLocaleDateString(post.data.lang)}</time><TagList tags={post.data.tags} limit={3} locale={locale} /></div><h1 class="article-title">{post.data.title}</h1><div class="article-author-row"><img src={publicAssetPath('/favicon.svg')} alt="" /><strong>{messages.author}: {post.data.author.name}</strong><span>{post.data.date.toLocaleDateString(post.data.lang, { year: 'numeric', month: 'long', day: 'numeric' })}</span></div></div></header>
+      <div class="main-grid article-main-grid"><div class="article-column">{description && <p class="article-summary">{description}</p>}{headings.length > 0 && post.data.toc && <nav class="toc-card" aria-label={messages.tableOfContents}><h2>{messages.tableOfContents}</h2><ul>{headings.map((heading) => <li><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul></nav>}{hasCode && <CodeCopyIsland client:load messages={messages} />}{hasImages && <LightboxIsland client:load messages={messages} />}<div class="post-html"><Content /></div><nav class="article-nav" aria-label={messages.article}>{navigation.previous ? <a href={localePostPath(navigation.previous)}><small>{messages.previousArticle}</small><span>← {navigation.previous.data.title}</span></a> : <span />}{navigation.next ? <a href={localePostPath(navigation.next)}><small>{messages.nextArticle}</small><span>{navigation.next.data.title} →</span></a> : <span />}</nav><Comments enabled={post.data.comments && config.comments.enabled} provider={config.comments.provider} providerId={config.comments.gitalkIdMode} legacyUid={manifest.commentId} canonicalPath={manifest.canonicalUrlPath} commentPath={manifest.commentPath} title={post.data.title} locale={locale} /></div></div>
+    </article>
+  </BaseLayout>
+) : (
+  <BaseLayout title={`404 · Aurora`} canonicalPath={defaultCurrentPath} lang={locale} localeLinks={localeLinks}>
+    <article class="article-shell"><div class="post-html"><h1 class="page-heading">{messages.notFoundTitle}</h1><p>{messages.notFoundMessage}</p><a href={localizedSitePath('/', locale)}>{messages.home}</a></div></article>
+  </BaseLayout>
+)}

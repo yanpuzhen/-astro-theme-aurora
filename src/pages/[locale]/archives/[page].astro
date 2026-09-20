@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import Pagination from '../../../components/Pagination.astro'
+import { archivePosts, paginate } from '../../../lib/posts'
+import { isLocale, isPublicPost } from '../../../lib/content'
+import { messagesFor, type AuroraLocale } from '../../../lib/i18n'
+import { archivePath, localizedSitePath, postPath } from '../../../lib/routing'
+
+export async function getStaticPaths() {
+  const locale = 'zh-CN' as const
+  const posts = archivePosts((await getCollection('posts')).filter(isPublicPost).filter((post) => isLocale(post, locale)))
+  const pageCount = Math.ceil(posts.length / 12)
+  return Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) => ({ params: { locale: 'cn', page: String(index + 2) }, props: { locale, page: index + 2, pageCount } }))
+}
+const { locale, page, pageCount } = Astro.props as { locale: AuroraLocale; page: number; pageCount: number }
+const messages = messagesFor(locale)
+const posts = archivePosts((await getCollection('posts')).filter(isPublicPost).filter((post) => isLocale(post, locale)))
+const current = paginate(posts, page, 12)
+const localeLinks = { en: localizedSitePath(`/archives/${page}/`, 'en'), 'zh-CN': localizedSitePath(`/archives/${page}/`, 'zh-CN') }
+---
+<BaseLayout title={`${messages.archives} ${page} · Aurora`} canonicalPath={archivePath(page, locale)} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={localeLinks}>
+  <section class="taxonomy-page"><p class="eyebrow">{messages.timeline}</p><h1 class="page-heading">{messages.archives} <span>· {page}</span></h1>
+    <div class="archive-timeline">{current.items.map((post) => <article class="timeline-year timeline-year--single"><div class="timeline-marker" aria-hidden="true"></div><time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString(post.data.lang)}</time><h2><a href={postPath(post, { locale })}>{post.data.title}</a></h2><p>{post.data.description}</p></article>)}</div>
+    <Pagination page={page} pageCount={pageCount} kind="archive" locale={locale} />
+  </section>
+</BaseLayout>

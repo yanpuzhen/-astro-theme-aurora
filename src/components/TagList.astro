@@ -1,11 +1,13 @@
 ---
 import { tagPath } from '../lib/routing'
-interface Props { tags: string[]; limit?: number }
-const { tags, limit } = Astro.props
+import { messagesFor, type AuroraLocale } from '../lib/i18n'
+interface Props { tags: string[]; limit?: number; locale?: AuroraLocale }
+const { tags, limit, locale = 'en' } = Astro.props
+const messages = messagesFor(locale)
 const visibleTags = limit ? tags.slice(0, limit) : tags
 ---
 {visibleTags.length > 0 && (
-  <ul class="tag-list" aria-label="Tags">
-    {visibleTags.map((tag) => <li><a href={tagPath(tag)}># {tag}</a></li>)}
+  <ul class="tag-list" aria-label={messages.tags}>
+    {visibleTags.map((tag) => <li><a href={tagPath(tag, locale)}># {tag}</a></li>)}
   </ul>
 )}

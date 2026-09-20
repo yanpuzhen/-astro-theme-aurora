@@ -7,7 +7,7 @@ const docsBase = '/astro-theme-aurora/'
 const demoBase = '/astro-theme-aurora/demo/'
 const read = (relative) => readFileSync(resolve(root, relative), 'utf8')
 const requiredFiles = [
-  'index.html', 'en/index.html', 'cn/index.html',
+  'index.html', 'en/index.html', 'cn/index.html', 'guide/getting-started.html', 'cn/guide/getting-started.html',
   'demo/index.html', 'demo/pagefind/pagefind.js', 'demo/pagefind/pagefind-entry.json',
   'demo/post/welcome-to-aurora-3/index.html',
   'demo/routing-and-deployment/index.html',
@@ -33,8 +33,9 @@ function htmlFiles(directory) {
 }
 
 assert.match(docs, /Aurora 3\.0/)
-assert.match(docsEnglish, /Documentation|Aurora 3\.0/)
+assert.match(docsEnglish, /Aurora 3\.0 documentation moved/)
 assert.match(docsChinese, /使用文档|Aurora 3\.0/)
+assert.match(docsEnglish, /\/astro-theme-aurora\/\"?\/?<\/a>/)
 assert.match(docs, /https:\/\/yanpuzhen\.github\.io\/astro-theme-aurora\/demo\//)
 assert.match(demo, /Welcome to Aurora 3\.0/)
 assert.match(demoSearch, /SearchIsland/)

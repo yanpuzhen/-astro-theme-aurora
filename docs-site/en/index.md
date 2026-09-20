@@ -11,7 +11,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /en/guide/getting-started
+      link: /guide/getting-started
     - theme: alt
       text: Live Demo
       link: https://yanpuzhen.github.io/astro-theme-aurora/demo/
@@ -37,4 +37,4 @@ features:
     details: English and Chinese documentation mirror the same Aurora 3 implementation.
 ---
 
-Aurora 3.0 keeps the original Aurora visual direction while replacing the legacy Hexo/Vue runtime with Astro Content Collections, filesystem routes, and focused Vue islands. Start with [Getting Started](/en/guide/getting-started), or open the [Live Demo](https://yanpuzhen.github.io/astro-theme-aurora/demo/).
+Aurora 3.0 keeps the original Aurora visual direction while replacing the legacy Hexo/Vue runtime with Astro Content Collections, filesystem routes, and focused Vue islands. Start with [Getting Started](/guide/getting-started), or open the [Live Demo](https://yanpuzhen.github.io/astro-theme-aurora/demo/).

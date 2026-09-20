@@ -1,10 +1,11 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
-import { customPagePath } from '../../lib/routing'
+import { customPagePath, localizedSitePath } from '../../lib/routing'
+import { isLocale } from '../../lib/content'
 
 export async function getStaticPaths() {
-  const pages = await getCollection('pages')
+  const pages = (await getCollection('pages')).filter((page) => isLocale(page, 'en'))
   return pages.filter((page) => page.id !== 'about').map((page) => ({
     params: { slug: page.id }, props: { page },
   }))
@@ -12,8 +13,9 @@ export async function getStaticPaths() {
 
 const { page } = Astro.props as { page: CollectionEntry<'pages'> }
 const { Content } = await render(page)
+const localeLinks = { en: customPagePath(page.id), 'zh-CN': localizedSitePath('/', 'zh-CN') }
 ---
-<BaseLayout title={page.data.title} description={page.data.description} canonicalPath={customPagePath(page.id)}>
+<BaseLayout title={page.data.title} description={page.data.description} canonicalPath={customPagePath(page.id)} lang="en" localeLinks={localeLinks}>
   <article class="article-shell">
     <header class="article-header"><h1 class="article-title">{page.data.title}</h1></header>
     <div class="post-html"><Content /></div>

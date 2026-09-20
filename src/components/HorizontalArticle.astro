@@ -2,23 +2,24 @@
 import type { CollectionEntry } from 'astro:content'
 import { excerptFor } from '../lib/posts'
 import { categoryPath, postPath, publicAssetPath } from '../lib/routing'
+import type { AuroraLocale } from '../lib/i18n'
 import TagList from './TagList.astro'
-interface Props { post: CollectionEntry<'posts'> }
-const { post } = Astro.props
+interface Props { post: CollectionEntry<'posts'>; locale?: AuroraLocale }
+const { post, locale = 'en' } = Astro.props
 const cover = post.data.cover || '/assets/default-cover.jpg'
 ---
 
 <article class="horizontal-article highlighted">
-  <a class="horizontal-article__cover" href={postPath(post)} aria-label={post.data.title}>
+      <a class="horizontal-article__cover" href={postPath(post, { locale })} aria-label={post.data.title}>
     <img src={publicAssetPath(cover)} alt="" loading="eager" />
     <span class="thumbnail-screen" aria-hidden="true"></span>
   </a>
   <div class="horizontal-article__content">
     <div class="article-labels">
-      {post.data.categories[0] && <a class="article-category" href={categoryPath(post.data.categories[0])}>{post.data.categories[0]}</a>}
-      <TagList tags={post.data.tags} limit={2} />
+      {post.data.categories[0] && <a class="article-category" href={categoryPath(post.data.categories[0], locale)}>{post.data.categories[0]}</a>}
+      <TagList tags={post.data.tags} limit={2} locale={locale} />
     </div>
-    <h1><a href={postPath(post)}>{post.data.title}</a></h1>
+      <h1><a href={postPath(post, { locale })}>{post.data.title}</a></h1>
     <p>{excerptFor(post)}</p>
     <div class="article-footer">
       <img src={publicAssetPath('/favicon.svg')} alt="" />

@@ -2,23 +2,25 @@
 import type { CollectionEntry } from 'astro:content'
 import HorizontalArticle from './HorizontalArticle.astro'
 import PostCard from './PostCard.astro'
-interface Props { posts: CollectionEntry<'posts'>[] }
-const { posts } = Astro.props
+import { messagesFor, type AuroraLocale } from '../lib/i18n'
+interface Props { posts: CollectionEntry<'posts'>[]; locale?: AuroraLocale }
+const { posts, locale = 'en' } = Astro.props
+const messages = messagesFor(locale)
 const [hero, ...secondary] = posts
 ---
 
 {hero && <section class="feature" aria-labelledby="feature-title">
-  <h2 id="feature-title" class="sr-only">Featured articles</h2>
-  <HorizontalArticle post={hero} />
+  <h2 id="feature-title" class="sr-only">{messages.featuredArticles}</h2>
+  <HorizontalArticle post={hero} locale={locale} />
   <div class="feature-list">
     <div class="feature-selection">
       <div class="feature-selection__inner">
-        <span class="feature-selection__wordmark">EDITOR'S<br />SELECTION</span>
-        <strong><span class="feature-selection__icon" aria-hidden="true"></span> Recommended</strong>
+        <span class="feature-selection__wordmark">{locale === 'zh-CN' ? messages.editorSelection : <>EDITOR'S<br />SELECTION</>}</span>
+        <strong><span class="feature-selection__icon" aria-hidden="true"></span> {messages.recommended}</strong>
       </div>
     </div>
     <div class="feature-list__cards">
-      {secondary.map((post) => <PostCard post={post} feature />)}
+      {secondary.map((post) => <PostCard post={post} feature locale={locale} />)}
     </div>
   </div>
 </section>}

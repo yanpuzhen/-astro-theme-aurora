@@ -4,18 +4,24 @@ import Header from '../components/Header.astro'
 import Footer from '../components/Footer.astro'
 import DiaIsland from '../islands/DiaIsland.vue'
 import { config } from '../lib/config'
-import { assetPath, publicAssetPath, sitePath, withoutBase } from '../lib/routing'
-import { messagesFor, normalizeLocale } from '../lib/i18n'
+import { assetPath, localizedSitePath, publicAssetPath, sitePath, withoutBase } from '../lib/routing'
+import { defaultLocale, messagesFor, normalizeLocale, type AuroraLocale } from '../lib/i18n'
 
 interface Props {
   title: string; description?: string; canonicalPath?: string; image?: string; type?: 'website' | 'article'
   author?: string; published?: Date; updated?: Date; keywords?: string[]; tags?: string[]; lang?: string; jsonLd?: Record<string, unknown>
+  localeLinks?: Partial<Record<AuroraLocale, string>>; alternateLocaleLinks?: Partial<Record<AuroraLocale, string>>
 }
-const { title, description, canonicalPath, image, type = 'website', author, published, updated, keywords, tags, lang = config.site.language, jsonLd } = Astro.props
+const { title, description, canonicalPath, image, type = 'website', author, published, updated, keywords, tags, lang = config.site.language, jsonLd, localeLinks, alternateLocaleLinks } = Astro.props
 const locale = normalizeLocale(lang)
 const messages = messagesFor(locale)
 const path = canonicalPath ? withoutBase(canonicalPath) : withoutBase(Astro.url.pathname)
 const canonical = new URL(sitePath(path), Astro.site)
+const switchLinks = {
+  en: localeLinks?.en || localizedSitePath(path, defaultLocale),
+  'zh-CN': localeLinks?.['zh-CN'] || localizedSitePath(path, 'zh-CN'),
+}
+const alternates = alternateLocaleLinks || {}
 const imageUrl = image ? new URL(publicAssetPath(image), Astro.site) : undefined
 const structuredData = {
   ...(jsonLd || {
@@ -39,10 +45,14 @@ const diaEnabled = import.meta.env.PUBLIC_AURORA_DIA === 'true'
     {description && <meta name="description" content={description} />}
     {keywords && keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
     <link rel="canonical" href={canonical} />
+    {Object.entries(alternates).map(([alternateLocale, href]) => href && <link rel="alternate" hreflang={alternateLocale} href={new URL(sitePath(withoutBase(href)), Astro.site)} />)}
+    {alternates.en && <link rel="alternate" hreflang="x-default" href={new URL(sitePath(withoutBase(alternates.en)), Astro.site)} />}
     <meta property="og:title" content={title} />
     <meta property="og:type" content={type} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:locale" content={lang.replace('-', '_')} />
+    <meta property="og:locale" content={locale === 'zh-CN' ? 'zh_CN' : 'en_US'} />
+    {alternates['zh-CN'] && <meta property="og:locale:alternate" content="zh_CN" />}
+    {alternates.en && <meta property="og:locale:alternate" content="en_US" />}
     <meta property="og:site_name" content={config.site.title} />
     {description && <meta property="og:description" content={description} />}
     {imageUrl && <meta property="og:image" content={imageUrl} />}
@@ -60,9 +70,9 @@ const diaEnabled = import.meta.env.PUBLIC_AURORA_DIA === 'true'
   <body>
     <div class="aurora-background" aria-hidden="true"></div>
     <a class="skip-link" href="#main-content">{messages.skipToContent}</a>
-    <Header />
+    <Header locale={locale} localeLinks={switchLinks} />
     <main id="main-content"><slot /></main>
-    <Footer />
+    <Footer locale={locale} />
     {diaEnabled && <DiaIsland client:idle locale={lang} />}
   </body>
 </html>
