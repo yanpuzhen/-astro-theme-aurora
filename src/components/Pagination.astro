@@ -9,8 +9,12 @@ const messages = messagesFor(config.site.language)
 ---
 {pageCount > 1 && (
   <nav class="pagination" aria-label="Pagination">
-    {page > 1 && <a href={pathFor(page - 1)}>{messages.newer}</a>}
-    <span>Page {page} of {pageCount}</span>
-    {page < pageCount && <a href={pathFor(page + 1)}>{messages.older}</a>}
+    {page > 1 && <a class="page-navigator" href={pathFor(page - 1)} aria-label={messages.newer}>←</a>}
+    <span class="pagination-pages">
+      {Array.from({ length: pageCount }, (_, index) => index + 1).map((number) => (
+        <a class:list={{ active: number === page }} href={pathFor(number)} aria-current={number === page ? 'page' : undefined}>{number}</a>
+      ))}
+    </span>
+    {page < pageCount && <a class="page-navigator" href={pathFor(page + 1)} aria-label={messages.older}>→</a>}
   </nav>
 )}

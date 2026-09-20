@@ -6,7 +6,10 @@ import { isPublicPost } from '../../lib/content'
 import { tagPath } from '../../lib/routing'
 const tags = collectTags((await getCollection('posts')).filter(isPublicPost))
 ---
+
 <BaseLayout title="Tags · Aurora" canonicalPath="/tags/">
-  <h1 class="page-heading">Tags</h1>
-  <div class="taxonomy-grid">{tags.map((tag) => <a class="taxonomy-card" href={tagPath(tag.name)}><strong>{tag.name}</strong><span>{tag.posts.length} articles</span></a>)}</div>
+  <section class="taxonomy-page">
+    <p class="eyebrow">Taxonomy</p><h1 class="page-heading">Tags</h1>
+    <div class="tag-cloud">{tags.map((tag) => <a href={tagPath(tag.name)}>{tag.name}<sup>{tag.posts.length}</sup></a>)}</div>
+  </section>
 </BaseLayout>

@@ -1,0 +1,52 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import { config } from '../lib/config'
+import { publicAssetPath, tagPath } from '../lib/routing'
+import { collectTags } from '../lib/taxonomy'
+import Icon from './Icon.astro'
+interface Props { posts: CollectionEntry<'posts'>[] }
+const { posts } = Astro.props
+const tags = collectTags(posts).slice(0, 14)
+const words = posts.reduce((sum, post) => sum + (post.body?.trim().split(/\s+/).length || 0), 0)
+const categories = new Set(posts.flatMap((post) => post.data.categories)).size
+const author = posts[0]?.data.author || { name: config.site.author, description: config.site.description, socials: {} }
+const configuredSocials = Object.entries(author.socials || {}).flatMap(([label, value]) => {
+  const href = typeof value === 'string' ? value : value?.link
+  return href ? [{ label, href }] : []
+})
+const github = config.menu.find((item) => item.label === 'GitHub')?.href
+const socialLinks = configuredSocials.some((item) => item.label.toLowerCase() === 'github') || !github
+  ? configuredSocials
+  : [...configuredSocials, { label: 'GitHub', href: github }]
+const socialIcon = (label: string): 'github' | 'link' => label.toLowerCase() === 'github' ? 'github' : 'link'
+---
+
+<aside class="sidebar" aria-label="Aurora sidebar">
+  <section class="profile-card highlighted" data-dia="author">
+    <div class="profile-card__inner">
+      <img class="profile-card__avatar diamond-avatar" src={publicAssetPath('/favicon.svg')} alt={author.name} />
+      <h2>{author.name}</h2>
+      <span class="gradient-rule" aria-hidden="true"></span>
+      <p>{author.description || config.site.description}</p>
+      {socialLinks.length > 0 && <div class="profile-socials">{socialLinks.map((item) => <a href={item.href} target="_blank" rel="noreferrer" aria-label={item.label} title={item.label}><Icon name={socialIcon(item.label)} /></a>)}</div>}
+      <dl class="profile-stats">
+        <div><dt>{words}</dt><dd>Words</dd></div>
+        <div><dt>{posts.length}</dt><dd>Articles</dd></div>
+        <div><dt>{categories}</dt><dd>Categories</dd></div>
+        <div><dt>{tags.length}</dt><dd>Tags</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="sidebar-box" id="sticky-tag-box">
+    <h2 class="sidebar-title"><span>Tags</span><i aria-hidden="true"></i></h2>
+    <div class="sidebar-tags">
+      {tags.map((tag) => <a href={tagPath(tag.name)}>{tag.name}<sup>{tag.posts.length}</sup></a>)}
+    </div>
+  </section>
+
+  <section class="sidebar-box recent-comments" aria-labelledby="recent-comments-title">
+    <h2 id="recent-comments-title" class="sidebar-title"><span>Recent comments</span><i aria-hidden="true"></i></h2>
+    <p class="empty-state"><span aria-hidden="true"></span> No recent comments</p>
+  </section>
+</aside>

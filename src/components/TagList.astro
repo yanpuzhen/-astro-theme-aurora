@@ -6,6 +6,6 @@ const visibleTags = limit ? tags.slice(0, limit) : tags
 ---
 {visibleTags.length > 0 && (
   <ul class="tag-list" aria-label="Tags">
-    {visibleTags.map((tag) => <li><a href={tagPath(tag)}>#{tag}</a></li>)}
+    {visibleTags.map((tag) => <li><a href={tagPath(tag)}># {tag}</a></li>)}
   </ul>
 )}

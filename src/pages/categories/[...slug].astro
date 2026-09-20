@@ -12,6 +12,7 @@ export async function getStaticPaths() {
 const { category } = Astro.props
 ---
 <BaseLayout title={`${category.name} · Categories`} canonicalPath={categoryPath(category.name)}>
-  <p class="eyebrow">Category</p><h1 class="page-heading">{category.name}</h1>
-  <div class="post-grid">{category.posts.map((post) => <PostCard post={post} />)}</div>
+  <section class="taxonomy-page"><p class="eyebrow">Category</p><h1 class="page-heading">{category.name}</h1>
+    <div class="post-grid">{category.posts.map((post) => <PostCard post={post} />)}</div>
+  </section>
 </BaseLayout>
