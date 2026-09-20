@@ -1,0 +1,24 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import HorizontalArticle from './HorizontalArticle.astro'
+import PostCard from './PostCard.astro'
+interface Props { posts: CollectionEntry<'posts'>[] }
+const { posts } = Astro.props
+const [hero, ...secondary] = posts
+---
+
+{hero && <section class="feature" aria-labelledby="feature-title">
+  <h2 id="feature-title" class="sr-only">Featured articles</h2>
+  <HorizontalArticle post={hero} />
+  <div class="feature-list">
+    <div class="feature-selection">
+      <div class="feature-selection__inner">
+        <span class="feature-selection__wordmark">EDITOR'S<br />SELECTION</span>
+        <strong><span class="feature-selection__icon" aria-hidden="true"></span> Recommended</strong>
+      </div>
+    </div>
+    <div class="feature-list__cards">
+      {secondary.map((post) => <PostCard post={post} feature />)}
+    </div>
+  </div>
+</section>}

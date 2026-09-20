@@ -20,8 +20,8 @@ const provider = configuredProvider === 'gitalk' || configuredProvider === 'vali
 
 export const config: AuroraConfig = {
   site: {
-    title: 'Aurora', subtitle: "Aurora's Blog", author: 'Aurora',
-    description: 'An Aurora blog powered by Astro.', language: locale,
+    title: 'Aurora 3.0', subtitle: 'Futuristic auroral theme powered by Astro', author: 'Aurora',
+    description: 'A static-first Aurora theme for expressive, multilingual publishing.', language: locale,
   },
   theme: {
     feature: true, darkMode: true, profileShape: 'diamond',
@@ -30,6 +30,8 @@ export const config: AuroraConfig = {
   menu: [
     { label: labels.home, href: '/' }, { label: labels.tags, href: '/tags/' },
     { label: labels.archives, href: '/archives/' }, { label: labels.about, href: '/about/' },
+    { label: 'Docs', href: 'https://yanpuzhen.github.io/-astro-theme-aurora/' },
+    { label: 'GitHub', href: 'https://github.com/yanpuzhen/-astro-theme-aurora' },
   ],
   comments: { provider, enabled: provider !== 'none', gitalkIdMode: import.meta.env.PUBLIC_GITALK_ID_MODE === 'pathname' ? 'pathname' : 'uid' },
 }

@@ -1,4 +1,30 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
+import Icon from '../../components/Icon.astro'
+
+const emptyAvatars = Array.from({ length: 24 })
 ---
-<BaseLayout title="Links · Aurora" canonicalPath="/links/"><article class="article-shell"><h1 class="article-title">Links</h1><div class="post-html"><p>Friends and links can be configured through the Aurora migration config.</p></div></article></BaseLayout>
+<BaseLayout title="Links · Aurora" description="Friends and links for Aurora." canonicalPath="/links/">
+  <section class="links-page" aria-labelledby="links-title">
+    <header class="links-page__intro">
+      <p class="eyebrow">Aurora / Friends</p>
+      <h1 id="links-title">Links</h1>
+    </header>
+    <section class="links-hero highlighted" aria-labelledby="links-hero-title">
+      <div class="links-hero__inner">
+        <div class="links-hero__heading">
+          <span class="eyebrow">Friends and links</span>
+          <h2 id="links-hero-title"><Icon name="link" /> Connect with Aurora creators</h2>
+          <span class="gradient-rule" aria-hidden="true"></span>
+        </div>
+        <div class="links-wall" aria-label="Configured friend links">
+          {emptyAvatars.map(() => <span class="links-avatar--empty" aria-hidden="true"></span>)}
+        </div>
+      </div>
+    </section>
+    <section class="links-empty-state">
+      <h2>No friend links configured</h2>
+      <p>This static shell is ready for opt-in links without fabricating external records.</p>
+    </section>
+  </section>
+</BaseLayout>

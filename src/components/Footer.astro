@@ -1,9 +1,20 @@
 ---
 import { config } from '../lib/config'
-import { sitePath } from '../lib/routing'
-import { messagesFor } from '../lib/i18n'
-const messages = messagesFor(config.site.language)
+import { publicAssetPath, sitePath } from '../lib/routing'
 ---
 <footer class="site-footer" id="footer">
-  <p>© {new Date().getFullYear()} <a href={sitePath('/')}>{config.site.author}</a>. {messages.builtWith}</p>
+  <div class="site-footer__rule" aria-hidden="true"></div>
+  <div class="site-footer__inner">
+    <div class="site-footer__copy">
+      <p>Copyright © 2019 - {new Date().getFullYear()} <strong>{config.site.author}</strong>. All Rights Reserved.</p>
+      <p>Powered by <a href="https://astro.build/">Astro</a> &amp; themed by <a href={sitePath('/')}>Aurora 3.0</a>.</p>
+      <p class="footer-attribution">Original visual system by <a href="https://github.com/auroral-ui/hexo-theme-aurora">Auroral-UI</a> under the MIT License.</p>
+    </div>
+    <div class="site-footer__links">
+      <a href={sitePath('/archives/')}>Archives</a>
+      <a href={sitePath('/tags/')}>Tags</a>
+      <a href={sitePath('/links/')}>Links</a>
+    </div>
+    <img class="footer-avatar diamond-avatar" src={publicAssetPath('/favicon.svg')} alt="" />
+  </div>
 </footer>

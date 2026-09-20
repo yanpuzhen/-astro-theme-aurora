@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
-interface Props { base: string }
+interface Props { base: string; overlay?: boolean; searchHref?: string }
 interface SearchResult { url: string; title: string; excerpt: string }
 interface PagefindResult { score: number; data: () => Promise<SearchResult> }
 interface PagefindSearchResponse { results: PagefindResult[] }
@@ -9,13 +9,52 @@ interface PagefindModule {
   mergeIndex: (path: string, options: { language: string; baseUrl: string }) => Promise<void>
   search: (value: string) => Promise<PagefindSearchResponse>
 }
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), { overlay: false, searchHref: '/search/' })
+const open = ref(!props.overlay)
+const searchInput = ref<HTMLInputElement>()
 const query = ref('')
 const results = ref<SearchResult[]>([])
 const loading = ref(false)
 const error = ref('')
 let pagefindLoading: Promise<PagefindModule> | undefined
 let searchId = 0
+let previousBodyOverflow = ''
+
+function lockBody() {
+  previousBodyOverflow = document.body.style.overflow
+  document.body.style.overflow = 'hidden'
+}
+
+function unlockBody() {
+  document.body.style.overflow = previousBodyOverflow
+}
+
+async function openSearch() {
+  open.value = true
+  lockBody()
+  await nextTick()
+  searchInput.value?.focus()
+}
+
+function closeSearch() {
+  if (props.overlay) {
+    open.value = false
+    unlockBody()
+  }
+}
+
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape') closeSearch()
+}
+
+onMounted(() => {
+  if (props.overlay) document.addEventListener('keydown', onKeydown)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('keydown', onKeydown)
+  unlockBody()
+})
 
 function pagefindBasePath() {
   return `${props.base.replace(/\/$/, '')}/pagefind/` || '/pagefind/'
@@ -83,14 +122,26 @@ async function search() {
 </script>
 
 <template>
-  <div class="search-island">
-    <input v-model="query" class="search-box" type="search" placeholder="Search Aurora…" aria-label="Search" @input="search" />
-    <p v-if="loading">Searching…</p><p v-else-if="error">{{ error }}</p>
-    <div class="search-results" aria-live="polite">
-      <a v-for="result in results" :key="result.url" class="search-result" :href="result.url">
-        <h2>{{ result.title }}</h2><p v-html="result.excerpt"></p>
-      </a>
-      <p v-if="query && !loading && !error && results.length === 0">No results.</p>
+  <a v-if="props.overlay" class="header-control header-search-trigger" :href="props.searchHref" aria-label="Open search" @click.prevent="openSearch">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.8" /><path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" /></svg>
+  </a>
+  <div v-if="!props.overlay || open" :class="{ 'search-modal': props.overlay }" :aria-hidden="props.overlay && !open" :role="props.overlay ? 'dialog' : undefined" :aria-modal="props.overlay ? 'true' : undefined" aria-label="Aurora search" @click.self="closeSearch">
+    <div class="search-island search-container" @click.stop>
+      <form class="search-form" @submit.prevent>
+        <label class="sr-only" for="search-input">Search</label>
+        <input id="search-input" ref="searchInput" v-model="query" class="search-input search-box" type="search" autocomplete="off" placeholder="Search Aurora..." aria-label="Search" @input="search" />
+        <button v-if="query" class="search-btn" type="button" aria-label="Clear search" @click="query = ''; results = []; error = ''"><span aria-hidden="true">×</span></button>
+        <button class="search-btn" type="submit" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.8" /><path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" /></svg></button>
+      </form>
+      <p v-if="!query && !loading" class="search-startscreen">Search across the statically generated Aurora archive.</p>
+      <p v-if="loading" class="search-state">Searching...</p><p v-else-if="error" class="search-state">{{ error }}</p>
+      <div class="search-results" aria-live="polite">
+        <a v-for="result in results" :key="result.url" class="search-result" :href="result.url">
+          <div class="search-hit-container"><span class="search-hit-icon">›</span><span class="search-hit-content-wrapper"><strong class="search-hit-title">{{ result.title }}</strong><span class="search-hit-path" v-html="result.excerpt"></span></span><span class="search-hit-action">→</span></div>
+        </a>
+        <p v-if="query && !loading && !error && results.length === 0" class="search-state">No results.</p>
+      </div>
+      <footer class="search-footer"><span>Pagefind index</span><span>Type to search</span></footer>
     </div>
   </div>
 </template>

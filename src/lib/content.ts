@@ -38,6 +38,7 @@ export interface NormalizedPostData {
   published: boolean
   draft: boolean
   rawHtml: boolean
+  demo: boolean
   preview?: number
   extras: Record<string, unknown>
 }
@@ -47,7 +48,7 @@ const KNOWN_FIELDS = new Set([
   'abstracts', 'preview', 'keywords', 'author', 'feature', 'sticky', 'pinned', 'slug',
   'permalink', 'permalinkMode', 'uid', 'legacyUid', 'legacyPermalink', 'legacyPermalinks',
   'aliases', 'photos', 'toc', 'comment', 'comments', 'commentId', 'commentPath', 'lang',
-  'hidden', 'published', 'draft', 'rawHtml', 'allowHtml', 'type', 'categoryMode', 'data',
+  'hidden', 'published', 'draft', 'rawHtml', 'allowHtml', 'type', 'categoryMode', 'data', 'demo',
 ])
 
 export function asStringList(value: unknown): string[] {
@@ -133,12 +134,15 @@ export function normalizeLegacyData(
     commentPath: firstString(raw.commentPath), lang: firstString(raw.lang) || 'en',
     hidden: asBoolean(raw.hidden, false), published: asBoolean(raw.published, true),
     draft: asBoolean(raw.draft, false), rawHtml: asBoolean(raw.rawHtml ?? raw.allowHtml, true),
+    demo: asBoolean(raw.demo, false),
     preview: typeof raw.preview === 'number' ? raw.preview : undefined, extras,
   }
 }
 
-export function isPublicPost(post: { data: Pick<NormalizedPostData, 'hidden' | 'published' | 'draft'> }): boolean {
-  return post.data.published && !post.data.hidden && !post.data.draft
+export function isPublicPost(post: { data: Pick<NormalizedPostData, 'hidden' | 'published' | 'draft' | 'demo'> }): boolean {
+  const demoBuild = process.env.ASTRO_DEMO_BUILD === 'true'
+  const demo = post.data.demo
+  return post.data.published && !post.data.hidden && !post.data.draft && (!demoBuild || demo)
 }
 
 export function excerptFromBody(body: string, limit = 160): string {

@@ -3,12 +3,14 @@ import { getCollection, render, type CollectionEntry } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import TagList from '../../components/TagList.astro'
 import Comments from '../../components/Comments.astro'
+import Sidebar from '../../components/Sidebar.astro'
 import CodeCopyIsland from '../../islands/CodeCopyIsland.vue'
+import LightboxIsland from '../../islands/LightboxIsland.vue'
+import Icon from '../../components/Icon.astro'
 import { config } from '../../lib/config'
 import { isPublicPost } from '../../lib/content'
 import { previousNext, excerptFor, selectHomePosts } from '../../lib/posts'
 import { assertNoRouteCollisions, postPath, publicAssetPath, resolvePostPath, routeManifestEntry, sitePath } from '../../lib/routing'
-import LightboxIsland from '../../islands/LightboxIsland.vue'
 
 const posts = await getCollection('posts')
 const publicEntries = posts.filter(isPublicPost)
@@ -25,32 +27,52 @@ const ordered = selectHomePosts(publicEntries, config.theme.feature).posts
 const { previous, next } = previousNext(ordered, post)
 const manifest = routeManifestEntry(post)
 const description = post.data.description || excerptFor(post)
-const image = post.data.cover
+const image = post.data.cover || '/assets/default-cover.jpg'
 const hasCode = /```/.test(post.body || '')
 const hasImages = /!\[[^\]]*\]\([^)]*\)|<img\b/i.test(post.body || '')
 const jsonLd = {
   '@context': 'https://schema.org', '@type': 'BlogPosting', headline: post.data.title, description,
   url: new URL(sitePath(manifest.canonicalPath), Astro.site).toString(), datePublished: post.data.date.toISOString(),
   ...(post.data.updated ? { dateModified: post.data.updated.toISOString() } : {}),
-  author: { '@type': 'Person', name: post.data.author.name }, ...(image ? { image: publicAssetPath(image) } : {}),
+  author: { '@type': 'Person', name: post.data.author.name }, image: publicAssetPath(image),
 }
 ---
+
 <BaseLayout title={`${post.data.title} · ${config.site.title}`} description={description} canonicalPath={manifest.canonicalPath}
   image={image} type="article" author={post.data.author.name} published={post.data.date} updated={post.data.updated}
   keywords={post.data.keywords} tags={post.data.tags} lang={post.data.lang} jsonLd={jsonLd}>
   <article class="article-shell" data-pagefind-body>
-    <header class="article-header">
-      <div class="post-card__meta">{post.data.categories[0] && <span>{post.data.categories[0]}</span>}<time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString(post.data.lang)}</time>{post.data.updated && <time datetime={post.data.updated.toISOString()}>Updated {post.data.updated.toLocaleDateString(post.data.lang)}</time>}</div>
-      <h1 class="article-title">{post.data.title}</h1>
-      <div class="article-meta"><span>{post.data.author.name}</span><TagList tags={post.data.tags} /></div>
-      {description && <p class="article-summary">{description}</p>}
-      {image && <img class="article-cover" src={publicAssetPath(image)} alt={post.data.title} loading="eager" />}
+    <header class="article-hero highlighted">
+      <img class="article-cover" src={publicAssetPath(image)} alt="" loading="eager" />
+      <div class="article-hero__veil" aria-hidden="true"></div>
+      <div class="article-hero__content">
+        <div class="article-labels">
+          {post.data.categories[0] && <span class="article-category">{post.data.categories[0]}</span>}
+          <time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString(post.data.lang)}</time>
+          <TagList tags={post.data.tags} limit={3} />
+        </div>
+        <h1 class="article-title">{post.data.title}</h1>
+        <div class="article-author-row">
+          <img src={publicAssetPath('/favicon.svg')} alt="" />
+          <strong>{post.data.author.name}</strong>
+          <span>{post.data.date.toLocaleDateString(post.data.lang, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+          <span class="article-stat"><Icon name="clock" /> {Math.max(1, Math.ceil((post.body?.length || 1) / 900))} min.</span>
+          <span class="article-stat"><Icon name="article" /> {post.body?.trim().split(/\s+/).length || 0}</span>
+        </div>
+      </div>
     </header>
-    {headings.length > 0 && post.data.toc && <nav class="taxonomy-card" aria-label="Table of contents"><strong>Contents</strong><ul>{headings.map((heading) => <li><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul></nav>}
-      {hasCode && <CodeCopyIsland client:load />}
-      {hasImages && <LightboxIsland client:load />}
-    <div class="post-html"><Content /></div>
-    <nav class="article-nav" aria-label="Article navigation">{previous ? <a href={postPath(previous)}>← {previous.data.title}</a> : <span />}{next ? <a href={postPath(next)}>{next.data.title} →</a> : <span />}</nav>
-    <Comments enabled={post.data.comments && config.comments.enabled} provider={config.comments.provider} providerId={config.comments.gitalkIdMode} legacyUid={manifest.legacyUid} canonicalPath={manifest.canonicalUrlPath} commentPath={manifest.commentPath} title={post.data.title} />
+
+    <div class="main-grid article-main-grid">
+      <div class="article-column">
+        {description && <p class="article-summary">{description}</p>}
+        {headings.length > 0 && post.data.toc && <nav class="toc-card" aria-label="Table of contents"><h2>Contents</h2><ul>{headings.map((heading) => <li><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul></nav>}
+        {hasCode && <CodeCopyIsland client:load />}
+        {hasImages && <LightboxIsland client:load />}
+        <div class="post-html"><Content /></div>
+        <nav class="article-nav" aria-label="Article navigation">{previous ? <a href={postPath(previous)}><small>Previous article</small><span>← {previous.data.title}</span></a> : <span />}{next ? <a href={postPath(next)}><small>Next article</small><span>{next.data.title} →</span></a> : <span />}</nav>
+        <Comments enabled={post.data.comments && config.comments.enabled} provider={config.comments.provider} providerId={config.comments.gitalkIdMode} legacyUid={manifest.legacyUid} canonicalPath={manifest.canonicalUrlPath} commentPath={manifest.commentPath} title={post.data.title} />
+      </div>
+      <Sidebar posts={publicEntries} />
+    </div>
   </article>
 </BaseLayout>

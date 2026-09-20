@@ -1,0 +1,15 @@
+---
+import { categoryPath, pagePath } from '../lib/routing'
+interface Category { name: string; count: number }
+interface Props { categories: Category[]; active?: string }
+const { categories, active = '' } = Astro.props
+---
+
+<nav class="category-tabs" aria-label="Categories">
+  <a class:list={{ active: active === '' }} class="category-tab category-tab--all" href={pagePath(1)}>All <span>{categories.reduce((sum, item) => sum + item.count, 0)}</span></a>
+  {categories.map((category) => (
+    <a class:list={{ active: active === category.name }} class="category-tab" href={categoryPath(category.name)}>
+      {category.name} <span>{category.count}</span>
+    </a>
+  ))}
+</nav>

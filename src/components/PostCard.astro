@@ -5,19 +5,24 @@ import { categoryPath, postPath, publicAssetPath } from '../lib/routing'
 import TagList from './TagList.astro'
 interface Props { post: CollectionEntry<'posts'>; feature?: boolean }
 const { post, feature = false } = Astro.props
-const coverStyle = post.data.cover ? `background-image: url("${publicAssetPath(post.data.cover)}")` : undefined
+const cover = post.data.cover || '/assets/default-cover.jpg'
 ---
 <article class:list={['post-card', { 'post-card--feature': feature }]}>
-  <a class="post-card__cover" href={postPath(post)} aria-label={post.data.title} style={coverStyle}>
-    <span aria-hidden="true"></span>
+  <a class="post-card__cover" href={postPath(post)} aria-label={post.data.title}>
+    <img src={publicAssetPath(cover)} alt="" loading="lazy" />
+    <span class="thumbnail-screen" aria-hidden="true"></span>
   </a>
   <div class="post-card__body">
-    <div class="post-card__meta">
-      {post.data.categories[0] && <a href={categoryPath(post.data.categories[0])}>{post.data.categories[0]}</a>}
-      <time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString(post.data.lang)}</time>
+    <div class="post-card__labels">
+      {post.data.categories[0] && <a class="article-category" href={categoryPath(post.data.categories[0])}>{post.data.categories[0]}</a>}
+      <TagList tags={post.data.tags} limit={2} />
     </div>
     <h2><a href={postPath(post)}>{post.data.title}</a></h2>
     <p>{excerptFor(post)}</p>
-    <TagList tags={post.data.tags} limit={3} />
+    <div class="post-card__footer">
+      <img src={publicAssetPath('/favicon.svg')} alt="" />
+      <strong>{post.data.author.name}</strong>
+      <time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString(post.data.lang, { year: 'numeric', month: 'short', day: 'numeric' })}</time>
+    </div>
   </div>
 </article>

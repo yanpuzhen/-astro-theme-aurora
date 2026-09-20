@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Aurora Demo gallery</title>
+  <desc id="desc">A violet and cyan gallery card with a bright moon.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b12"/>
+      <stop offset=".55" stop-color="#5433ff"/>
+      <stop offset="1" stop-color="#24c6dc"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#sky)"/>
+  <path d="M0 500c260-160 380 20 600-95 230-120 370 30 600-65v335H0z" fill="#ff0099" opacity=".62"/>
+  <circle cx="950" cy="160" r="75" fill="#fff" opacity=".9"/>
+</svg>

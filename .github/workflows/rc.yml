@@ -2,8 +2,9 @@ name: RC validation
 
 on:
   push:
-    branches: ['**']
+    branches: [dev]
   pull_request:
+    branches: [main]
 
 permissions:
   contents: read
@@ -36,3 +37,24 @@ jobs:
 
       - name: Build production output and Pagefind index
         run: pnpm build
+
+      - name: Build bilingual documentation
+        run: pnpm docs:build
+
+      - name: Build combined Pages artifact
+        run: pnpm pages:build
+
+      - name: Verify Pages artifact
+        run: pnpm test:pages
+
+      - name: Verify README links and preview assets
+        run: pnpm test:readme
+
+      - name: Install Chromium for browser checks
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run standalone browser checks
+        run: pnpm run test:browser
+
+      - name: Run combined Pages browser checks
+        run: pnpm run test:browser:pages

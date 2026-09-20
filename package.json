@@ -29,8 +29,17 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build && pagefind --site dist",
+    "demo:build": "ASTRO_SITE=https://yanpuzhen.github.io ASTRO_BASE=/-astro-theme-aurora/demo/ ASTRO_DEMO_BUILD=true pnpm build",
+    "docs:dev": "vitepress dev docs-site",
+    "docs:build": "vitepress build docs-site",
+    "docs:preview": "vitepress preview docs-site",
+    "pages:build": "node scripts/build-pages.mjs",
+    "test:pages": "node scripts/verify-pages.mjs",
+    "test:readme": "node scripts/verify-readme.mjs",
+    "test:browser:pages": "PLAYWRIGHT_PAGES=true playwright test",
+    "visual:capture": "node scripts/capture-visual.mjs",
     "check": "astro check",
-    "test:browser": "playwright test",
+    "test:browser": "pnpm build && playwright test",
     "pretest": "pnpm build",
     "test": "node scripts/verify-build.mjs && node --experimental-strip-types scripts/verify-rc.mjs",
     "preview": "astro preview"
@@ -47,6 +56,7 @@
     "@types/node": "^26.6.1",
     "pagefind": "^1.5.2",
     "rehype-raw": "^7.0.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitepress": "^1.6.4"
   }
 }

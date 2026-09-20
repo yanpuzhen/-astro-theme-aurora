@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import { excerptFor } from '../lib/posts'
+import { categoryPath, postPath, publicAssetPath } from '../lib/routing'
+import TagList from './TagList.astro'
+interface Props { post: CollectionEntry<'posts'> }
+const { post } = Astro.props
+const cover = post.data.cover || '/assets/default-cover.jpg'
+---
+
+<article class="horizontal-article highlighted">
+  <a class="horizontal-article__cover" href={postPath(post)} aria-label={post.data.title}>
+    <img src={publicAssetPath(cover)} alt="" loading="eager" />
+    <span class="thumbnail-screen" aria-hidden="true"></span>
+  </a>
+  <div class="horizontal-article__content">
+    <div class="article-labels">
+      {post.data.categories[0] && <a class="article-category" href={categoryPath(post.data.categories[0])}>{post.data.categories[0]}</a>}
+      <TagList tags={post.data.tags} limit={2} />
+    </div>
+    <h1><a href={postPath(post)}>{post.data.title}</a></h1>
+    <p>{excerptFor(post)}</p>
+    <div class="article-footer">
+      <img src={publicAssetPath('/favicon.svg')} alt="" />
+      <strong>{post.data.author.name}</strong>
+      <time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString(post.data.lang, { year: 'numeric', month: 'short', day: 'numeric' })}</time>
+    </div>
+  </div>
+</article>
