@@ -1,0 +1,25 @@
+---
+import Icon from './Icon.astro'
+import { localeLabels, type AuroraLocale } from '../lib/i18n'
+
+interface Props {
+  locale: AuroraLocale
+  links: Record<AuroraLocale, string>
+  mobile?: boolean
+  label: string
+  switchTo: string
+}
+
+const { locale, links, mobile = false, label, switchTo } = Astro.props
+---
+
+<nav class:list={['locale-switcher', { 'locale-switcher--mobile': mobile }]} aria-label={label}>
+  <Icon name="language" />
+  {(['en', 'zh-CN'] as const).map((item) => (
+    <a href={links[item]} aria-current={item === locale ? 'page' : undefined}
+      aria-label={item === locale ? `${localeLabels[item]} (${label})` : `${switchTo} ${localeLabels[item]}`}
+      class={item === locale ? 'current' : undefined}>
+      {item === locale ? (item === 'en' ? 'En' : '简体') : localeLabels[item]}
+    </a>
+  ))}
+</nav>

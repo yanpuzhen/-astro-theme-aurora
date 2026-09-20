@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue'
+import type { AuroraMessages } from '../lib/i18n'
 
+const props = defineProps<{ messages: Pick<AuroraMessages, 'copy' | 'copied' | 'unavailable'> }>()
 const cleanups: (() => void)[] = []
 
 onMounted(() => {
@@ -9,16 +11,16 @@ onMounted(() => {
     const button = document.createElement('button')
     button.type = 'button'
     button.className = 'code-copy-button'
-    button.title = 'Copy code'
-    button.setAttribute('aria-label', 'Copy code')
-    button.textContent = 'Copy'
+    button.title = props.messages.copy
+    button.setAttribute('aria-label', props.messages.copy)
+    button.textContent = props.messages.copy
     const handler = async () => {
       try {
         await navigator.clipboard.writeText(pre.querySelector('code')?.textContent || '')
-        button.textContent = 'Copied'
-        window.setTimeout(() => { button.textContent = 'Copy' }, 1400)
+        button.textContent = props.messages.copied
+        window.setTimeout(() => { button.textContent = props.messages.copy }, 1400)
       } catch {
-        button.textContent = 'Unavailable'
+        button.textContent = props.messages.unavailable
       }
     }
     button.addEventListener('click', handler)

@@ -3,21 +3,22 @@ import type { CollectionEntry } from 'astro:content'
 import { excerptFor } from '../lib/posts'
 import { categoryPath, postPath, publicAssetPath } from '../lib/routing'
 import TagList from './TagList.astro'
-interface Props { post: CollectionEntry<'posts'>; feature?: boolean }
-const { post, feature = false } = Astro.props
+import type { AuroraLocale } from '../lib/i18n'
+interface Props { post: CollectionEntry<'posts'>; feature?: boolean; locale?: AuroraLocale }
+const { post, feature = false, locale = 'en' } = Astro.props
 const cover = post.data.cover || '/assets/default-cover.jpg'
 ---
 <article class:list={['post-card', { 'post-card--feature': feature }]}>
-  <a class="post-card__cover" href={postPath(post)} aria-label={post.data.title}>
+  <a class="post-card__cover" href={postPath(post, { locale })} aria-label={post.data.title}>
     <img src={publicAssetPath(cover)} alt="" loading="lazy" />
     <span class="thumbnail-screen" aria-hidden="true"></span>
   </a>
   <div class="post-card__body">
     <div class="post-card__labels">
-      {post.data.categories[0] && <a class="article-category" href={categoryPath(post.data.categories[0])}>{post.data.categories[0]}</a>}
-      <TagList tags={post.data.tags} limit={2} />
+      {post.data.categories[0] && <a class="article-category" href={categoryPath(post.data.categories[0], locale)}>{post.data.categories[0]}</a>}
+      <TagList tags={post.data.tags} limit={2} locale={locale} />
     </div>
-    <h2><a href={postPath(post)}>{post.data.title}</a></h2>
+    <h2><a href={postPath(post, { locale })}>{post.data.title}</a></h2>
     <p>{excerptFor(post)}</p>
     <div class="post-card__footer">
       <img src={publicAssetPath('/favicon.svg')} alt="" />

@@ -1,19 +1,23 @@
 ---
 import { config } from '../lib/config'
-import { publicAssetPath, sitePath } from '../lib/routing'
+import { localizedSitePath, publicAssetPath } from '../lib/routing'
+import { messagesFor, type AuroraLocale } from '../lib/i18n'
+interface Props { locale?: AuroraLocale }
+const { locale = config.site.language } = Astro.props
+const messages = messagesFor(locale)
 ---
 <footer class="site-footer" id="footer">
   <div class="site-footer__rule" aria-hidden="true"></div>
   <div class="site-footer__inner">
     <div class="site-footer__copy">
-      <p>Copyright © 2019 - {new Date().getFullYear()} <strong>{config.site.author}</strong>. All Rights Reserved.</p>
-      <p>Powered by <a href="https://astro.build/">Astro</a> &amp; themed by <a href={sitePath('/')}>Aurora 3.0</a>.</p>
-      <p class="footer-attribution">Original visual system by <a href="https://github.com/auroral-ui/hexo-theme-aurora">Auroral-UI</a> under the MIT License.</p>
+      <p>Copyright © 2019 - {new Date().getFullYear()} <strong>{config.site.author}</strong>. {messages.rightsReserved}</p>
+      <p>{messages.builtWith} <a href="https://astro.build/">Astro</a> &amp; <a href={localizedSitePath('/', locale)}>Aurora 3.0</a>.</p>
+      <p class="footer-attribution">{messages.originalVisualSystem} <a href="https://github.com/auroral-ui/hexo-theme-aurora">Auroral-UI</a> under the MIT License.</p>
     </div>
     <div class="site-footer__links">
-      <a href={sitePath('/archives/')}>Archives</a>
-      <a href={sitePath('/tags/')}>Tags</a>
-      <a href={sitePath('/links/')}>Links</a>
+      <a href={localizedSitePath('/archives/', locale)}>{messages.archives}</a>
+      <a href={localizedSitePath('/tags/', locale)}>{messages.tags}</a>
+      <a href={localizedSitePath('/links/', locale)}>{messages.links}</a>
     </div>
     <img class="footer-avatar diamond-avatar" src={publicAssetPath('/favicon.svg')} alt="" />
   </div>

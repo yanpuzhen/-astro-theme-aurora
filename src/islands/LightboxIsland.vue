@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
+import type { AuroraMessages } from '../lib/i18n'
 
+const props = defineProps<{ messages: Pick<AuroraMessages, 'closeImage'> }>()
 const open = ref(false)
 const image = ref('')
 const alt = ref('')
@@ -20,7 +22,7 @@ onUnmounted(() => cleanups.forEach((cleanup) => cleanup()))
 
 <template>
   <dialog v-if="open" open class="lightbox-dialog" @click.self="close">
-    <button type="button" aria-label="Close image" @click="close">×</button>
+    <button type="button" :aria-label="props.messages.closeImage" @click="close">×</button>
     <img :src="image" :alt="alt" />
   </dialog>
 </template>

@@ -1,32 +1,35 @@
 ---
-import { config } from '../lib/config'
-import { publicAssetPath, sitePath } from '../lib/routing'
+import { config, menuFor } from '../lib/config'
+import { localizedSitePath, publicAssetPath, withoutBase } from '../lib/routing'
 import ThemeIsland from '../islands/ThemeIsland.vue'
 import MobileMenuIsland from '../islands/MobileMenuIsland.vue'
 import SearchIsland from '../islands/SearchIsland.vue'
-import Icon from './Icon.astro'
-const currentPath = Astro.url.pathname
-const menu = config.menu.map((item) => ({
-  ...item,
-  href: /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(item.href) ? item.href : sitePath(item.href),
-}))
+import LocaleSwitcher from './LocaleSwitcher.astro'
+import { messagesFor, type AuroraLocale } from '../lib/i18n'
+
+interface Props { locale?: AuroraLocale; localeLinks?: Record<AuroraLocale, string> }
+const { locale = config.site.language, localeLinks = { en: localizedSitePath('/', 'en'), 'zh-CN': localizedSitePath('/', 'zh-CN') } } = Astro.props
+const currentPath = withoutBase(Astro.url.pathname)
+const menu = menuFor(locale)
+const messages = messagesFor(locale)
+const isExternal = (href: string) => /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(href)
 ---
 <header class="site-header">
   <div class="site-header__inner">
-    <a class="site-logo" href={sitePath('/')} aria-label={config.site.title}>
+    <a class="site-logo" href={localizedSitePath('/', locale)} aria-label={config.site.title}>
       <img src={publicAssetPath('/favicon.svg')} alt="" />
       <span><strong>{config.site.author}</strong><small>AURORA 3.0</small></span>
     </a>
-    <nav class="desktop-navigation" aria-label="Primary navigation">
+    <nav class="desktop-navigation" aria-label={messages.primaryNavigation}>
       {menu.map((item) => (
-        <a class:list={{ active: currentPath === item.href }} href={item.href}>{item.label}</a>
+        <a class:list={{ active: !isExternal(item.href) && currentPath === withoutBase(item.href) }} href={item.href}>{item.label}</a>
       ))}
     </nav>
     <div class="header-controls">
-      <SearchIsland client:load overlay base={import.meta.env.BASE_URL} searchHref={sitePath('/search/')} />
-      <span class="header-control header-language" aria-label="Language"><Icon name="language" /><span>{config.site.language === 'zh-CN' ? '简体' : 'En'}</span></span>
-      <ThemeIsland client:load />
+      <SearchIsland client:load overlay base={import.meta.env.BASE_URL} searchHref={localizedSitePath('/search/', locale)} locale={locale} messages={messages} />
+      <LocaleSwitcher locale={locale} links={localeLinks} label={messages.language} switchTo={messages.switchTo} />
+      <ThemeIsland client:load messages={messages} />
     </div>
-    <MobileMenuIsland client:load menu={menu} logo={publicAssetPath('/favicon.svg')} />
+    <MobileMenuIsland client:load menu={menu} logo={publicAssetPath('/favicon.svg')} locale={locale} localeLinks={localeLinks} messages={messages} />
   </div>
 </header>
