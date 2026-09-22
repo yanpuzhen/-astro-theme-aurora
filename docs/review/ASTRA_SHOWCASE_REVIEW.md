@@ -11,7 +11,8 @@ the Pages artifact. It does not merge the PR, publish stable, or move RC2.
 - Repository: `yanpuzhen/astro-theme-aurora`
 - PR: [#5](https://github.com/yanpuzhen/astro-theme-aurora/pull/5), **OPEN** and **NOT MERGED**
 - Base: `main` at `b0e2d10d16a83c487c112d3a030acbe6d47d9a60`
-- Reviewed head: `dev` at `6a759d0c795e027da03ee09868253e9509cc22ad` (`docs(review): record Astra showcase gate`)
+- Reviewed implementation head: `c29afa9` (`fix(review): harden showcase release gates`)
+- Review record commits: `6a759d0` and `8c512d2`
 - `origin/dev` before the local fix: `752749b42c417240e650603b34d48f80890318a4`
 - `v3.0.0-rc.2` peeled commit: `b0e2d10d16a83c487c112d3a030acbe6d47d9a60` (unchanged)
 - Working tree after verification: clean
