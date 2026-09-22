@@ -1,0 +1,27 @@
+---
+import { localizedSitePath } from '../lib/routing'
+import { messagesFor, type AuroraLocale } from '../lib/i18n'
+
+interface Props { locale?: AuroraLocale }
+const { locale = 'en' } = Astro.props
+const messages = messagesFor(locale)
+const english = locale === 'en'
+---
+<article class="article-shell about-showcase">
+  <header class="article-header"><p class="eyebrow">Aurora / {messages.about}</p><h1 class="article-title">{english ? 'About Aurora 3' : '关于 Aurora 3'}</h1></header>
+  <div class="post-html">
+    <p class="lead">{messages.aboutIntro}</p>
+    <h2>{english ? 'A static-first migration' : '静态优先的迁移'}</h2>
+    <p>{english ? 'Aurora 3 moves routing, content collections, SEO, archives, taxonomy, RSS, sitemap, and Pagefind indexing into Astro build time. The generated article is ordinary HTML: it remains useful with JavaScript disabled and deploys cleanly to static hosting.' : 'Aurora 3 将路由、内容集合、SEO、归档、分类、RSS、Sitemap 和 Pagefind 索引交给 Astro 在构建期完成。生成的文章就是普通 HTML，即使关闭 JavaScript 也保持可读，并且可以直接部署到静态托管。'}</p>
+    <h2>{english ? 'Rich Markdown, carefully bounded' : '丰富但有边界的 Markdown'}</h2>
+    <p>{english ? 'The single Astro → Remark → Rehype → Shiki pipeline supports CommonMark, GFM tables and tasks, Aurora containers, syntax highlighting, raw HTML media, and build-time KaTeX math. Vue islands are reserved for search, comments, lightbox, code copy, theme, mobile navigation, and Dia.' : '单一的 Astro → Remark → Rehype → Shiki 管线支持 CommonMark、GFM 表格与任务列表、Aurora 容器、代码高亮、媒体 HTML 和构建期 KaTeX 数学公式。Vue island 只负责搜索、评论、灯箱、代码复制、主题、移动菜单和 Dia。'}</p>
+    <h2>{english ? 'Explore the project' : '探索项目'}</h2>
+    <ul>
+      <li><a href="https://github.com/yanpuzhen/astro-theme-aurora">{english ? 'Source repository' : '源代码仓库'}</a></li>
+      <li><a href={`https://yanpuzhen.github.io/astro-theme-aurora/${english ? '' : 'cn/'}`}>{english ? 'Documentation' : '中文文档'}</a></li>
+      <li><a href="https://github.com/yanpuzhen/astro-theme-aurora/blob/main/LICENSE">{english ? 'License and attribution' : '许可证与署名'}</a></li>
+      <li><a href={localizedSitePath('/links/', locale)}>{english ? 'Curated project links' : '项目与资源链接'}</a></li>
+    </ul>
+    <p>{english ? 'The Demo identity is intentionally Aurora Demo: its profile, comment examples, footer counters, links, and started date are deterministic showcase fixtures, never production analytics or personal biography.' : 'Demo 使用 Aurora Demo 作为明确身份：Profile、评论示例、Footer 计数、链接和开始日期都是确定性的展示 fixture，不代表生产分析数据或真实个人简介。'}</p>
+  </div>
+</article>

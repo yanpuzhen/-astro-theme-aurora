@@ -22,7 +22,7 @@ const isExternal = (href: string) => /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(href)
     </a>
     <nav class="desktop-navigation" aria-label={messages.primaryNavigation}>
       {menu.map((item) => (
-        <a class:list={{ active: !isExternal(item.href) && currentPath === withoutBase(item.href) }} href={item.href}>{item.label}</a>
+        <a data-menu={item.label} class:list={{ active: !isExternal(item.href) && currentPath === withoutBase(item.href) }} href={item.href}>{item.label}</a>
       ))}
     </nav>
     <div class="header-controls">

@@ -8,7 +8,7 @@ const { enabled, provider, providerId = 'uid', legacyUid, canonicalPath, comment
 const messages = messagesFor(locale)
 ---
 {enabled && provider !== 'none' && (
-  <section class="comments" id="comments" data-provider={provider} data-legacy-uid={legacyUid} data-canonical-path={canonicalPath} data-legacy-path={commentPath}>
+  <section class="comments" id="comments" data-dia="jump-to-comment" data-provider={provider} data-legacy-uid={legacyUid} data-canonical-path={canonicalPath} data-legacy-path={commentPath}>
     <h2>{messages.comments}</h2>
     <CommentIsland client:visible provider={provider} providerId={providerId} legacyUid={legacyUid} canonicalPath={canonicalPath} legacyPath={commentPath} title={title} />
   </section>

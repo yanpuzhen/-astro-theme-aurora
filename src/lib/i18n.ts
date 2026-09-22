@@ -32,6 +32,9 @@ export interface AuroraMessages {
   closeImage: string; unavailable: string; brandDescription: string; rightsReserved: string; originalVisualSystem: string
   tableOfContents: string; minutes: string; words: string; notFoundTitle: string; notFoundMessage: string
   featuredArticles: string; editorSelection: string; recommended: string
+  poweredBy: string; themedBy: string; pageViews: string; uniqueVisitors: string; siteRunningFor: string
+  day: string; demoStats: string; projects: string; resources: string; linksIntro: string; aboutIntro: string
+  homeAction: string; searchAction: string; noCommentsConfigured: string
 }
 
 const messages: Record<AuroraLocale, AuroraMessages> = {
@@ -56,7 +59,11 @@ const messages: Record<AuroraLocale, AuroraMessages> = {
     rightsReserved: 'All Rights Reserved.', originalVisualSystem: 'Original visual system by',
     tableOfContents: 'Contents', minutes: 'min.', words: 'words', notFoundTitle: 'Page not found',
     notFoundMessage: 'The page you requested does not exist.', featuredArticles: 'Featured articles',
-    editorSelection: "EDITOR'S SELECTION", recommended: 'Recommended',
+    editorSelection: "EDITOR'S SELECTION", recommended: 'Recommended', poweredBy: 'Powered by', themedBy: 'Themed by',
+    pageViews: 'Page views', uniqueVisitors: 'Unique visitors', siteRunningFor: 'Site running for', day: 'days',
+    demoStats: 'Demo showcase data', projects: 'Projects', resources: 'Resources', linksIntro: 'Curated project and resource links for this showcase.',
+    aboutIntro: 'A complete Aurora 3 showcase: static HTML, multilingual content, focused islands, and a build-time Markdown pipeline.',
+    homeAction: 'Back to home', searchAction: 'Search the archive', noCommentsConfigured: 'Comments are not configured for this site.',
   },
   'zh-CN': {
     home: '首页', latestArticles: '最新文章', viewArchive: '查看归档 →', all: '全部', featured: '精选',
@@ -78,7 +85,11 @@ const messages: Record<AuroraLocale, AuroraMessages> = {
     rightsReserved: '版权所有。', originalVisualSystem: '原始视觉系统来自',
     tableOfContents: '目录', minutes: '分钟', words: '字', notFoundTitle: '找不到页面',
     notFoundMessage: '你访问的页面不存在。', featuredArticles: '精选文章', editorSelection: '编辑精选',
-    recommended: '推荐',
+    recommended: '推荐', poweredBy: '由', themedBy: '主题来自', pageViews: '页面浏览', uniqueVisitors: '独立访客',
+    siteRunningFor: '站点已运行', day: '天', demoStats: 'Demo 展示数据', projects: '项目', resources: '资源',
+    linksIntro: '为本次 Showcase 整理的项目与资源链接。',
+    aboutIntro: '完整展示 Aurora 3 的能力：静态 HTML、多语言内容、聚焦交互岛和构建期 Markdown 管线。',
+    homeAction: '返回首页', searchAction: '搜索归档', noCommentsConfigured: '本站尚未配置评论服务。',
   },
 }
 

@@ -29,7 +29,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build && pagefind --site dist",
-    "demo:build": "ASTRO_SITE=https://yanpuzhen.github.io ASTRO_BASE=/astro-theme-aurora/demo/ ASTRO_DEMO_BUILD=true pnpm build",
+    "demo:build": "ASTRO_SITE=https://yanpuzhen.github.io ASTRO_BASE=/astro-theme-aurora/demo/ ASTRO_DEMO_BUILD=true PUBLIC_AURORA_DIA=true pnpm build",
     "docs:dev": "vitepress dev docs-site",
     "docs:build": "vitepress build docs-site",
     "docs:preview": "vitepress preview docs-site",
@@ -57,8 +57,12 @@
     "@astrojs/check": "^0.9.10",
     "@playwright/test": "^1.63.0",
     "@types/node": "^26.6.1",
+    "katex": "^0.18.7",
     "pagefind": "^1.5.2",
+    "rehype-katex": "^7.0.1",
     "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
     "typescript": "^5.9.3",
     "vitepress": "^1.6.4"
   }

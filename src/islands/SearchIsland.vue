@@ -120,7 +120,7 @@ async function search() {
 </script>
 
 <template>
-  <a v-if="props.overlay" class="header-control header-search-trigger" :href="props.searchHref" :aria-label="props.messages.openSearch" @click.prevent="openSearch">
+  <a v-if="props.overlay" data-dia="search" class="header-control header-search-trigger" :href="props.searchHref" :aria-label="props.messages.openSearch" @click.prevent="openSearch">
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.8" /><path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" /></svg>
   </a>
   <div v-if="!props.overlay || open" :class="{ 'search-modal': props.overlay }" :aria-hidden="props.overlay && !open" :role="props.overlay ? 'dialog' : undefined" :aria-modal="props.overlay ? 'true' : undefined" :aria-label="props.messages.search" @click.self="closeSearch">

@@ -145,7 +145,10 @@ export function normalizeLegacyData(
 export function isPublicPost(post: { data: Pick<NormalizedPostData, 'hidden' | 'published' | 'draft' | 'demo'> }): boolean {
   const demoBuild = process.env.ASTRO_DEMO_BUILD === 'true'
   const demo = post.data.demo
-  return post.data.published && !post.data.hidden && !post.data.draft && (!demoBuild || demo)
+  // Demo content is an explicit fixture set. Keeping it out of ordinary
+  // builds prevents a theme consumer from publishing Aurora's showcase data
+  // or its deterministic profile/statistics by accident.
+  return post.data.published && !post.data.hidden && !post.data.draft && (demoBuild ? demo : !demo)
 }
 
 export function isLocale<T extends { data: { lang: string } }>(post: T, locale: AuroraLocale): boolean {
