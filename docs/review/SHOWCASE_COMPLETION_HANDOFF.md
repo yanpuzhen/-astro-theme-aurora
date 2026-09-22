@@ -170,6 +170,8 @@ Implementation commits on `dev`:
 
 - `6291c74` — `feat: complete Aurora Showcase surfaces`
 - `5e51af7` — `docs: document Showcase completion and verification`
+- `972e04f` — `docs: record Showcase commit handoff`
+- `bda0819` — `docs: refresh Showcase routing examples`
 
 An open `dev → main` pull request will follow. No merge, force-push, version
 bump, RC3, stable release, or movement of `v3.0.0-rc.2` is part of this
