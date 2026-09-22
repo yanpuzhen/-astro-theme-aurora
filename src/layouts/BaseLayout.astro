@@ -1,11 +1,13 @@
 ---
 import '../styles/global.css'
+import 'katex/dist/katex.min.css'
 import Header from '../components/Header.astro'
 import Footer from '../components/Footer.astro'
 import DiaIsland from '../islands/DiaIsland.vue'
 import { config } from '../lib/config'
 import { assetPath, localizedSitePath, publicAssetPath, sitePath, withoutBase } from '../lib/routing'
 import { defaultLocale, messagesFor, normalizeLocale, type AuroraLocale } from '../lib/i18n'
+import { isDemoBuild } from '../lib/showcase'
 
 interface Props {
   title: string; description?: string; canonicalPath?: string; image?: string; type?: 'website' | 'article'
@@ -31,7 +33,7 @@ const structuredData = {
 }
 if (imageUrl && typeof structuredData.image === 'string') structuredData.image = imageUrl.toString()
 const safeJsonLd = JSON.stringify(structuredData).split('<').join('\\u003c').split('>').join('\\u003e').split('&').join('\\u0026')
-const diaEnabled = import.meta.env.PUBLIC_AURORA_DIA === 'true'
+const diaEnabled = isDemoBuild() || import.meta.env.PUBLIC_AURORA_DIA === 'true'
 ---
 <!doctype html>
 <html lang={lang} class="no-js">

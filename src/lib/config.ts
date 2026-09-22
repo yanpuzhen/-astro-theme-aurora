@@ -6,11 +6,15 @@ export interface AuroraConfig {
     title: string
     subtitle: string
     author: string
+    avatar: string
+    startedDate: string
     description: string
     language: AuroraLocale
   }
   theme: { feature: boolean; darkMode: boolean; profileShape: 'circle' | 'diamond' | 'rounded'; colors: [string, string, string] }
   menu: { label: string; href: string }[]
+  statistics: { pageViews: string; uniqueVisitors: string }
+  beian: { number: string; link: string; policeNumber: string; policeLink: string }
   comments: { provider: 'gitalk' | 'valine' | 'twikoo' | 'waline' | 'none'; enabled: boolean; gitalkIdMode: 'uid' | 'pathname' }
 }
 
@@ -21,6 +25,8 @@ const provider = configuredProvider === 'gitalk' || configuredProvider === 'vali
 export const config: AuroraConfig = {
   site: {
     title: 'Aurora 3.0', subtitle: 'Futuristic auroral theme powered by Astro', author: 'Aurora',
+    avatar: import.meta.env.PUBLIC_AURORA_AVATAR || '',
+    startedDate: import.meta.env.PUBLIC_AURORA_STARTED_DATE || '',
     description: 'A static-first Aurora theme for expressive, multilingual publishing.', language: defaultLocale,
   },
   theme: {
@@ -32,6 +38,11 @@ export const config: AuroraConfig = {
     { label: defaultLabels.categories, href: '/categories/' }, { label: defaultLabels.archives, href: '/archives/' },
     { label: defaultLabels.about, href: '/about/' },
   ],
+  statistics: { pageViews: import.meta.env.PUBLIC_AURORA_PAGE_VIEWS || '', uniqueVisitors: import.meta.env.PUBLIC_AURORA_UNIQUE_VISITORS || '' },
+  beian: {
+    number: import.meta.env.PUBLIC_AURORA_BEIAN_NUMBER || '', link: import.meta.env.PUBLIC_AURORA_BEIAN_LINK || '',
+    policeNumber: import.meta.env.PUBLIC_AURORA_POLICE_BEIAN_NUMBER || '', policeLink: import.meta.env.PUBLIC_AURORA_POLICE_BEIAN_LINK || '',
+  },
   comments: { provider, enabled: provider !== 'none', gitalkIdMode: import.meta.env.PUBLIC_GITALK_ID_MODE === 'pathname' ? 'pathname' : 'uid' },
 }
 

@@ -10,6 +10,6 @@ author:
     github: https://github.com/yanpuzhen
 ```
 
-The current Aurora 3 RC renders the author identity and link in article metadata but does not expose a complete upstream-style social-link panel or social-count system. Do not assume the legacy Hexo social configuration is active.
+The sidebar renders the author identity, avatar, description, and configured links. The Demo build supplies the explicit `Aurora Demo` profile with GitHub, Docs, and Issues destinations; ordinary builds use frontmatter/configuration and never inherit those fixtures.
 
-This page intentionally records the boundary instead of expanding feature scope for documentation. Configure visible links through normal menu entries or page content.
+Friend Links use the same static-first principle. The public Demo has seven categorized project/resource records. A normal build with no link dataset keeps the localized empty state rather than inventing external records. The component accepts `name`, `url`, `avatar`, `description`, `category`, and an optional display color.

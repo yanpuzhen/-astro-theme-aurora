@@ -25,4 +25,8 @@ cpSync(docsDist, staging, { recursive: true })
 mkdirSync(resolve(staging, 'demo'), { recursive: true })
 cpSync(demoDist, resolve(staging, 'demo'), { recursive: true })
 
+// Keep the working dist usable by the ordinary build checks that follow the
+// Pages artifact verification. The staged Demo remains immutable in .pages-dist.
+run('build')
+
 console.log(`Staged documentation and Demo in ${staging}`)

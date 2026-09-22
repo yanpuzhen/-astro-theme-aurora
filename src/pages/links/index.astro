@@ -1,34 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
-import Icon from '../../components/Icon.astro'
+import FriendLinks from '../../components/FriendLinks.astro'
 import { messagesFor } from '../../lib/i18n'
 import { localizedSitePath } from '../../lib/routing'
 
-const emptyAvatars = Array.from({ length: 24 })
 const messages = messagesFor('en')
 const localeLinks = { en: localizedSitePath('/links/', 'en'), 'zh-CN': localizedSitePath('/links/', 'zh-CN') }
 ---
 <BaseLayout title={`${messages.links} · Aurora`} description={messages.linksDescription} canonicalPath="/links/" lang="en" localeLinks={localeLinks} alternateLocaleLinks={localeLinks}>
-  <section class="links-page" aria-labelledby="links-title">
-    <header class="links-page__intro">
-      <p class="eyebrow">Aurora / {messages.friends}</p>
-      <h1 id="links-title">{messages.links}</h1>
-    </header>
-    <section class="links-hero highlighted" aria-labelledby="links-hero-title">
-      <div class="links-hero__inner">
-        <div class="links-hero__heading">
-          <span class="eyebrow">{messages.friends}</span>
-          <h2 id="links-hero-title"><Icon name="link" /> {messages.connectCreators}</h2>
-          <span class="gradient-rule" aria-hidden="true"></span>
-        </div>
-        <div class="links-wall" aria-label={messages.friends}>
-          {emptyAvatars.map(() => <span class="links-avatar--empty" aria-hidden="true"></span>)}
-        </div>
-      </div>
-    </section>
-    <section class="links-empty-state">
-      <h2>{messages.noFriendLinks}</h2>
-      <p>{messages.linksDescription}</p>
-    </section>
-  </section>
+  <FriendLinks locale="en" />
 </BaseLayout>

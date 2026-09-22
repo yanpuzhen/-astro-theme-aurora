@@ -10,5 +10,5 @@ const current = localizedSitePath('/404/', locale)
 const localeLinks = { en: localizedSitePath('/404/', 'en'), 'zh-CN': localizedSitePath('/404/', 'zh-CN') }
 ---
 <BaseLayout title="404 · Aurora" canonicalPath={current} lang={locale} localeLinks={localeLinks}>
-  <article class="article-shell"><div class="post-html"><h1 class="page-heading">{messages.notFoundTitle}</h1><p>{messages.notFoundMessage}</p><a href={localizedSitePath('/', locale)}>{messages.home}</a></div></article>
+  <article class="not-found-page article-shell"><div class="post-html"><p class="eyebrow">Aurora / 404</p><h1 class="page-heading">404</h1><p>{messages.notFoundMessage}</p><div class="not-found-actions"><a class="button-link" href={localizedSitePath('/', locale)}>{messages.homeAction}</a><a class="button-link button-link--quiet" href={localizedSitePath('/search/', locale)}>{messages.searchAction}</a></div></div></article>
 </BaseLayout>

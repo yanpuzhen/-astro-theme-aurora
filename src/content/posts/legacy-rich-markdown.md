@@ -29,6 +29,9 @@ console.log(greeting);
 
 <script>alert('this must not execute')</script>
 
+<a href="javascript:alert('this must not execute')" onclick="alert('this must not execute')">Unsafe link fixture</a>
+<iframe src="https://example.invalid/unsafe"></iframe>
+
 :::warning
 The legacy post-render script is intentionally not restored.
 :::

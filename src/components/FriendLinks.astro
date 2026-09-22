@@ -1,0 +1,29 @@
+---
+import Icon from './Icon.astro'
+import { demoLinks, isDemoBuild } from '../lib/showcase'
+import { messagesFor, type AuroraLocale } from '../lib/i18n'
+
+interface Props { locale?: AuroraLocale }
+const { locale = 'en' } = Astro.props
+const messages = messagesFor(locale)
+const links = isDemoBuild() ? demoLinks[locale] : []
+const groups = [...new Set(links.map((link) => link.category))]
+---
+<section class="links-page" aria-labelledby="links-title">
+  <header class="links-page__intro">
+    <p class="eyebrow">Aurora / {messages.friends}</p>
+    <h1 id="links-title">{messages.links}</h1>
+    <p>{isDemoBuild() ? messages.linksIntro : messages.linksDescription}</p>
+  </header>
+  <section class="links-hero highlighted" aria-labelledby="links-hero-title">
+    <div class="links-hero__inner">
+      <div class="links-hero__heading">
+        <span class="eyebrow">{messages.friends}</span>
+        <h2 id="links-hero-title"><Icon name="link" /> {messages.connectCreators}</h2>
+        <span class="gradient-rule" aria-hidden="true"></span>
+      </div>
+      {links.length > 0 ? <div class="links-wall" aria-label={messages.friends}>{links.map((link) => <a class="link-avatar" href={link.url} target="_blank" rel="noreferrer" style={`--link-color:${link.color}`} title={link.name}><img src={link.avatar} alt="" loading="lazy" /></a>)}</div> : <div class="links-wall" aria-label={messages.friends}>{Array.from({ length: 12 }).map(() => <span class="links-avatar--empty" aria-hidden="true"></span>)}</div>}
+    </div>
+  </section>
+  {links.length > 0 ? <div class="link-groups">{groups.map((category) => <section class="link-group" aria-labelledby={`links-${category}`}><h2 id={`links-${category}`}>{category === 'Projects' || category === '项目' ? messages.projects : messages.resources}</h2><div class="link-card-grid">{links.filter((link) => link.category === category).map((link) => <a class="link-card" href={link.url} target="_blank" rel="noreferrer" style={`--link-color:${link.color}`}><img src={link.avatar} alt="" loading="lazy" /><span><strong>{link.name}</strong><small>{link.description}</small></span><span aria-hidden="true">↗</span></a>)}</div></section>)}</div> : <section class="links-empty-state"><h2>{messages.noFriendLinks}</h2><p>{messages.linksDescription}</p></section>}
+</section>

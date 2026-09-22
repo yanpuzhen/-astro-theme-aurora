@@ -5,16 +5,21 @@ import { publicAssetPath, tagPath } from '../lib/routing'
 import { collectTags } from '../lib/taxonomy'
 import Icon from './Icon.astro'
 import { messagesFor, type AuroraLocale } from '../lib/i18n'
+import { commentHref, demoComments, demoProfile, isDemoBuild } from '../lib/showcase'
+import { safeExternalUrl } from '../lib/urls'
 interface Props { posts: CollectionEntry<'posts'>[]; locale?: AuroraLocale }
 const { posts, locale = 'en' } = Astro.props
 const messages = messagesFor(locale)
-const tags = collectTags(posts).slice(0, 14)
+const allTags = collectTags(posts)
+const tags = allTags.slice(0, 14)
 const words = posts.reduce((sum, post) => sum + (post.body?.trim().split(/\s+/).length || 0), 0)
 const categories = new Set(posts.flatMap((post) => post.data.categories)).size
-const author = posts[0]?.data.author || { name: config.site.author, description: config.site.description, socials: {} }
+const showcase = isDemoBuild()
+const author = showcase ? { name: demoProfile[locale].name, description: demoProfile[locale].description, avatar: demoProfile[locale].avatar, socials: Object.fromEntries(demoProfile[locale].socials.map((item) => [item.label, item.href])) } : (posts[0]?.data.author || { name: config.site.author, description: config.site.description, avatar: config.site.avatar, socials: {} })
 const configuredSocials = Object.entries(author.socials || {}).flatMap(([label, value]) => {
   const href = typeof value === 'string' ? value : value?.link
-  return href ? [{ label, href }] : []
+  const safeHref = safeExternalUrl(href)
+  return safeHref ? [{ label, href: safeHref }] : []
 })
 const github = menuFor(locale).find((item) => item.label === messages.github)?.href
 const socialLinks = configuredSocials.some((item) => item.label.toLowerCase() === 'github') || !github
@@ -26,16 +31,16 @@ const socialIcon = (label: string): 'github' | 'link' => label.toLowerCase() ===
   <aside class="sidebar" aria-label={messages.home}>
   <section class="profile-card highlighted" data-dia="author">
     <div class="profile-card__inner">
-      <img class="profile-card__avatar diamond-avatar" src={publicAssetPath('/favicon.svg')} alt={author.name} />
+      <img class="profile-card__avatar diamond-avatar" src={publicAssetPath(author.avatar || '/favicon.svg')} alt={author.name} />
       <h2>{author.name}</h2>
       <span class="gradient-rule" aria-hidden="true"></span>
       <p>{author.description || config.site.description}</p>
       {socialLinks.length > 0 && <div class="profile-socials">{socialLinks.map((item) => <a href={item.href} target="_blank" rel="noreferrer" aria-label={item.label} title={item.label}><Icon name={socialIcon(item.label)} /></a>)}</div>}
       <dl class="profile-stats">
-        <div><dt>{words}</dt><dd>{messages.article}</dd></div>
+        <div><dt>{words}</dt><dd>{messages.words}</dd></div>
         <div><dt>{posts.length}</dt><dd>{messages.articles}</dd></div>
         <div><dt>{categories}</dt><dd>{messages.categories}</dd></div>
-        <div><dt>{tags.length}</dt><dd>{messages.tags}</dd></div>
+        <div><dt>{allTags.length}</dt><dd>{messages.tags}</dd></div>
       </dl>
     </div>
   </section>
@@ -49,6 +54,6 @@ const socialIcon = (label: string): 'github' | 'link' => label.toLowerCase() ===
 
     <section class="sidebar-box recent-comments" aria-labelledby="recent-comments-title">
     <h2 id="recent-comments-title" class="sidebar-title"><span>{messages.comments}</span><i aria-hidden="true"></i></h2>
-    <p class="empty-state"><span aria-hidden="true"></span> {messages.noRecentComments}</p>
+    {showcase ? <ul class="recent-comment-list">{demoComments[locale].map((comment) => <li><img src={comment.avatar} alt="" loading="lazy" /><div><a href={commentHref(comment, locale)}>{comment.name}</a><p>{comment.text}</p><time datetime={comment.date}>{comment.date}</time></div></li>)}</ul> : <p class="empty-state"><span aria-hidden="true"></span> {messages.noCommentsConfigured}</p>}
   </section>
 </aside>

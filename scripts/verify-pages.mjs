@@ -9,8 +9,10 @@ const read = (relative) => readFileSync(resolve(root, relative), 'utf8')
 const requiredFiles = [
   'index.html', 'en/index.html', 'cn/index.html', 'guide/getting-started.html', 'cn/guide/getting-started.html',
   'demo/index.html', 'demo/pagefind/pagefind.js', 'demo/pagefind/pagefind-entry.json',
-  'demo/post/welcome-to-aurora-3/index.html',
-  'demo/routing-and-deployment/index.html',
+  'demo/post/demo-markdown-fundamentals/index.html',
+  'demo/post/demo-math/index.html',
+  'demo/cn/post/demo-markdown-fundamentals/index.html',
+  'demo/page/2/index.html', 'demo/cn/page/2/index.html',
 ]
 
 for (const relative of requiredFiles) {
@@ -22,7 +24,7 @@ const docsEnglish = read('en/index.html')
 const docsChinese = read('cn/index.html')
 const demo = read('demo/index.html')
 const demoSearch = read('demo/search/index.html')
-const demoPost = read('demo/post/welcome-to-aurora-3/index.html')
+const demoPost = read('demo/post/demo-markdown-fundamentals/index.html')
 const entry = JSON.parse(read('demo/pagefind/pagefind-entry.json'))
 
 function htmlFiles(directory) {
@@ -37,10 +39,10 @@ assert.match(docsEnglish, /Aurora 3\.0 documentation moved/)
 assert.match(docsChinese, /使用文档|Aurora 3\.0/)
 assert.match(docsEnglish, /\/astro-theme-aurora\/\"?\/?<\/a>/)
 assert.match(docs, /https:\/\/yanpuzhen\.github\.io\/astro-theme-aurora\/demo\//)
-assert.match(demo, /Welcome to Aurora 3\.0/)
+assert.match(demo, /Markdown Fundamentals in Aurora/)
 assert.match(demoSearch, /SearchIsland/)
 assert.match(demoSearch, new RegExp(demoBase.replaceAll('/', '\\/')))
-assert.match(demoPost, /Static-first|static-first|Aurora 3\.0/)
+assert.match(demoPost, /AuroraSearchAlpha|CommonMark/)
 assert.doesNotMatch(`${demo}${demoSearch}`, /legacy-markdown-parity|migration torture|security payload/i)
 assert.doesNotMatch(`${demo}${demoSearch}`, /\/fixtures\//i)
 assert.ok(entry.languages?.en, 'Demo Pagefind English index is missing')

@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Completed the bilingual Aurora Demo Showcase with exactly ten primary posts across five translation pairs, deterministic remote covers, richer taxonomy, profile/social data, categorized project links, About content, and local-only recent comment fixtures.
+- Added GFM tables/task lists/strikethrough, build-time KaTeX math, a full Markdown fixture matrix, restored Dia's auroral character and contextual interactions, and expanded Footer version/statistics/running-day behavior.
+- Isolated `demo: true` content and showcase fixtures from ordinary builds; ordinary statistics and comments remain provider/configuration driven.
+
 ## 3.0.0-rc.2
 
 Aurora 3.0 RC2 is a release candidate for migration testing and bilingual site validation. It is not a stable release.

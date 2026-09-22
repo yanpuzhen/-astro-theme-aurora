@@ -13,6 +13,8 @@ import { isLocale, isPublicPost, translationFor } from '../../lib/content'
 import { collectCategories, collectTags } from '../../lib/taxonomy'
 import { messagesFor, type AuroraLocale } from '../../lib/i18n'
 import { categoryPath, localePath, localizedSitePath, normalizeRoutePath, postPath, postAliasesForLocale, publicAssetPath, resolvePostPath, routeManifestEntryForLocale, sitePath, stripLocalePath, tagPath } from '../../lib/routing'
+import FriendLinks from '../../components/FriendLinks.astro'
+import AboutShowcase from '../../components/AboutShowcase.astro'
 
 type Post = CollectionEntry<'posts'>
 
@@ -124,11 +126,11 @@ const localePostPath = (entry: Post) => postPath(entry, { locale })
   </BaseLayout>
 ) : isAbout ? (
   <BaseLayout title={`${messages.about} Aurora`} description={config.site.description} canonicalPath={defaultCurrentPath} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={alternateLocaleLinks}>
-    <article class="article-shell"><header class="article-header"><h1 class="article-title">{messages.about} Aurora</h1></header><div class="post-html"><p>这是 Aurora 3.0 的简体中文静态主题页面。</p><p>Astro 在构建时负责内容、路由、搜索和 SEO；Vue 只增强必要的交互。</p></div></article>
+    <AboutShowcase locale={locale} />
   </BaseLayout>
 ) : isLinks ? (
   <BaseLayout title={`${messages.links} · Aurora`} description={messages.linksDescription} canonicalPath={defaultCurrentPath} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={alternateLocaleLinks}>
-    <section class="links-page" aria-labelledby="links-title"><header class="links-page__intro"><p class="eyebrow">Aurora / {messages.friends}</p><h1 id="links-title">{messages.links}</h1></header><section class="links-hero highlighted"><div class="links-hero__inner"><div class="links-hero__heading"><span class="eyebrow">{messages.friends}</span><h2 id="links-hero-title">{messages.connectCreators}</h2><span class="gradient-rule" aria-hidden="true"></span></div><div class="links-wall" aria-label={messages.friends}>{Array.from({ length: 24 }).map(() => <span class="links-avatar--empty" aria-hidden="true"></span>)}</div></div></section><section class="links-empty-state"><h2>{messages.noFriendLinks}</h2><p>{messages.linksDescription}</p></section></section>
+    <FriendLinks locale={locale} />
   </BaseLayout>
 ) : pageEntry ? (
   <BaseLayout title={pageEntry.data.title} description={pageEntry.data.description} canonicalPath={defaultCurrentPath} lang={locale} localeLinks={localeLinks} alternateLocaleLinks={alternateLocaleLinks}>
