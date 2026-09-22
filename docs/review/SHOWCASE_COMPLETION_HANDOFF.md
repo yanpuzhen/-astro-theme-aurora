@@ -166,9 +166,14 @@ and production comment databases are not part of the Demo fixture path.
 
 ## Commit and release handling
 
-Implementation commits will remain on `dev`, followed by an open `dev → main`
-pull request for Astra review. No merge, force-push, version bump, RC3, stable
-release, or movement of `v3.0.0-rc.2` is part of this handoff.
+Implementation commits on `dev`:
+
+- `6291c74` — `feat: complete Aurora Showcase surfaces`
+- `5e51af7` — `docs: document Showcase completion and verification`
+
+An open `dev → main` pull request will follow. No merge, force-push, version
+bump, RC3, stable release, or movement of `v3.0.0-rc.2` is part of this
+handoff.
 
 Next step: Astra performs the final focused review before any merge toward
 stable.
