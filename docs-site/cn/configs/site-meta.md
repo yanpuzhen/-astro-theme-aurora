@@ -10,3 +10,5 @@
 - `rss.xml`、`sitemap.xml` 和 `robots.txt` 由 Astro routes 生成。
 
 project site 使用 `ASTRO_SITE=https://yanpuzhen.github.io` 与 `ASTRO_BASE=/astro-theme-aurora/`；Demo 额外使用 `/demo/`。两个值必须与实际公开部署一致，开发 server 能监听不代表 canonical URL 正确。
+
+Demo 的站点身份明确为 `Aurora Demo`。Profile、最新评论、友链、计数和开始日期都是 Showcase fixture；普通构建只有在提供对应站点配置时才显示这些值。

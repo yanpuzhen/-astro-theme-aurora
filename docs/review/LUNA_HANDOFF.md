@@ -57,10 +57,16 @@ The README preserves the original centered branding, title/subtitle, badge block
 
 ## Known mismatches and limitations
 
-- The current RC does not implement a complete upstream social panel, author pages, comment counts/recent-comment widgets, math, or every legacy fence/image-source behavior.
+- The current RC does not implement upstream author archives or every legacy
+  fence/image-source behavior. The Showcase pass now covers build-time math,
+  localized social/profile data, Demo recent-comment fixtures, categorized
+  Friend Links, and the full static footer surface while retaining provider-safe
+  empty states for ordinary builds.
 - Production comment-provider records were unavailable, so identity continuity is documented but not externally proven.
 - The Pages URL is a target until the PR is merged and the main-only workflow succeeds.
-- The Demo uses deterministic repository SVG artwork; it demonstrates the image/lightbox contract without importing upstream remote assets.
+- The Demo uses deterministic seeded remote covers/avatars and does not download
+  remote bytes during the build; it demonstrates the image/lightbox contract
+  without importing unrelated upstream photography.
 - GitHub repository Pages source and homepage settings were not changed from the local workspace; verify Pages source manually if required.
 
 ## Astra review required

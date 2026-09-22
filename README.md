@@ -57,7 +57,8 @@ Aurora 3.0 is the Astro implementation of Aurora. The original Aurora project wa
 - Light, dark, and system appearance - _Theme choice persists locally and does not gate content readability._
 - Tags, categories, and archives - _Static taxonomy pages and pagination are generated from public posts._
 - RSS, sitemap, robots, SEO, and JSON-LD - _Site metadata is generated from `ASTRO_SITE` and `ASTRO_BASE`._
-- Optional comments - _Focused adapters exist for Gitalk, Valine, Twikoo, and Waline; Demo comments are disabled._
+- Optional comments - _Focused adapters exist for Gitalk, Valine, Twikoo, and Waline; Demo recent comments are local-only showcase fixtures and never enter a provider._
+- Build-time Markdown math - _GFM is provided by `remark-gfm`; inline/display equations are rendered by KaTeX._
 - Lightbox, code copy, Dia, and mobile menu - _Interactive islands enhance ordinary static HTML._
 - Custom permalinks and legacy identity - _The route manifest preserves explicit paths, UID inputs, and compatibility aliases._
 - Nested-base deployment - _Documentation and Demo share one GitHub Pages artifact below separate base paths._
@@ -85,7 +86,7 @@ Create posts in `src/content/posts/` and pages in `src/content/pages/`. See the 
 
 ### 🚫 Current architecture boundaries
 
-Aurora 3.0 does not run the old Vue SPA, Vue Router, runtime article JSON API, or Hexo plugin runtime. Markdown scripts are inert/removed by default. Author pages, comment counts/recent-comment data, math, and some complete legacy fence/image-source behavior are not claimed in this RC; see the [migration guide](./MIGRATION.md).
+Aurora 3.0 does not run the old Vue SPA, Vue Router, runtime article JSON API, or Hexo plugin runtime. Markdown scripts are inert/removed by default. The Demo's profile, recent comments, links, counters, and started date are clearly isolated deterministic fixtures; ordinary builds show only configured real values.
 
 ## 🍼 Feedback
 

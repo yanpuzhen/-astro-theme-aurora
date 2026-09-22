@@ -21,14 +21,14 @@ Vue islands remain architectural contracts.
 | Article cards | `PostCard.astro`, `TagList.astro` | Cover, gradient screen, category, tags, title, excerpt, author, date, proportions, and hover treatment restored | `home-light-1440x900.png` |
 | Magazine main grid | `pages/index.astro`, `global.css` | Desktop article column plus sidebar; tablet and mobile collapse follow the Aurora breakpoints | `home-light-1024x800.png`; `home-light-390x844.png` |
 | Sidebar / profile | `Sidebar.astro` | Profile, diamond avatar, SVG social buttons for configured links, statistics, and glow restored | `home-light-1440x900.png` |
-| Tag box / recent comments | `Sidebar.astro` | Count-bearing tag box and explicit no-data Recent comments shell restored without fabricated comments | `home-light-1440x900.png` |
+| Tag box / recent comments | `Sidebar.astro` | Count-bearing tag box, localized Demo fixture comments, and provider-safe no-data fallback | `home-light-1440x900.png`; Showcase browser assertions |
 | Pagination | `Pagination.astro` | Static numbered/active pagination retained with Aurora gradient state | `home-light-1280x800.png` |
 | Article header / cover | `pages/post/[...slug].astro`, `global.css` | Cover hero, metadata, author row, reading stats, gradient veil, and glow restored | `article-light-1440x900.png`; `article-dark-1440x900.png` |
 | Article body | `global.css`, existing Markdown pipeline | Headings, rules, links, lists, blockquotes, custom containers, code, tables, images, and lightbox boundary styled without a second renderer | `article-light-1440x900.png` |
 | TOC / post navigation / comments | `pages/post/[...slug].astro`, existing islands | Aurora panels and navigation restored; comment identity and provider boundary remain unchanged | `article-light-1440x900.png`; RC browser suite |
 | Archives | `pages/archives/*` | Centered gradient timeline with year markers and responsive mobile line restored | `archives-light-1280x800.png`; `archives-light-390x844.png` |
 | Tags / categories | `pages/tags/*`, `pages/categories/*` | Aurora chips/clouds, counts, accent states, and result cards restored | `tags-light-1280x800.png`; `categories-1440x900.png` |
-| Friends links | `pages/links/index.astro` | Upstream gradient-framed avatar wall restored as an explicit no-data shell; no external friend records are invented | `/links/` in RC browser suite |
+| Friends links | `pages/links/index.astro`, `FriendLinks.astro` | Upstream gradient-framed avatar wall populated with categorized, localized Demo Resources; empty fallback remains for ordinary builds | `links-light-1440x900.png`; Showcase browser assertions |
 | Footer | `Footer.astro` | Gradient divider, grouped links, attribution, and avatar treatment restored | `home-light-1440x900.png` |
 | Mobile menu | `MobileMenuIsland.vue` | SVG menu/close/theme controls, Aurora profile treatment, responsive panel, Escape and backdrop close restored | RC browser suite; `home-light-390x844.png` |
 | Light/dark themes and glow | `theme-variables.css`, `global.css` | Full upstream semantic token families, cover gradients, shadows, background colors, and highlighted glow restored | `*-light-*` and `*-dark-*` fixtures |
@@ -50,11 +50,13 @@ Vue islands remain architectural contracts.
 
 ## Verification evidence
 
-The visual capture command was run against the rebuilt standalone preview:
+The visual capture command targets the rebuilt standalone Demo preview:
 
 ```text
-VISUAL_ORIGIN=http://127.0.0.1:4323 pnpm visual:capture
-Captured 60 visual fixtures in output/playwright/visual
+VISUAL_ORIGIN=http://127.0.0.1:4322 \
+VISUAL_BASE=/astro-theme-aurora/demo \
+pnpm visual:capture
+Captured 84 Showcase visual fixtures in output/playwright/visual
 ```
 
 The matrix covers home, article, archives, tags, and search in light and dark
@@ -80,15 +82,13 @@ fixtures.
 These are explicit content/configuration boundaries, not untracked layout work:
 
 1. Upstream screenshots use the production site's photography, Chinese copy,
-   author identity, and populated comment/link records. This repository uses its
-   local static demo posts and default cover fixture, so text and image pixels
-   cannot be identical while preserving the repository's content fixtures.
-2. Only GitHub is configured as a social destination in the current demo data.
-   The profile renders the original diamond SVG treatment for configured links;
-   absent providers are intentionally not fabricated.
-3. The `/links/` page now matches the upstream hierarchy and gradient avatar-wall
-   shell, but remains an honest no-data state until link records are configured.
-4. CSS remains a single migration stylesheet for this RC to keep token and
+   author identity, and provider-backed comment/link records. This repository
+   uses deterministic Showcase fixtures, so text and image pixels cannot be
+   identical while preserving safe local content.
+2. Showcase profile/social/comment/link values are intentionally labeled and
+   isolated Demo data. Ordinary builds keep configured real values or render the
+   corresponding empty state; they do not inherit Showcase counters or records.
+3. CSS remains a single migration stylesheet for this RC to keep token and
    breakpoint review local; splitting it into component files is maintenance
    follow-up and does not affect the visual contract.
 
@@ -99,12 +99,13 @@ These are explicit content/configuration boundaries, not untracked layout work:
 - [x] Horizontal first article
 - [x] Category tabs and pagination
 - [x] Article cards and magazine grid
-- [x] Sidebar, profile, tag box, and no-data recent comments shell
+- [x] Sidebar, profile, tag box, Demo recent comments, and provider-safe fallback
 - [x] Article header, cover, body, TOC, post navigation, and comments shell
 - [x] Archives timeline
 - [x] Tags and categories
 - [x] Search modal with Pagefind backend
-- [x] Footer and MIT attribution
+- [x] Footer, Demo statistics/running days, and MIT attribution
+- [x] Categorized Friend Links and localized Showcase About/Profile surfaces
 - [x] Mobile menu
 - [x] Light theme, dark theme, and Aurora glow
 - [x] Responsive layout and no-overflow screenshot matrix

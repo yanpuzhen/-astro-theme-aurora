@@ -25,14 +25,20 @@ The initial read-only pass was recorded before implementation edits. It identifi
 
 The current dark screenshots preserve the upstream Aurora identity: gradient header/banner, compact navigation, cover-led feature hero, Editor’s Selection rail, two secondary feature cards, article list plus right Sidebar, diamond Profile, tag/recent-comment boxes, gradient shadows, archive timeline, article cover/header, and responsive mobile stacking. The light screenshots use the corresponding upstream light token family and preserve the same hierarchy.
 
-The migration is not pixel-identical. Repository-owned fixture covers, copy, author identity, social data, comment data, and the simplified local SVG icon set differ from upstream production content. The links page is an honest no-data shell. These are P2 content/configuration or polish gaps, not a structural redesign.
+The migration is not pixel-identical. Deterministic Showcase covers, copy,
+Demo identity, fixture comments/links, and the simplified local SVG icon set
+differ from upstream production content. Showcase-only populated surfaces are
+clearly isolated from ordinary builds, where unconfigured provider-backed data
+still renders an honest fallback. These are content/configuration boundaries,
+not a structural redesign.
 
 Evidence:
-- Fresh `VISUAL_ORIGIN=http://127.0.0.1:4323 pnpm visual:capture`
-- 60 screenshots: 5 pages × 6 viewports × 2 themes
+- Fresh Showcase capture with `VISUAL_BASE=/astro-theme-aurora/demo`
+- 84 screenshots: 7 pages × 6 viewports × 2 themes
 - Viewports: 1440, 1280, 1024, 768, 390, 375
 - No horizontal overflow in the completed matrix
-- Representative fresh captures inspected for Home, Article, Archives, and Search in both themes.
+- Representative fresh captures inspected for Home, Article, Math, Links, About,
+  Archives, Footer, and Dia in both themes.
 
 ## Page review
 
@@ -44,7 +50,7 @@ Evidence:
 | Tags | PASS | Aurora chips/cloud, counts, accent states and result cards are present. |
 | Categories | PASS | Category presentation and result cards use the same design language. |
 | Search | PASS | Aurora overlay/page shell with Pagefind backend and no-JS `/search/` fallback. |
-| Links | P2 GAP | Faithful gradient-framed shell, but no configured friend records are shown. |
+| Links | PASS | Faithful gradient-framed wall with seven categorized Demo Resources; ordinary builds retain the empty fallback. |
 | Mobile | PASS | Mobile menu island, backdrop/Escape close, theme control, stacked cards and footer were verified. |
 
 ## Component review
@@ -54,8 +60,8 @@ Evidence:
 | Header | PASS | Gradient shell, logo, navigation, search/language/theme controls and responsive menu. |
 | Feature | PASS | Hero/secondary hierarchy and Editor’s Selection panel preserved. |
 | ArticleCard | PASS | Cover screen, category/tags, title/excerpt, author/date, proportions and hover treatment. |
-| Sidebar | PASS | Profile, tags and no-data recent comments shell; sticky-compatible structure retained. |
-| Profile | P2 GAP | Diamond avatar/stat rhythm preserved; production social providers and author data are intentionally reduced. |
+| Sidebar | PASS | Profile, localized social links, tags, Demo recent comments, and provider-safe empty fallback; sticky-compatible structure retained. |
+| Profile | PASS | Diamond avatar/stat rhythm preserved with derived locale counts and explicitly identified Demo profile data. |
 | TagBox | PASS | Count-bearing Aurora chips and gradient title rule. |
 | Pagination | PASS | Static numbered/active gradient states and navigation links. |
 | Footer | PASS | Grouped links, divider, attribution and responsive layout. |
@@ -76,7 +82,12 @@ Legacy route aliases, UID/comment identity manifest, nested base composition and
 
 ## Demo
 
-**PASS.** `demo: true` selects only public Demo fixtures. Normal builds include migration fixtures for regression coverage but do not publish them in the Demo. The Demo uses the same Astro components, CSS, Markdown pipeline and islands; no mock HTML or duplicate visual layer was found. Pagefind indexes both English and Chinese Demo content.
+**PASS.** `demo: true` selects only public Showcase fixtures. Normal builds include
+compatibility fixtures for regression coverage but do not publish Showcase
+posts, comments, links, profile data, counters, or started-date values. The Demo
+uses the same Astro components, CSS, Markdown pipeline and islands; no mock HTML
+or duplicate visual layer was found. Pagefind indexes both English and Chinese
+Showcase content.
 
 ## GitHub Pages
 
@@ -121,10 +132,12 @@ None remaining after the Astra fix.
 
 ## P2
 
-1. Links page has a faithful no-data shell instead of populated friend records.
-2. Production author/social/recent-comment data and upstream photography/copy are not part of this repository’s deterministic fixtures.
-3. Local icons are faithful inline SVG equivalents rather than every upstream icon asset.
-4. README light-theme preview is visually different from the upstream dark production screenshot because it is a current local fixture capture.
+1. Production author/social/recent-comment data and upstream photography/copy are
+   not part of this repository’s deterministic Showcase fixtures.
+2. Local icons are faithful inline SVG equivalents rather than every upstream
+   icon asset.
+3. README previews are current local Showcase captures, so they differ from
+   upstream production screenshots by design.
 
 ## P3
 
