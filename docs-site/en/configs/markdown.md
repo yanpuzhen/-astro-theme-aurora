@@ -16,4 +16,4 @@ const theme = 'Aurora'
 
 Inline math uses `$E = mc^2$`; display math uses a fenced double-dollar block. KaTeX runs at build time, so generated equations remain readable with JavaScript disabled. Long displays scroll within their own container on small screens.
 
-Raw HTML images are base-aware. Markdown `<script>` elements are removed or made inert by default; arbitrary script execution is not a supported content feature. See the [showcase matrix](https://github.com/yanpuzhen/astro-theme-aurora/blob/dev/docs/review/MARKDOWN_DEMO_MATRIX.md) in the repository for the exact supported surface and fixture posts.
+Raw HTML images are base-aware. Dangerous tags, event-handler attributes, unsafe URL schemes, and `<script>` elements are removed by default; arbitrary script execution is not a supported content feature. See the [showcase matrix](https://github.com/yanpuzhen/astro-theme-aurora/blob/dev/docs/review/MARKDOWN_DEMO_MATRIX.md) in the repository for the exact supported surface and fixture posts.

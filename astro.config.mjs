@@ -7,6 +7,7 @@ import remarkMath from 'remark-math'
 import { remarkAurora } from './src/lib/remark-aurora'
 import { rehypeBasePath } from './src/lib/rehype-base-path'
 import { rehypeCodeMeta } from './src/lib/rehype-code-meta'
+import { rehypeSecurity } from './src/lib/rehype-security'
 import { shikiAuroraTransformer } from './src/lib/shiki-aurora'
 
 export default defineConfig({
@@ -14,7 +15,7 @@ export default defineConfig({
   integrations: [vue()],
   markdown: {
     remarkPlugins: [remarkGfm, remarkMath, [remarkAurora, { base: process.env.ASTRO_BASE || '/' }]],
-    rehypePlugins: [rehypeRaw, rehypeKatex, [rehypeBasePath, { base: process.env.ASTRO_BASE || '/' }], rehypeCodeMeta],
+    rehypePlugins: [rehypeRaw, rehypeSecurity, rehypeKatex, [rehypeBasePath, { base: process.env.ASTRO_BASE || '/' }], rehypeCodeMeta],
     syntaxHighlight: 'shiki',
     shikiConfig: { theme: 'github-dark', transformers: [shikiAuroraTransformer] },
   },

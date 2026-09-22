@@ -35,6 +35,7 @@ export interface AuroraMessages {
   poweredBy: string; themedBy: string; pageViews: string; uniqueVisitors: string; siteRunningFor: string
   day: string; demoStats: string; projects: string; resources: string; linksIntro: string; aboutIntro: string
   homeAction: string; searchAction: string; noCommentsConfigured: string
+  filing: string; policeFiling: string
 }
 
 const messages: Record<AuroraLocale, AuroraMessages> = {
@@ -64,6 +65,7 @@ const messages: Record<AuroraLocale, AuroraMessages> = {
     demoStats: 'Demo showcase data', projects: 'Projects', resources: 'Resources', linksIntro: 'Curated project and resource links for this showcase.',
     aboutIntro: 'A complete Aurora 3 showcase: static HTML, multilingual content, focused islands, and a build-time Markdown pipeline.',
     homeAction: 'Back to home', searchAction: 'Search the archive', noCommentsConfigured: 'Comments are not configured for this site.',
+    filing: 'Filing', policeFiling: 'Police filing',
   },
   'zh-CN': {
     home: '首页', latestArticles: '最新文章', viewArchive: '查看归档 →', all: '全部', featured: '精选',
@@ -90,6 +92,7 @@ const messages: Record<AuroraLocale, AuroraMessages> = {
     linksIntro: '为本次 Showcase 整理的项目与资源链接。',
     aboutIntro: '完整展示 Aurora 3 的能力：静态 HTML、多语言内容、聚焦交互岛和构建期 Markdown 管线。',
     homeAction: '返回首页', searchAction: '搜索归档', noCommentsConfigured: '本站尚未配置评论服务。',
+    filing: '备案信息', policeFiling: '公安备案',
   },
 }
 

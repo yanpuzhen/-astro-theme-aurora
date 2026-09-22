@@ -4,6 +4,7 @@ import { config } from '../lib/config'
 import { localizedSitePath, publicAssetPath } from '../lib/routing'
 import { demoFooter, demoProfile, isDemoBuild, runningDays } from '../lib/showcase'
 import { messagesFor, type AuroraLocale } from '../lib/i18n'
+import { safeExternalUrl } from '../lib/urls'
 
 interface Props { locale?: AuroraLocale }
 const { locale = config.site.language } = Astro.props
@@ -17,6 +18,8 @@ const uniqueVisitors = demo ? demoFooter.uniqueVisitors : config.statistics.uniq
 const currentYear = new Date().getFullYear()
 const startYear = startedDate ? new Date(`${startedDate}T00:00:00Z`).getUTCFullYear() : currentYear
 const avatar = profile?.avatar || config.site.avatar
+const policeLink = safeExternalUrl(config.beian.policeLink)
+const beianLink = safeExternalUrl(config.beian.link)
 ---
 <footer class="site-footer" id="footer">
   <div class="site-footer__rule" aria-hidden="true"></div>
@@ -25,8 +28,8 @@ const avatar = profile?.avatar || config.site.avatar
       <p>Copyright © {startYear} - {currentYear} <strong>{demo ? profile?.name : config.site.author}</strong>. {messages.rightsReserved}</p>
       <p>{messages.poweredBy} <a href="https://astro.build/">Astro</a> &amp; {messages.themedBy} <a href={localizedSitePath('/', locale)}>Aurora v{packageInfo.version}</a>.</p>
       <p class="footer-attribution">{messages.originalVisualSystem} <a href="https://github.com/auroral-ui/hexo-theme-aurora">Auroral-UI</a> under the MIT License.</p>
-      {config.beian.policeNumber && <p class="footer-beian">公安备案：<a href={config.beian.policeLink}>{config.beian.policeNumber}</a></p>}
-      {config.beian.number && <p class="footer-beian">备案信息：<a href={config.beian.link}>{config.beian.number}</a></p>}
+      {config.beian.policeNumber && policeLink && <p class="footer-beian">{messages.policeFiling}: <a href={policeLink}>{config.beian.policeNumber}</a></p>}
+      {config.beian.number && beianLink && <p class="footer-beian">{messages.filing}: <a href={beianLink}>{config.beian.number}</a></p>}
     </div>
     <div class="site-footer__middle">
       <div class="site-footer__links">
