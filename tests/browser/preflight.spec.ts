@@ -69,6 +69,8 @@ test('supported comment clients and Recent Comments render safely from determini
   await expect(page.locator('[data-provider-test="giscus"] giscus-widget')).toHaveAttribute('lang', 'en')
   await expect(page.locator('[data-provider-test="giscus-zh"] giscus-widget')).toHaveAttribute('lang', 'zh-CN')
   await expect(page.locator('[data-provider-test="giscus-specific"] giscus-widget')).toHaveAttribute('term', 'preflight-legacy-uid')
+  await expect(page.locator('[data-provider-test="giscus-escaped-term"] giscus-widget')).toHaveAttribute('term', '<img src=x onerror=alert(1)>')
+  await expect(page.locator('[data-provider-test="giscus-escaped-term"] img[onerror]')).toHaveCount(0)
   await expect(page.locator('[data-provider-test="incomplete"]')).toContainText('not fully configured')
   await expect(page.locator('section[aria-label="Twikoo recent comments"]')).toContainText('Twikoo Reader')
   await expect(page.locator('section[aria-label="Twikoo recent comments"]')).toContainText('Welcome reader')

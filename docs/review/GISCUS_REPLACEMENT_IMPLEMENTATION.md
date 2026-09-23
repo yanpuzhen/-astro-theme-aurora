@@ -26,7 +26,7 @@ Aurora 2 root `gitalk` is detected by presence only, discarded without copying o
 ## Validation performed
 
 - `pnpm install --frozen-lockfile --offline`, `pnpm check`, `pnpm test`, `pnpm docs:build`, `pnpm test:docs`, `pnpm test:i18n`, `pnpm test:readme`: passed.
-- `pnpm test:browser:preflight`: 5 passed, including an aborted giscus iframe with localized timeout status. `pnpm test:browser:giscus`: 3 passed against a configured English/Chinese nested-base build with local giscus iframe mocks. Root RC browser suite: 7 passed, including no-JS. giscus browser checks cover theme changes and widths 1440, 1024, 768, 390, and 375.
+- `pnpm test:browser:preflight`: 5 passed, including an aborted giscus iframe with localized timeout status and a special-character `specific` term that remains an attribute rather than executable HTML. `pnpm test:browser:giscus`: 3 passed against a configured English/Chinese nested-base build with local giscus iframe mocks. Root RC browser suite: 7 passed, including no-JS. giscus browser checks cover theme changes and widths 1440, 1024, 768, 390, and 375.
 - `pnpm demo:build`, `pnpm test:demo`, Demo feed check, `pnpm pages:build`, `pnpm test:pages`, and Pages browser suite: passed (5 Pages browser tests). EN/ZH RSS, sitemap, robots, Docs, Demo, Pagefind, and Pages artifact remained valid.
 - Generated `dist` and `.pages-dist` scans found no Gitalk runtime asset, Gitalk ENV field, OAuth secret field, or sentinel value. Local mocks never post to GitHub.
 
