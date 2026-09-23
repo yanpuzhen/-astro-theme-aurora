@@ -51,7 +51,7 @@ comments:
     reactions_enabled: true
     emit_metadata: false
     input_position: bottom
-    theme: auto # auto follows Aurora Light/Dark/System.
+    theme: auto # Follows Aurora's resolved theme; system fallback only if it is absent.
     lang: auto # auto | en | zh-CN
     loading: eager # Aurora already hydrates comments when visible.
   valine:

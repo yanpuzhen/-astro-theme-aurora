@@ -28,7 +28,7 @@ async function mockProviderAssets(page: import('@playwright/test').Page, brokenT
 test('validated YAML settings reach the rendered static UI and none loads no provider assets', async ({ page }) => {
   const providerRequests: string[] = []
   page.on('request', (request) => {
-    if (/gitalk|valine|twikoo|waline/i.test(request.url())) providerRequests.push(request.url())
+    if (/giscus|gitalk|valine|twikoo|waline/i.test(request.url())) providerRequests.push(request.url())
   })
   await page.goto(route('/'))
   await expect(page).toHaveTitle('Config UI Smoke')
@@ -45,6 +45,9 @@ test('validated YAML settings reach the rendered static UI and none loads no pro
   await expect(page.locator('.footer-attribution')).toBeVisible()
   await expect(page.locator('.site-footer__copy a[href="/config-smoke/"]')).toHaveText('Aurora')
   expect(providerRequests).toEqual([])
+  await page.goto(route('/post/architecture-smoke/'))
+  await expect(page.locator('section.comments, giscus-widget')).toHaveCount(0)
+  expect(providerRequests).toEqual([])
   await page.goto(route('/search/'))
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   await expect(page.locator('h1.page-heading')).toHaveText('Search')
@@ -60,6 +63,7 @@ test('supported comment clients and Recent Comments render safely from determini
   await mockProviderAssets(page)
   const pageErrors: string[] = []
   page.on('pageerror', (error) => pageErrors.push(error.message))
+  page.on('console', (message) => { if (message.type() === 'error') pageErrors.push(message.text()) })
   await page.goto(route('/preflight/comments/'))
   for (const provider of ['valine', 'twikoo', 'waline']) {
     await expect(page.locator(`[data-provider-test="${provider}"] [data-client-mock="${provider}"]`)).toBeVisible()

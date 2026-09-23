@@ -33,7 +33,7 @@ comments:
 
 自动创建 Discussion 时必须填写 `repo`、`repo_id` 和 `category_id`。`mapping: number` 用正整数 `term` 指定已有 Discussion，可不填 `category_id`；`mapping: specific` 则要求非空 `term`。还支持 `url`、`title`、`og:title`。默认的 `pathname` 使用浏览器实际部署路径：`ASTRO_BASE`、自定义永久链接或语言路由变化都可能映射到不同 Discussion。迁移旧评论时，可在核对转换后标题的基础上用 `specific` 与 `term: "{legacyUid}"` 取得逐页稳定 UID；字面量 term 会让所有页面共用一个讨论。全局 `number` 也会让所有页面指向同一个 Discussion；不会自动匹配 Gitalk Issue。
 
-`theme: auto` 跟随 Aurora 的 Light/Dark/System 切换，无需刷新页面。可显式选 `light`、`dark`、`dark_dimmed`；不接受任意 CSS URL。`lang: auto` 把路由映射为 `en` 或 `zh-CN`，也可显式设置这两种语言。评论岛已在可见时 hydration，所以内部默认 `loading: eager`；仍可选 `lazy`。giscus iframe 由 giscus.app 托管，GitHub 授权由 giscus 处理，不需要站点 OAuth 密钥或 PAT。若使用 CSP，需允许 giscus.app 的 frame 及 giscus 所需连接；Aurora CSS/DOM 无法控制 iframe 内部。
+`theme: auto` 跟随 Aurora 已解析的浅色/深色主题，无需刷新页面。正常页面依次采用 URL 覆盖、访客保存的选择、`theme.dark_mode`；未保存选择并不表示启用 System 模式。仅在 `html[data-theme]` 缺失时，giscus 才跟随系统颜色偏好的变化；此集成没有新增 System 模式控件。可显式选 `light`、`dark`、`dark_dimmed`；不接受任意 CSS URL。`lang: auto` 把路由映射为 `en` 或 `zh-CN`，也可显式设置这两种语言。评论岛已在可见时 hydration，所以内部默认 `loading: eager`；仍可选 `lazy`。giscus iframe 由 giscus.app 托管，GitHub 授权由 giscus 处理，不需要站点 OAuth 密钥或 PAT。若使用 CSP，需允许 giscus.app 的 frame 及 giscus 所需连接；Aurora CSS/DOM 无法控制 iframe 内部。
 
 ### 其他 provider 与能力
 

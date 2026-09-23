@@ -94,7 +94,8 @@ onBeforeUnmount(() => valineThemeObserver?.disconnect())
   <div class="comment-island" :data-provider="provider" :data-comment-id="identity" :data-comment-aliases="aliases.join('|')">
     <p v-if="status" class="comment-status" role="status">{{ status }}</p>
     <p class="comment-page-title">{{ title }}</p>
-    <noscript><p class="comment-status">{{ noScriptText }}</p></noscript>
+    <!-- With scripting enabled, noscript contents parse as text, not child elements. -->
+    <noscript class="comment-status">{{ noScriptText }}</noscript>
     <GiscusComment v-if="provider === 'giscus'" :settings="settings" :legacy-uid="legacyUid" :locale="locale" :loading-text="labels.loading" :error-text="labels.loadError" />
     <div v-else ref="host" class="comment-provider-host"></div>
   </div>
