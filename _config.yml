@@ -1,0 +1,95 @@
+# Aurora 3 user configuration. Edit this file for normal site settings.
+# Deployment values from ASTRO_SITE / ASTRO_BASE override site.url / site.base.
+site:
+  title: My Aurora Blog
+  subtitle: A personal blog powered by Aurora
+  author: Your Name
+  description: A static-first multilingual blog.
+  avatar: '' # Site-relative path or absolute http(s) URL.
+  logo: /favicon.svg
+  language: en # en or zh-CN; both routes are built by Aurora.
+  started_date: '' # Optional YYYY-MM-DD; used for the footer running-day count.
+  url: https://example.com # Set this to your canonical origin before deployment.
+  base: / # Use /blog/theme/ when deployed below a subdirectory.
+
+i18n:
+  default_locale: en
+  locales: [en, zh-CN] # Fixed supported locales; do not add unsupported languages.
+
+theme:
+  feature: true
+  dark_mode: true # Initial theme; visitors can still switch themes.
+  profile_shape: diamond # circle | diamond | rounded
+  gradient:
+    color_1: '#24c6dc'
+    color_2: '#5433ff'
+    color_3: '#ff0099'
+
+menu:
+  home: true
+  tags: true
+  categories: true
+  archives: true
+  about: true
+  links: false # Enable after adding your own entries to links below.
+
+socials: [] # Example: [{ label: GitHub, href: 'https://github.com/you', icon: github }]
+
+comments:
+  provider: none # none | waline | twikoo | valine
+  recent_comments:
+    enabled: true
+    count: 5
+  gitalk:
+    id: uid # legacy identity mapping only; Gitalk is not a runtime provider
+  valine:
+    app_id: ''
+    app_key: ''
+    avatar: mp
+    placeholder: Leave your thoughts behind~
+    visitor: false
+    avatar_force: false
+    language: auto
+    meta: [nick, mail]
+    required_fields: [nick]
+  twikoo:
+    env_id: ''
+    region: ''
+    language: auto
+  waline:
+    server_url: ''
+    language: auto
+    reaction: false
+    login: disable
+    meta: [nick, mail]
+    required_meta: [nick]
+    comment_sorting: latest
+    word_limit: 0
+    page_size: 10
+
+dia:
+  enabled: false
+  locale: auto
+  tips: []
+
+footer:
+  show_version: true
+  show_avatar: true
+  statistics:
+    # These are manually supplied display strings, not live analytics.
+    page_views: ''
+    unique_visitors: ''
+  beian:
+    number: ''
+    link: ''
+    police_number: ''
+    police_link: ''
+
+# Friend links are site-owned data, never Aurora Demo fixtures.
+links: []
+
+seo:
+  keywords: []
+
+# Markdown/GFM/KaTeX and Shiki are build-time theme capabilities and are always on.
+# RSS, sitemap.xml and robots.txt are generated automatically; there are no switches.

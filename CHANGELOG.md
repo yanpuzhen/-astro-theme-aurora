@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Added a validated root `_config.yml` pipeline with strict schema paths, defaults, environment-over-YAML precedence, selected Aurora 2 aliases, and visible consumer/UI coverage; documentation now separates routine config from deployment/test environment variables.
+- Added pinned Waline/Twikoo first-class runtime and Valine legacy-runtime adapters, identity regressions, localized states, and normalized Twikoo/Waline Recent Comments. Gitalk is explicitly identity/migration compatibility only; its upstream browser-visible secret requirement is an accepted limitation, not a Stable Preflight blocker.
+- Added ordinary/Demo RSS filtering, language-specific metadata, canonical sitemap/robots composition, XML/security assertions, and base-aware feed verification. Internal fixtures opt out of ordinary feeds and sitemap entries.
+- Added config, comment, feed, and dedicated browser preflight verification plus bilingual configuration, provider limitation, feed topology, and Aurora 2 migration documentation.
 - Completed the bilingual Aurora Demo Showcase with exactly ten primary posts across five translation pairs, deterministic remote covers, richer taxonomy, profile/social data, categorized project links, About content, and local-only recent comment fixtures.
 - Added GFM tables/task lists/strikethrough, build-time KaTeX math, a full Markdown fixture matrix, restored Dia's auroral character and contextual interactions, and expanded Footer version/statistics/running-day behavior.
 - Isolated `demo: true` content and showcase fixtures from ordinary builds; ordinary statistics and comments remain provider/configuration driven.

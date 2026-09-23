@@ -1,0 +1,45 @@
+site:
+  title: Config UI Smoke
+  subtitle: Visible subtitle from YAML
+  author: Ada Example
+  description: User configuration reaches the rendered page.
+  avatar: /fixtures/aurora-placeholder.svg
+  started_date: '2020-01-01'
+  url: https://config.example
+  base: /config-smoke/
+theme:
+  profile_shape: circle
+  dark_mode: false
+  gradient:
+    color_1: '#123456'
+    color_2: '#234567'
+    color_3: '#345678'
+menu:
+  home: true
+  tags: false
+  categories: true
+  archives: true
+  about: true
+  links: true
+socials:
+  - label: GitHub
+    href: https://github.com/example
+    icon: github
+  - label: Portfolio
+    href: https://example.org
+    icon: link
+comments:
+  provider: none
+  waline:
+    server_url: https://comments.example
+  twikoo:
+    env_id: https://twikoo.example
+dia:
+  enabled: true
+  locale: en
+  tips: [Dia reads this configured tip.]
+footer:
+  show_version: false
+  show_avatar: true
+  statistics:
+    page_views: '42'

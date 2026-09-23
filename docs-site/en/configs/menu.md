@@ -1,17 +1,17 @@
 # Menu
 
-The menu is a typed list in `src/lib/config.ts`. Each item has a `label` and an `href`:
+Configure the built-in route visibility with booleans in `_config.yml`; labels and targets are localized and owned by Aurora:
 
-```ts
-menu: [
-  { label: 'Home', href: '/' },
-  { label: 'Tags', href: '/tags/' },
-  { label: 'Docs', href: 'https://yanpuzhen.github.io/astro-theme-aurora/' },
-]
+```yaml
+menu:
+  home: true
+  tags: true
+  categories: true
+  archives: true
+  about: true
+  links: false
 ```
 
-Relative links are composed with Astro's configured `base`. Absolute `https://` links are kept external. Existing site routes include the home page, tags, archives, about, search, categories, and custom pages.
+The same generated navigation is used by desktop and mobile layouts. These flags hide or show navigation links; they do not remove generated routes. Search remains available through the search UI and is not a menu flag. Friend-link data is configured separately in the top-level `links` array.
 
-The same menu is passed to the mobile menu island. On small viewports the desktop links are hidden after JavaScript marks the document as enhanced; with JavaScript disabled, the ordinary navigation remains visible and usable.
-
-There is no runtime menu editor, Vue Router, or arbitrary Hexo menu schema in Aurora 3 RC. Menu entries that need a custom page must point to a generated entry in `src/content/pages/`.
+There is no runtime menu editor, arbitrary label/URL list, Vue Router, or Hexo menu runtime. Custom content pages are authored in `src/content/pages/`; their routing is governed by the static route implementation.

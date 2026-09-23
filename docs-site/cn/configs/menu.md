@@ -1,17 +1,17 @@
 # 菜单
 
-菜单是 `src/lib/config.ts` 中的类型化列表，每项包含 `label` 和 `href`：
+在 `_config.yml` 中用布尔值控制内置路由链接显示；标签和目标路径由 Aurora 本地化与维护：
 
-```ts
-menu: [
-  { label: '首页', href: '/' },
-  { label: '标签', href: '/tags/' },
-  { label: '文档', href: 'https://yanpuzhen.github.io/astro-theme-aurora/' },
-]
+```yaml
+menu:
+  home: true
+  tags: true
+  categories: true
+  archives: true
+  about: true
+  links: false
 ```
 
-相对链接会自动组合 Astro 的 `base`，`https://` 外链保持原样。当前站点路由包含首页、标签、归档、关于、搜索、分类和自定义页面。
+桌面和移动导航使用相同的生成菜单。这些开关只隐藏/显示链接，不会删除对应路由。搜索通过搜索交互入口提供，不是菜单开关。友链数据单独放在顶层 `links` 数组。
 
-同一份菜单会传给 mobile menu island。小屏幕上，JavaScript 增强后桌面链接会隐藏；禁用 JavaScript 时，普通导航仍然可见并可用。
-
-Aurora 3 RC 没有 runtime 菜单编辑器、Vue Router 或任意 Hexo 菜单 schema。需要自定义页面时，应指向 `src/content/pages/` 生成的路径。
+Aurora 没有 runtime 菜单编辑器、任意 label/URL 列表、Vue Router 或 Hexo 菜单 runtime。自定义内容页放在 `src/content/pages/`；路由仍由静态实现生成。

@@ -13,6 +13,7 @@ const requiredFiles = [
   'demo/post/demo-math/index.html',
   'demo/cn/post/demo-markdown-fundamentals/index.html',
   'demo/page/2/index.html', 'demo/cn/page/2/index.html',
+  'demo/rss.xml', 'demo/cn/rss.xml', 'demo/sitemap.xml', 'demo/robots.txt',
 ]
 
 for (const relative of requiredFiles) {
@@ -25,6 +26,9 @@ const docsChinese = read('cn/index.html')
 const demo = read('demo/index.html')
 const demoSearch = read('demo/search/index.html')
 const demoPost = read('demo/post/demo-markdown-fundamentals/index.html')
+const demoEnglishFeed = read('demo/rss.xml')
+const demoChineseFeed = read('demo/cn/rss.xml')
+const demoRobots = read('demo/robots.txt')
 const entry = JSON.parse(read('demo/pagefind/pagefind-entry.json'))
 
 function htmlFiles(directory) {
@@ -43,6 +47,12 @@ assert.match(demo, /Markdown Fundamentals in Aurora/)
 assert.match(demoSearch, /SearchIsland/)
 assert.match(demoSearch, new RegExp(demoBase.replaceAll('/', '\\/')))
 assert.match(demoPost, /AuroraSearchAlpha|CommonMark/)
+assert.match(demoEnglishFeed, /<language>en-US<\/language>/)
+assert.match(demoEnglishFeed, /\/astro-theme-aurora\/demo\/post\/demo-markdown-fundamentals\//)
+assert.match(demoChineseFeed, /<language>zh-CN<\/language>/)
+assert.match(demoChineseFeed, /\/astro-theme-aurora\/demo\/cn\/post\/demo-markdown-fundamentals\//)
+assert.match(read('demo/sitemap.xml'), /https:\/\/yanpuzhen\.github\.io\/astro-theme-aurora\/demo\//)
+assert.match(demoRobots, /^User-agent: \*\nAllow: \/\nSitemap: https:\/\/yanpuzhen\.github\.io\/astro-theme-aurora\/demo\/sitemap\.xml\n$/)
 assert.doesNotMatch(`${demo}${demoSearch}`, /legacy-markdown-parity|migration torture|security payload/i)
 assert.doesNotMatch(`${demo}${demoSearch}`, /\/fixtures\//i)
 assert.ok(entry.languages?.en, 'Demo Pagefind English index is missing')
@@ -56,6 +66,8 @@ for (const html of [demo, demoPost]) {
   assert.doesNotMatch(html, /(?:src|href)="[^" ]+\.(?:svg|png|jpe?g|webp|css|js|woff2)\//i, 'Demo static file URLs must not receive a route trailing slash')
   assert.doesNotMatch(html, /(?:href|src)="\/(?!astro-theme-aurora\/|\/\/)/, 'Found an unbased root-relative asset/link')
 }
+assert.match(demo, /href="\/astro-theme-aurora\/demo\/rss\.xml"/)
+assert.match(demo, /href="\/astro-theme-aurora\/demo\/cn\/rss\.xml"/)
 for (const path of htmlFiles(root)) {
   const html = readFileSync(path, 'utf8')
   assert.doesNotMatch(html, /(?:href|src)="\/(?!astro-theme-aurora\/|\/|#)/, `Found an unbased Pages URL in ${path}`)

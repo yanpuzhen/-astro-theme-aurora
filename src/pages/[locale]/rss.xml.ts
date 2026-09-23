@@ -1,22 +1,41 @@
+import rss from '@astrojs/rss'
 import { getCollection } from 'astro:content'
 import { config } from '../../lib/config'
-import { isLocale, isPublicPost } from '../../lib/content'
+import { isFeedPost, isLocale, excerptFromBody } from '../../lib/content'
 import { archivePosts } from '../../lib/posts'
 import { routeManifestEntryForLocale, sitePath } from '../../lib/routing'
 
 export const prerender = true
-const escapeXml = (value: string) => value.replace(/[<>&'\"]/g, (char) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' })[char] || char)
 
 export function getStaticPaths() { return [{ params: { locale: 'cn' } }] }
 
+function uniqueFeedPosts<T extends { id: string; data: { translationKey?: string } }>(posts: T[]): T[] {
+  const seen = new Set<string>()
+  return posts.filter((post) => {
+    const key = post.data.translationKey ? `translation:${post.data.translationKey}` : `entry:${post.id}`
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
 export async function GET({ site }: { site?: URL }) {
-  const posts = archivePosts((await getCollection('posts')).filter(isPublicPost).filter((post) => isLocale(post, 'zh-CN')))
-  const origin = site?.toString() || 'https://example.com/'
-  const items = posts.map((post) => {
-    const route = routeManifestEntryForLocale(post, 'zh-CN')
-    const link = new URL(sitePath(route.canonicalPath), origin).toString()
-    return `<item><title>${escapeXml(post.data.title)}</title><link>${escapeXml(link)}</link><guid isPermaLink="true">${escapeXml(link)}</guid><pubDate>${post.data.date.toUTCString()}</pubDate><description>${escapeXml(post.data.description || (post.body || '').slice(0, 240))}</description></item>`
-  }).join('')
-  const xml = `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escapeXml(config.site.title)} · 简体中文</title><link>${escapeXml(new URL(sitePath('/cn/'), origin).toString())}</link><description>${escapeXml(config.site.description)}</description>${items}</channel></rss>`
-  return new Response(xml, { headers: { 'Content-Type': 'application/rss+xml; charset=utf-8' } })
+  const posts = uniqueFeedPosts(archivePosts((await getCollection('posts'))
+    .filter(isFeedPost)
+    .filter((post) => isLocale(post, 'zh-CN'))))
+  const origin = site || new URL(config.site.url)
+  return rss({
+    title: `${config.site.title} · 简体中文`,
+    description: config.site.description,
+    site: new URL(sitePath('/cn/'), origin),
+    customData: '<language>zh-CN</language>',
+    items: posts.map((post) => ({
+      title: post.data.title,
+      description: excerptFromBody(post.data.description || post.body || '', post.data.preview || 240),
+      pubDate: post.data.date,
+      link: new URL(sitePath(routeManifestEntryForLocale(post, 'zh-CN').canonicalPath), origin).toString(),
+      categories: post.data.categories,
+      author: post.data.author.name,
+    })),
+  })
 }

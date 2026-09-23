@@ -65,6 +65,6 @@ const jsonLd = {
       {hasImages && <LightboxIsland client:load messages={messages} />}
     <div class="post-html"><Content /></div>
     <nav class="article-nav" aria-label={messages.article}>{previous ? <a href={postPath(previous)}><small>{messages.previousArticle}</small><span>← {previous.data.title}</span></a> : <span />}{next ? <a href={postPath(next)}><small>{messages.nextArticle}</small><span>{next.data.title} →</span></a> : <span />}</nav>
-    <Comments enabled={post.data.comments && config.comments.enabled} provider={config.comments.provider} providerId={config.comments.gitalkIdMode} legacyUid={manifest.commentId} canonicalPath={manifest.canonicalUrlPath} commentPath={manifest.commentPath} title={post.data.title} locale="en" />
+    <Comments enabled={post.data.comments && config.comments.enabled} provider={config.comments.provider} legacyUid={manifest.commentId} canonicalPath={manifest.canonicalUrlPath} commentPath={manifest.commentPath} title={post.data.title} locale="en" />
   </article>
 </BaseLayout>

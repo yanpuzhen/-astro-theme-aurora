@@ -28,10 +28,10 @@ features:
     details: 使用本地搜索索引，同时支持中文和英文，无需第三方凭据。
   - icon: 🌗
     title: 主题切换
-    details: 支持浅色、深色和系统偏好回退，并保存用户选择。
+    details: 可配置浅色或深色初始主题，并保存访客选择。
   - icon: 💬
     title: 评论适配器
-    details: 提供可选的 Gitalk、Valine、Twikoo 和 Waline 集成，并保留 identity 输入。
+    details: Waline/Twikoo 一等运行时、Valine legacy runtime，以及 Gitalk 仅保留 identity/migration compatibility。
   - icon: 🌍
     title: 双语文档
     details: 中英文文档使用相同的 Aurora 3 实现作为事实来源。

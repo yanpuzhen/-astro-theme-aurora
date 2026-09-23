@@ -11,7 +11,7 @@ test('home, article, taxonomy, archive and ordinary navigation load', async ({ p
   await page.goto(route('/'))
   await expect(page).toHaveTitle(/Aurora/)
   await expect(page.locator('main')).toContainText(/Latest articles|最新文章/)
-  await expect(page.locator('nav[aria-label="Primary navigation"] a')).toHaveCount(7)
+  expect(await page.locator('nav[aria-label="Primary navigation"] a').allTextContents()).toEqual(['Home', 'Tags', 'Categories', 'Archives', 'About'])
 
   const imageSources = await page.locator('img').evaluateAll((images) =>
     [...new Set(images.map((image) => image.getAttribute('src')).filter((src): src is string => typeof src === 'string' && src.startsWith('/')))],

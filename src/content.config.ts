@@ -26,7 +26,7 @@ const sharedSchema = z.object({
   translationKey: z.string().optional(),
   hidden: booleanLike, published: booleanLike, draft: booleanLike, rawHtml: booleanLike,
   allowHtml: booleanLike, type: z.string().optional(), categoryMode: z.string().optional(),
-  data: z.unknown().optional(), demo: booleanLike,
+  data: z.unknown().optional(), demo: booleanLike, rss: booleanLike, sitemap: booleanLike,
 }).passthrough()
 
 const posts = defineCollection({

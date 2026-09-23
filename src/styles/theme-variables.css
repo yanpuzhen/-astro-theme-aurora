@@ -5,7 +5,7 @@
 :root {
   --max-width: 1600px;
   --gap: 1.75rem;
-  --main-gradient: linear-gradient(130deg, #24c6dc, #5433ff 41.07%, #ff0099 76.05%);
+  --main-gradient: linear-gradient(130deg, var(--gradient-color-1, #24c6dc), var(--gradient-color-2, #5433ff) 41.07%, var(--gradient-color-3, #ff0099) 76.05%);
   --theme-transition: all 250ms ease;
 }
 
@@ -97,6 +97,8 @@
 }
 
 .diamond-avatar { clip-path: polygon(50% 3%, 91% 25%, 91% 75%, 50% 97%, 9% 75%, 9% 25%); }
+.profile-shape-circle { clip-path: none; border-radius: 50%; }
+.profile-shape-rounded { clip-path: none; border-radius: 1rem; }
 .circle-avatar { border-radius: 50%; }
 .rounded-avatar { border-radius: 1rem; }
 .ob-drop-shadow { filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3)); }

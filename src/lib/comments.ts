@@ -1,4 +1,7 @@
-export type CommentProvider = 'gitalk' | 'valine' | 'twikoo' | 'waline' | 'none'
+/** Providers with a bundled Aurora 3 browser runtime. */
+export type CommentProvider = 'valine' | 'twikoo' | 'waline' | 'none'
+/** Gitalk is accepted only by the identity mapper for migration compatibility. */
+export type CommentIdentityProvider = 'gitalk' | Exclude<CommentProvider, 'none'>
 export interface CommentIdentityInput { legacyUid: string; canonicalPath: string; legacyPath: string; providerId?: 'uid' | 'pathname' }
 
 export function normalizeCommentPath(path: string, trailingSlash = true): string {
@@ -7,7 +10,7 @@ export function normalizeCommentPath(path: string, trailingSlash = true): string
   return trailingSlash || clean === '/' ? clean : clean.slice(0, -1)
 }
 
-export function commentIdentity(provider: CommentProvider, input: CommentIdentityInput): string {
+export function commentIdentity(provider: CommentIdentityProvider, input: CommentIdentityInput): string {
   const legacyPath = input.legacyPath || input.canonicalPath
   if (provider === 'gitalk') return input.providerId === 'pathname' ? normalizeCommentPath(legacyPath) : input.legacyUid
   // Aurora 2.x calls cleanPath() for Valine, which removes a non-root final
@@ -17,7 +20,7 @@ export function commentIdentity(provider: CommentProvider, input: CommentIdentit
   return input.legacyUid
 }
 
-export function commentIdentityAliases(provider: CommentProvider, input: CommentIdentityInput): string[] {
+export function commentIdentityAliases(provider: CommentIdentityProvider, input: CommentIdentityInput): string[] {
   const values = new Set([
     commentIdentity(provider, input),
     normalizeCommentPath(input.legacyPath || input.canonicalPath),

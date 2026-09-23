@@ -7,7 +7,6 @@ import DiaIsland from '../islands/DiaIsland.vue'
 import { config } from '../lib/config'
 import { assetPath, localizedSitePath, publicAssetPath, sitePath, withoutBase } from '../lib/routing'
 import { defaultLocale, messagesFor, normalizeLocale, type AuroraLocale } from '../lib/i18n'
-import { isDemoBuild } from '../lib/showcase'
 
 interface Props {
   title: string; description?: string; canonicalPath?: string; image?: string; type?: 'website' | 'article'
@@ -33,20 +32,25 @@ const structuredData = {
 }
 if (imageUrl && typeof structuredData.image === 'string') structuredData.image = imageUrl.toString()
 const safeJsonLd = JSON.stringify(structuredData).split('<').join('\\u003c').split('>').join('\\u003e').split('&').join('\\u0026')
-const diaEnabled = isDemoBuild() || import.meta.env.PUBLIC_AURORA_DIA === 'true'
+const diaEnabled = config.dia.enabled
+const diaLocale = config.dia.locale === 'auto' ? locale : config.dia.locale
+const gradientStyle = `--gradient-color-1:${config.theme.gradient[0]};--gradient-color-2:${config.theme.gradient[1]};--gradient-color-3:${config.theme.gradient[2]}`
+const pageKeywords = keywords?.length ? keywords : config.seo.keywords
 ---
 <!doctype html>
-<html lang={lang} class="no-js">
+<html lang={lang} class="no-js" data-default-theme={config.theme.darkMode ? 'dark' : 'light'} style={gradientStyle}>
   <head>
     <script is:inline>
-      (() => { document.documentElement.classList.replace('no-js', 'js'); try { const requested = new URL(location.href).searchParams.get('theme'); const stored = localStorage.getItem('aurora-theme'); const configured = 'dark'; const theme = requested === 'dark' || requested === 'light' ? requested : stored === 'dark' || stored === 'light' ? stored : configured; document.documentElement.dataset.theme = theme; } catch { document.documentElement.dataset.theme = 'dark'; } })()
+      (() => { document.documentElement.classList.replace('no-js', 'js'); try { const requested = new URL(location.href).searchParams.get('theme'); const stored = localStorage.getItem('aurora-theme'); const configured = document.documentElement.dataset.defaultTheme === 'light' ? 'light' : 'dark'; const theme = requested === 'dark' || requested === 'light' ? requested : stored === 'dark' || stored === 'light' ? stored : configured; document.documentElement.dataset.theme = theme; } catch { document.documentElement.dataset.theme = document.documentElement.dataset.defaultTheme || 'dark'; } })()
     </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
-    {description && <meta name="description" content={description} />}
-    {keywords && keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
+    {(description || config.site.description) && <meta name="description" content={description || config.site.description} />}
+    {pageKeywords.length > 0 && <meta name="keywords" content={pageKeywords.join(', ')} />}
     <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title={config.site.title} href={assetPath('/rss.xml')} />
+    <link rel="alternate" type="application/rss+xml" title={`${config.site.title} · 简体中文`} href={assetPath('/cn/rss.xml')} />
     {Object.entries(alternates).map(([alternateLocale, href]) => href && <link rel="alternate" hreflang={alternateLocale} href={new URL(sitePath(withoutBase(href)), Astro.site)} />)}
     {alternates.en && <link rel="alternate" hreflang="x-default" href={new URL(sitePath(withoutBase(alternates.en)), Astro.site)} />}
     <meta property="og:title" content={title} />
@@ -56,11 +60,11 @@ const diaEnabled = isDemoBuild() || import.meta.env.PUBLIC_AURORA_DIA === 'true'
     {alternates['zh-CN'] && <meta property="og:locale:alternate" content="zh_CN" />}
     {alternates.en && <meta property="og:locale:alternate" content="en_US" />}
     <meta property="og:site_name" content={config.site.title} />
-    {description && <meta property="og:description" content={description} />}
+    {(description || config.site.description) && <meta property="og:description" content={description || config.site.description} />}
     {imageUrl && <meta property="og:image" content={imageUrl} />}
     <meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
     <meta name="twitter:title" content={title} />
-    {description && <meta name="twitter:description" content={description} />}
+    {(description || config.site.description) && <meta name="twitter:description" content={description || config.site.description} />}
     {imageUrl && <meta name="twitter:image" content={imageUrl} />}
     {type === 'article' && published && <meta property="article:published_time" content={published.toISOString()} />}
     {type === 'article' && updated && <meta property="article:modified_time" content={updated.toISOString()} />}
@@ -75,6 +79,6 @@ const diaEnabled = isDemoBuild() || import.meta.env.PUBLIC_AURORA_DIA === 'true'
     <Header locale={locale} localeLinks={switchLinks} />
     <main id="main-content"><slot /></main>
     <Footer locale={locale} />
-    {diaEnabled && <DiaIsland client:idle locale={lang} />}
+    {diaEnabled && <DiaIsland client:idle locale={diaLocale} tip={config.dia.tips[0]} />}
   </body>
 </html>

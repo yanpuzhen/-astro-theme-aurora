@@ -31,7 +31,7 @@ features:
     details: Light and dark themes with a system preference fallback and no-JavaScript-readable content.
   - icon: 💬
     title: Comment adapters
-    details: Focused integrations for Gitalk, Valine, Twikoo, and Waline, disabled by default.
+    details: Waline and Twikoo first-class runtimes, Valine legacy runtime, and Gitalk identity/migration compatibility only.
   - icon: 🌍
     title: Bilingual docs
     details: English and Chinese guides share the same current-source-of-truth structure.

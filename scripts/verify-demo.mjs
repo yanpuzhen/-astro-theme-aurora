@@ -30,6 +30,8 @@ assert.match(english, /Mira Chen/)
 assert.match(english, /Demo showcase data/)
 assert.match(english, /Aurora-Dia/)
 assert.match(read('/links/'), /Aurora 3/)
+assert.match(read('/about/'), /Aurora Demo/)
+assert.match(read('/about/'), /github\.com\/yanpuzhen\/astro-theme-aurora/)
 assert.match(read('/cn/links/'), /Aurora 3/)
 
 const manifest = JSON.parse(readFileSync(`${root}/route-manifest.json`, 'utf8'))

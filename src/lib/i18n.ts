@@ -35,6 +35,8 @@ export interface AuroraMessages {
   poweredBy: string; themedBy: string; pageViews: string; uniqueVisitors: string; siteRunningFor: string
   day: string; demoStats: string; projects: string; resources: string; linksIntro: string; aboutIntro: string
   homeAction: string; searchAction: string; noCommentsConfigured: string
+  commentLoading: string; commentSetupMissing: string; commentLoadError: string; commentsRequireJavaScript: string
+  recentCommentsLoadError: string; recentCommentsLoading: string
   filing: string; policeFiling: string
 }
 
@@ -63,8 +65,11 @@ const messages: Record<AuroraLocale, AuroraMessages> = {
     editorSelection: "EDITOR'S SELECTION", recommended: 'Recommended', poweredBy: 'Powered by', themedBy: 'Themed by',
     pageViews: 'Page views', uniqueVisitors: 'Unique visitors', siteRunningFor: 'Site running for', day: 'days',
     demoStats: 'Demo showcase data', projects: 'Projects', resources: 'Resources', linksIntro: 'Curated project and resource links for this showcase.',
-    aboutIntro: 'A complete Aurora 3 showcase: static HTML, multilingual content, focused islands, and a build-time Markdown pipeline.',
+    aboutIntro: 'Aurora 3 provides static HTML, multilingual content, focused islands, and a build-time Markdown pipeline.',
     homeAction: 'Back to home', searchAction: 'Search the archive', noCommentsConfigured: 'Comments are not configured for this site.',
+    commentLoading: 'Loading comments…', commentSetupMissing: 'The selected comment provider is not fully configured.',
+    commentLoadError: 'Comments could not be loaded. The article is still available.', commentsRequireJavaScript: 'Comments require JavaScript; the article remains available.',
+    recentCommentsLoadError: 'Recent comments are temporarily unavailable.', recentCommentsLoading: 'Loading recent comments…',
     filing: 'Filing', policeFiling: 'Police filing',
   },
   'zh-CN': {
@@ -90,8 +95,11 @@ const messages: Record<AuroraLocale, AuroraMessages> = {
     recommended: '推荐', poweredBy: '由', themedBy: '主题来自', pageViews: '页面浏览', uniqueVisitors: '独立访客',
     siteRunningFor: '站点已运行', day: '天', demoStats: 'Demo 展示数据', projects: '项目', resources: '资源',
     linksIntro: '为本次 Showcase 整理的项目与资源链接。',
-    aboutIntro: '完整展示 Aurora 3 的能力：静态 HTML、多语言内容、聚焦交互岛和构建期 Markdown 管线。',
+    aboutIntro: 'Aurora 3 提供静态 HTML、多语言内容、聚焦交互岛和构建期 Markdown 管线。',
     homeAction: '返回首页', searchAction: '搜索归档', noCommentsConfigured: '本站尚未配置评论服务。',
+    commentLoading: '评论加载中……', commentSetupMissing: '所选评论服务尚未完成配置。',
+    commentLoadError: '评论暂时无法加载，文章内容仍可正常阅读。', commentsRequireJavaScript: '评论服务需要 JavaScript，文章内容仍可正常阅读。',
+    recentCommentsLoadError: '最新评论暂时无法加载。', recentCommentsLoading: '最新评论加载中……',
     filing: '备案信息', policeFiling: '公安备案',
   },
 }

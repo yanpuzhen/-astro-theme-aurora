@@ -1,12 +1,14 @@
 ---
 import type { CollectionEntry } from 'astro:content'
-import { config, menuFor } from '../lib/config'
+import { config, profileShapeClass } from '../lib/config'
 import { publicAssetPath, tagPath } from '../lib/routing'
 import { collectTags } from '../lib/taxonomy'
 import Icon from './Icon.astro'
 import { messagesFor, type AuroraLocale } from '../lib/i18n'
 import { commentHref, demoComments, demoProfile, isDemoBuild } from '../lib/showcase'
 import { safeExternalUrl } from '../lib/urls'
+import RecentCommentsIsland from '../islands/RecentCommentsIsland.vue'
+import { adapterFor } from '../lib/comment-adapters'
 interface Props { posts: CollectionEntry<'posts'>[]; locale?: AuroraLocale }
 const { posts, locale = 'en' } = Astro.props
 const messages = messagesFor(locale)
@@ -15,27 +17,32 @@ const tags = allTags.slice(0, 14)
 const words = posts.reduce((sum, post) => sum + (post.body?.trim().split(/\s+/).length || 0), 0)
 const categories = new Set(posts.flatMap((post) => post.data.categories)).size
 const showcase = isDemoBuild()
-const author = showcase ? { name: demoProfile[locale].name, description: demoProfile[locale].description, avatar: demoProfile[locale].avatar, socials: Object.fromEntries(demoProfile[locale].socials.map((item) => [item.label, item.href])) } : (posts[0]?.data.author || { name: config.site.author, description: config.site.description, avatar: config.site.avatar, socials: {} })
-const configuredSocials = Object.entries(author.socials || {}).flatMap(([label, value]) => {
+const author = showcase ? { name: demoProfile[locale].name, description: demoProfile[locale].description, avatar: demoProfile[locale].avatar } : { name: config.site.author, description: config.site.description, avatar: config.site.avatar }
+const legacyAuthorSocials = showcase ? [] : Object.entries(posts[0]?.data.author.socials || {}).flatMap(([label, value]) => {
   const href = typeof value === 'string' ? value : value?.link
   const safeHref = safeExternalUrl(href)
-  return safeHref ? [{ label, href: safeHref }] : []
+  return safeHref ? [{ label, href: safeHref, icon: label.toLowerCase() === 'github' ? 'github' as const : 'link' as const }] : []
 })
-const github = menuFor(locale).find((item) => item.label === messages.github)?.href
-const socialLinks = configuredSocials.some((item) => item.label.toLowerCase() === 'github') || !github
-  ? configuredSocials
-  : [...configuredSocials, { label: 'GitHub', href: github }]
-const socialIcon = (label: string): 'github' | 'link' => label.toLowerCase() === 'github' ? 'github' : 'link'
+const siteSocials = config.socials.flatMap((social) => {
+  const href = safeExternalUrl(social.href)
+  return href ? [{ label: social.label, href, icon: social.icon }] : []
+})
+const demoSocials = demoProfile[locale].socials.flatMap((social) => {
+  const href = safeExternalUrl(social.href)
+  return href ? [{ label: social.label, href, icon: social.label.toLowerCase() === 'github' ? 'github' as const : 'link' as const }] : []
+})
+const socialLinks = showcase ? demoSocials : legacyAuthorSocials.length ? legacyAuthorSocials : siteSocials
+const socialIcon = (icon: 'github' | 'link'): 'github' | 'link' => icon
 ---
 
   <aside class="sidebar" aria-label={messages.home}>
   <section class="profile-card highlighted" data-dia="author">
     <div class="profile-card__inner">
-      <img class="profile-card__avatar diamond-avatar" src={publicAssetPath(author.avatar || '/favicon.svg')} alt={author.name} />
+      <img class:list={["profile-card__avatar", profileShapeClass()]} src={publicAssetPath(author.avatar || '/favicon.svg')} alt={author.name} />
       <h2>{author.name}</h2>
       <span class="gradient-rule" aria-hidden="true"></span>
       <p>{author.description || config.site.description}</p>
-      {socialLinks.length > 0 && <div class="profile-socials">{socialLinks.map((item) => <a href={item.href} target="_blank" rel="noreferrer" aria-label={item.label} title={item.label}><Icon name={socialIcon(item.label)} /></a>)}</div>}
+      {socialLinks.length > 0 && <div class="profile-socials">{socialLinks.map((item) => <a href={item.href} target="_blank" rel="noreferrer" aria-label={item.label} title={item.label}><Icon name={socialIcon(item.icon)} /></a>)}</div>}
       <dl class="profile-stats">
         <div><dt>{words}</dt><dd>{messages.words}</dd></div>
         <div><dt>{posts.length}</dt><dd>{messages.articles}</dd></div>
@@ -54,6 +61,10 @@ const socialIcon = (label: string): 'github' | 'link' => label.toLowerCase() ===
 
     <section class="sidebar-box recent-comments" aria-labelledby="recent-comments-title">
     <h2 id="recent-comments-title" class="sidebar-title"><span>{messages.comments}</span><i aria-hidden="true"></i></h2>
-    {showcase ? <ul class="recent-comment-list">{demoComments[locale].map((comment) => <li><img src={comment.avatar} alt="" loading="lazy" /><div><a href={commentHref(comment, locale)}>{comment.name}</a><p>{comment.text}</p><time datetime={comment.date}>{comment.date}</time></div></li>)}</ul> : <p class="empty-state"><span aria-hidden="true"></span> {messages.noCommentsConfigured}</p>}
+    {showcase ? <ul class="recent-comment-list">{demoComments[locale].map((comment) => <li><img src={comment.avatar} alt="" loading="lazy" /><div><a href={commentHref(comment, locale)}>{comment.name}</a><p>{comment.text}</p><time datetime={comment.date}>{comment.date}</time></div></li>)}</ul>
+      : !config.comments.enabled ? <p class="empty-state"><span aria-hidden="true"></span> {messages.noCommentsConfigured}</p>
+        : config.comments.recentComments.enabled && adapterFor(config.comments.provider).supportsRecentComments && (config.comments.provider === 'twikoo' || config.comments.provider === 'waline')
+          ? <RecentCommentsIsland client:visible provider={config.comments.provider} settings={{ twikoo: config.comments.twikoo, waline: config.comments.waline }} count={config.comments.recentComments.count} base={import.meta.env.BASE_URL} siteOrigin={config.site.url} locale={locale} emptyText={messages.noRecentComments} loadingText={messages.recentCommentsLoading} errorText={messages.recentCommentsLoadError} />
+          : <p class="empty-state"><span aria-hidden="true"></span> {messages.noRecentComments}</p>}
   </section>
 </aside>

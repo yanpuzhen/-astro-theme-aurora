@@ -1,0 +1,41 @@
+---
+import CommentIsland from '../../islands/CommentIsland.vue'
+import RecentCommentsIsland from '../../islands/RecentCommentsIsland.vue'
+import { config } from '../../lib/config'
+import { commentIdentity, commentIdentityAliases } from '../../lib/comments'
+import { messagesFor } from '../../lib/i18n'
+
+export function getStaticPaths() {
+  return process.env.ASTRO_PREFLIGHT_TESTS === 'true' ? [{ params: { suite: 'comments' } }] : []
+}
+const labels = messagesFor('en')
+const identity = { legacyUid: 'preflight-legacy-uid', canonicalPath: '/post/preflight/', legacyPath: '/post/preflight/' }
+const legacyGitalkIdentity = commentIdentity('gitalk', { ...identity, providerId: 'uid' })
+const legacyGitalkPathnameIdentity = commentIdentity('gitalk', { ...identity, providerId: 'pathname' })
+const legacyGitalkAliases = commentIdentityAliases('gitalk', { ...identity, providerId: 'uid' })
+const providerSettings = {
+  valine: { appId: 'preflight-app-id', appKey: 'preflight-public-app-key', avatar: 'mp', placeholder: 'Mock', visitor: false, avatarForce: false, meta: ['nick'], requiredFields: ['nick'] },
+  twikoo: { envId: 'https://twikoo.example', region: '', language: 'en' },
+  waline: { serverUrl: 'https://waline.example', language: 'en', reaction: false, login: 'disable', meta: ['nick'], requiredMeta: ['nick'], commentSorting: 'latest', wordLimit: 0, pageSize: 10 },
+}
+const providerLabels = { loading: labels.commentLoading, setupMissing: labels.commentSetupMissing, loadError: labels.commentLoadError }
+const recentSettings = { twikoo: config.comments.twikoo, waline: config.comments.waline }
+---
+<html lang="en">
+  <head><meta charset="utf-8" /><title>Preflight provider mocks</title></head>
+  <body>
+    <main>
+      <h1>Preflight provider mocks</h1>
+      <div data-provider-test="gitalk-identity" data-runtime-bundled="false" data-comment-id={legacyGitalkIdentity} data-comment-aliases={legacyGitalkAliases.join('|')}>
+        <p>Gitalk identity compatibility is retained for migration only; no Gitalk runtime is bundled.</p>
+        <span data-pathname-comment-id={legacyGitalkPathnameIdentity}></span>
+      </div>
+      <div data-provider-test="valine"><CommentIsland client:load provider="valine" {...identity} title="Preflight Valine" locale="en" settings={providerSettings.valine} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div>
+      <div data-provider-test="twikoo"><CommentIsland client:load provider="twikoo" {...identity} title="Preflight Twikoo" locale="en" settings={providerSettings.twikoo} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div>
+      <div data-provider-test="waline"><CommentIsland client:load provider="waline" {...identity} title="Preflight Waline" locale="en" settings={providerSettings.waline} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div>
+      <div data-provider-test="incomplete"><CommentIsland client:load provider="waline" {...identity} title="Incomplete Waline" locale="en" settings={{ serverUrl: '' }} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div>
+      <section aria-label="Twikoo recent comments"><RecentCommentsIsland client:load provider="twikoo" settings={recentSettings} count={3} base={import.meta.env.BASE_URL} siteOrigin={config.site.url} locale="en" emptyText={labels.noRecentComments} loadingText={labels.recentCommentsLoading} errorText={labels.recentCommentsLoadError} /></section>
+      <section aria-label="Waline recent comments"><RecentCommentsIsland client:load provider="waline" settings={recentSettings} count={3} base={import.meta.env.BASE_URL} siteOrigin={config.site.url} locale="en" emptyText={labels.noRecentComments} loadingText={labels.recentCommentsLoading} errorText={labels.recentCommentsLoadError} /></section>
+    </main>
+  </body>
+</html>

@@ -1,18 +1,18 @@
 # Theme
 
-Aurora has three effective appearance states: light, dark, and the system preference fallback. The inline head script selects the system preference on first load; the Theme island persists an explicit choice in `localStorage` under `aurora-theme`.
+Set supported theme values in the root `_config.yml`:
 
-The current theme defaults are defined in `src/lib/config.ts`:
-
-```ts
-theme: {
-  feature: true,
-  darkMode: true,
-  profileShape: 'diamond',
-  colors: ['#24c6dc', '#5433ff', '#ff0099'],
-}
+```yaml
+theme:
+  feature: true
+  dark_mode: true # initial appearance; visitors may switch and persist their choice
+  profile_shape: diamond # circle | diamond | rounded
+  gradient:
+    color_1: '#24c6dc'
+    color_2: '#5433ff'
+    color_3: '#ff0099'
 ```
 
-`darkMode` and `profileShape` are part of the typed config surface, while the current public shell exposes the light/dark toggle and the Aurora gradient system. The toggle is an enhancement; generated content and navigation remain readable without it.
+`feature` controls the existing home post-selection mode. `dark_mode` selects the initial appearance; the visitor's explicit local choice takes precedence and is stored in the browser. `profile_shape` applies to the sidebar and footer avatars. The three hex values feed the Aurora gradient CSS variables.
 
-Responsive layouts cover the home grid, article body, taxonomy cards, archives, search, and mobile navigation. Theme choice is local to the browser and is not sent to a server.
+The appearance toggle is an enhancement; static content and navigation remain readable without JavaScript. Theme choice stays local to the browser and is not sent to a server.

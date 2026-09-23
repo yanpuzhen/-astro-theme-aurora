@@ -1,28 +1,50 @@
 # Integrations
 
-Aurora keeps interactive or external integrations isolated from the static content layer.
+Routine integration settings belong in `_config.yml`; optional public ENV values are deployment overrides. Never put private credentials in YAML or `PUBLIC_*` variables.
+
+## Comments
+
+Select one provider with `comments.provider`. The snippets below are public client configuration, not private credentials:
+
+```yaml
+comments:
+  provider: waline # none | waline | twikoo | valine
+  waline:
+    server_url: https://comments.example.com
+    language: auto # auto | en | zh-CN
+    reaction: false
+    login: disable # enable | disable | force
+    page_size: 10
+  twikoo:
+    env_id: https://comments.example.com
+    region: ''
+    language: auto
+  valine:
+    app_id: ''
+    app_key: ''
+    language: auto
+```
+
+| Provider | Role | Runtime bundled | Identity compatibility | Secure OAuth runtime | Reason / production backend verification |
+| --- | --- | --- | --- | --- | --- |
+| Waline | FIRST-CLASS RUNTIME | YES — 3.15.2 | YES — trailing-slash pathname | NOT APPLICABLE | Requires a reachable configured server; production backend is not verified here. |
+| Twikoo | FIRST-CLASS RUNTIME | YES — 2.0.8 | YES — trailing-slash pathname | NOT APPLICABLE | Supports `getRecentComments`; requires a configured service; production backend is not verified here. |
+| Valine | LEGACY RUNTIME | YES — 1.5.3 | YES — pathname without trailing slash | NOT APPLICABLE | No theme Recent Comments API; App ID/key are public client values, never admin/master credentials. |
+| Gitalk | LEGACY IDENTITY / MIGRATION COMPATIBILITY | NO | YES — legacy UID and pathname | NOT PROVIDED | Upstream browser client requires `clientSecret`; Aurora does not expose it or provide an OAuth backend/fork. Production backend verification: NOT APPLICABLE. |
+
+The three bundled client versions and initialization shapes are centralized in `src/lib/comment-adapters.ts`; Gitalk is absent from runtime adapters and exists only for identity/migration compatibility. Scripts and required CSS are loaded only by an enabled integration; failures show a localized status and do not remove the article. `none` loads no provider assets. Theme Recent Comments are supported only for Twikoo and Waline. Gitalk selection is rejected with localized configuration guidance recommending Waline or Twikoo. Provider responses are reduced to plain text, same-origin/base-aware links, safe avatars, and timestamps; arbitrary HTML is never rendered.
+
+The browser suite uses deterministic local mocks for bundled clients and verifies the adapter-to-island initialization boundary; Gitalk has identity-only regression coverage and no runtime mock or initialization claim. This is **client integration verification**, not backend verification. No production provider credentials or comment records were supplied; real backend availability and record continuity remain **not externally verified**. Demo recent comments are fixed local showcase data and never query or write to a live provider.
 
 ## Search, media, and utilities
 
 - **Pagefind** indexes generated HTML after `astro build`; no Algolia credentials are used.
-- **Lightbox** enhances article images when the island loads; images remain ordinary HTML without JavaScript.
-- **Code copy** adds a copy button to generated code blocks.
-- **Dia** is opt-in with `PUBLIC_AURORA_DIA=true` and uses no external backend in the Demo. It keeps the original orb/body/eyes/platform composition, localized tips, contextual `data-dia` hooks, keyboard focus, mobile hiding, and reduced-motion behavior.
-- **RSS**, **sitemap**, and **robots** are generated as static files.
+- **Lightbox** enhances ordinary generated article images; no-JS content remains readable.
+- **Code copy** enhances generated code blocks.
+- **Dia** is configured by `dia.enabled`, `dia.locale`, and optional `dia.tips`; Demo content is deterministic.
 
-## Comments
+## Footer and feeds
 
-Set `PUBLIC_COMMENT_PROVIDER` to `none`, `gitalk`, `valine`, `twikoo`, or `waline`. The theme hides the comments region when no provider is configured. The Demo sidebar's recent comments are deterministic local fixtures and never enter a provider database.
+`footer.statistics.page_views` and `unique_visitors` are manual display strings, not live analytics. `site.started_date` computes the running-day display; `footer.beian` is optional.
 
-## Footer and site statistics
-
-Configure `PUBLIC_AURORA_STARTED_DATE` as `YYYY-MM-DD` to show real running days. `PUBLIC_AURORA_PAGE_VIEWS` and `PUBLIC_AURORA_UNIQUE_VISITORS` are intentionally plain public build values for an existing integration; leave them blank to hide those rows. `PUBLIC_AURORA_AVATAR` configures the footer avatar. Optional `PUBLIC_AURORA_BEIAN_*` variables render备案 links only when supplied. The Demo uses clearly labeled fixture values and a fixed showcase start date.
-
-| Provider | Build variables | Identity |
-| --- | --- | --- |
-| Gitalk | `PUBLIC_GITALK_CLIENT_ID`, `PUBLIC_GITALK_OWNER`, `PUBLIC_GITALK_REPO` | Legacy UID by default; pathname mode is available. |
-| Valine | `PUBLIC_VALINE_APP_ID`, `PUBLIC_VALINE_APP_KEY` | Historical pathname without trailing slash. |
-| Twikoo | `PUBLIC_TWIKOO_ENV_ID` | Historical pathname with trailing slash. |
-| Waline | `PUBLIC_WALINE_SERVER_URL` | Historical pathname with trailing slash. |
-
-Production provider records were not available for verification. Compare representative old comment keys before switching traffic. There is intentionally no static `PUBLIC_GITALK_CLIENT_SECRET`; OAuth secrets must stay in a trusted service.
+Root deployments publish `/rss.xml`, `/cn/rss.xml`, `/sitemap.xml`, and `/robots.txt`. All use the configured `site.url` and `site.base`; `ASTRO_SITE`/`ASTRO_BASE` override them for a build. GitHub Pages Demo outputs are `/astro-theme-aurora/demo/rss.xml`, `/astro-theme-aurora/demo/cn/rss.xml`, `/astro-theme-aurora/demo/sitemap.xml`, and `/astro-theme-aurora/demo/robots.txt`. English and Chinese feeds include only their locale. Ordinary builds exclude Demo-marked entries; `rss: false` and `sitemap: false` frontmatter opt an otherwise public entry out of the respective index.

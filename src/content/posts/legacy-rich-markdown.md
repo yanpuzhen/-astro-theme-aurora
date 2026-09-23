@@ -1,4 +1,6 @@
 ---
+rss: false
+sitemap: false
 title: Legacy Markdown parity
 date: 2026-09-17
 slug: legacy-markdown-parity

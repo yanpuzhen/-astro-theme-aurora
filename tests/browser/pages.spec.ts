@@ -57,7 +57,7 @@ test('Demo nested base, Pagefind, article, lightbox, theme and mobile navigation
   await expect(page.locator('html')).not.toHaveAttribute('data-theme', before || '')
   await page.goto(demoRoute('/'))
   await page.getByRole('button', { name: 'Open menu' }).click()
-  await expect(page.locator('#mobile-navigation a[href="https://yanpuzhen.github.io/astro-theme-aurora/"]')).toBeVisible()
+  await expect(page.locator(`#mobile-navigation a[href="${demoRoute('/links/')}"]`)).toBeVisible()
   await page.getByRole('button', { name: 'Close menu' }).click()
   await page.goto(demoRoute('/post/demo-rich-markdown/'))
   await expect(page.locator('.article-title')).toContainText('Tables, Lists')

@@ -7,7 +7,7 @@
 
 **RC VALIDATED for the repository/static release gate.**
 
-The upstream Aurora theme/plugin repositories contain implementation code but no production blog corpus or provider records. The repository therefore validates the migration contract with legacy-shaped fixtures and source-level evidence. Production comment continuity remains explicitly **not production-verified: external credentials and provider records required**.
+The upstream Aurora theme/plugin repositories contain implementation code but no production blog corpus or provider records. The repository therefore validates the migration contract with legacy-shaped fixtures and source-level evidence. Production continuity for the bundled Valine, Twikoo, and Waline clients remains **not production-verified: external credentials and provider records required**. Gitalk has no Aurora 3 runtime, so backend verification is not applicable; compare its preserved UID/pathname mapping against historical records when migrating.
 
 ## Legacy content and identity
 
@@ -25,12 +25,12 @@ For posts, `str` is exactly `post_uid___${post.title}`. Aurora 3.0 preserves the
 
 | Provider | Aurora 3.0 identity policy | Local verification | Production status |
 |---|---|---|---|
-| Gitalk | Preserved legacy UID by default; pathname mode is explicit and aliases are emitted | Unit/manifest assertions | Not production-verified: external records/credentials required |
+| Gitalk | Preserved legacy UID by default; pathname mode is explicit and aliases are emitted | Unit/manifest assertions | NOT APPLICABLE — identity/migration compatibility only; no runtime is bundled |
 | Valine | Historical pathname without trailing slash | Unit assertions | Not production-verified: external records/credentials required |
 | Twikoo | Historical pathname with trailing slash | Unit assertions | Not production-verified: external records/credentials required |
 | Waline | Historical pathname with trailing slash | Unit assertions | Not production-verified: external records/credentials required |
 
-The browser test verifies the comment route manifest without submitting a comment. Gitalk also remains conditional on an external OAuth/proxy endpoint; no client secret is serialized into static page props. See `docs/migration/BLOCKERS.md` and ADR 005.
+The browser test verifies the comment route manifest without submitting a comment. Gitalk is retained only for identity and migration compatibility: upstream Gitalk 1.8 requires a browser-visible client secret, which Aurora 3 intentionally does not expose, and no OAuth/proxy runtime is built. This accepted limitation is not a Stable Preflight blocker. See `docs/migration/BLOCKERS.md` and ADR 005.
 
 ## Browser validation
 
