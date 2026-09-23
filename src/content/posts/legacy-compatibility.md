@@ -1,4 +1,6 @@
 ---
+rss: false
+sitemap: false
 title: "迁移后的第一篇文章 🚀"
 date: 2026-09-18
 updated: 2026-09-19

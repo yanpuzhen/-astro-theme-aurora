@@ -1,14 +1,14 @@
-# 网页 Meta
+# 网页 Meta 与 Feeds
 
-每个生成页面都由 `BaseLayout.astro` 在构建时生成 Meta：
+`BaseLayout.astro` 根据规范化配置和页面内容元数据在构建时生成 SEO：
 
-- canonical 使用 `ASTRO_SITE`、`ASTRO_BASE` 和路由解析器。
-- OpenGraph 包含 title、type、URL、locale、site name、description 和封面（如果有）。
-- Twitter card 根据封面使用 `summary` 或 `summary_large_image`。
-- 文章包含作者、发布时间、修改时间和 tags。
-- JSON-LD 对普通页面生成 `WebSite`，对文章生成 `BlogPosting`。
-- `rss.xml`、`sitemap.xml` 和 `robots.txt` 由 Astro routes 生成。
+- canonical 使用 `site.url`、`site.base` 和 canonical 路由解析器。
+- OpenGraph/Twitter 使用页面标题、描述、封面；缺少时回退到 `site.description` 和 `seo.keywords`。
+- 文章包含作者、发布日期/更新时间和标签；JSON-LD 描述站点或文章。
+- 每个页面都会声明英文和中文 RSS 路径。
 
-project site 使用 `ASTRO_SITE=https://yanpuzhen.github.io` 与 `ASTRO_BASE=/astro-theme-aurora/`；Demo 额外使用 `/demo/`。两个值必须与实际公开部署一致，开发 server 能监听不代表 canonical URL 正确。
+静态资源路由为 `/rss.xml`（英文）、`/cn/rss.xml`（简体中文）、`/sitemap.xml`（canonical URL）和 `/robots.txt`（含绝对 sitemap 指令）。它们都会输出到当前构建配置的 base 下。`site.url` 仅填写 origin，`site.base` 是前后带斜杠的路径；部署环境中的 `ASTRO_SITE`、`ASTRO_BASE` 可覆盖二者。
 
-Demo 的站点身份明确为 `Aurora Demo`。Profile、最新评论、友链、计数和开始日期都是 Showcase fixture；普通构建只有在提供对应站点配置时才显示这些值。
+GitHub Pages Demo 的组合 `.pages-dist/` 将文档放在 `/astro-theme-aurora/`，Demo 放在 `/astro-theme-aurora/demo/`；Demo 的 feeds、sitemap 和 robots 都位于 `/demo/` 下，不会覆盖文档输出。使用 `pnpm pages:build` 和 `pnpm test:pages` 检查最终可发布组合产物。仅启动开发服务器无法验证 canonical URL。
+
+普通构建会排除 Demo 标记内容。公开条目默认加入 RSS 和 sitemap；frontmatter 可用 `rss: false` 或 `sitemap: false` 分别退出。Demo 个人资料、最新评论、友链、计数和开始日期均为确定性的 Showcase fixture。

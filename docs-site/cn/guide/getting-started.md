@@ -16,6 +16,14 @@ pnpm install --frozen-lockfile
 
 ## 开发与预览
 
+日常主题设置请编辑仓库根目录的 `_config.yml`，包括站点标题、作者、主题、菜单、社交链接、评论、页脚、友链和 SEO。普通使用不需要编辑 `src/lib/config.ts`。构建期间会解析并校验 YAML。优先级为 **环境变量覆盖 > `_config.yml` > Aurora 默认值**。缺少配置文件时会使用默认值；YAML 格式或字段值无效会让构建失败。
+
+稳定部署时，可以在 `_config.yml` 中设置公开 origin 和 base。CI 或平台构建仍可使用环境变量覆盖：
+
+```sh
+ASTRO_SITE=https://example.com ASTRO_BASE=/blog/ pnpm build
+```
+
 运行 Aurora 站点：
 
 ```sh
@@ -52,15 +60,7 @@ date: 2026-09-20
 
 页面放在 `src/content/pages/`。已有的 `about.md` 对应 `/about/`；其他页面条目对应 `/page/<id>/`，可以从菜单链接。
 
-## Site 与 base
-
-在构建时设置公开域名和部署前缀：
-
-```sh
-ASTRO_SITE=https://example.com ASTRO_BASE=/blog/ pnpm build
-```
-
-根部署使用 `/`。GitHub Pages project site 必须包含仓库前缀和结尾斜杠。所有站内链接和生成资源都会基于这个值组合。
+根部署使用 `/`。GitHub Pages project site 的 base 必须包含仓库前缀和结尾斜杠。站内链接、RSS、sitemap 和 robots URL 都由同一份规范化配置组合。字段和校验规则见[基础配置](/cn/configs/general)。
 
 ## GitHub Pages Demo
 

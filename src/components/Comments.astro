@@ -3,13 +3,28 @@ import CommentIsland from '../islands/CommentIsland.vue'
 import type { CommentProvider } from '../lib/comments'
 import { messagesFor } from '../lib/i18n'
 import { config } from '../lib/config'
-interface Props { enabled: boolean; provider: CommentProvider; providerId?: 'uid' | 'pathname'; legacyUid: string; canonicalPath: string; commentPath: string; title: string; locale?: 'en' | 'zh-CN' }
-const { enabled, provider, providerId = 'uid', legacyUid, canonicalPath, commentPath, title, locale = config.site.language } = Astro.props
+interface Props { enabled: boolean; provider: CommentProvider; legacyUid: string; canonicalPath: string; commentPath: string; title: string; locale?: 'en' | 'zh-CN' }
+const { enabled, provider, legacyUid, canonicalPath, commentPath, title, locale = config.site.language } = Astro.props
 const messages = messagesFor(locale)
+const settings = provider === 'giscus' ? config.comments.giscus
+    : provider === 'valine' ? config.comments.valine
+    : provider === 'twikoo' ? config.comments.twikoo
+      : provider === 'waline' ? config.comments.waline : undefined
 ---
-{enabled && provider !== 'none' && (
+{enabled && provider !== 'none' && settings && (
   <section class="comments" id="comments" data-dia="jump-to-comment" data-provider={provider} data-legacy-uid={legacyUid} data-canonical-path={canonicalPath} data-legacy-path={commentPath}>
     <h2>{messages.comments}</h2>
-    <CommentIsland client:visible provider={provider} providerId={providerId} legacyUid={legacyUid} canonicalPath={canonicalPath} legacyPath={commentPath} title={title} />
+    <CommentIsland
+      client:visible
+      provider={provider}
+      legacyUid={legacyUid}
+      canonicalPath={canonicalPath}
+      legacyPath={commentPath}
+      title={title}
+      locale={locale}
+      settings={settings}
+      labels={{ loading: messages.commentLoading, setupMissing: messages.commentSetupMissing, loadError: messages.commentLoadError }}
+      noScriptText={messages.commentsRequireJavaScript}
+    />
   </section>
 )}

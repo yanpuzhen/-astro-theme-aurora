@@ -1,4 +1,6 @@
 ---
+rss: false
+sitemap: false
 title: "中文 Test 🚀 café 日本語"
 date: 2026-09-16
 updated: 2026-09-19

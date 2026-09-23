@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { strict as assert } from 'node:assert'
 import { createHash } from 'node:crypto'
 
@@ -19,6 +19,16 @@ const post = read(withBase('/post/architecture-smoke/'))
 const rich = read(withBase('/post/legacy-markdown-parity/'))
 const unicode = read(withBase('/cn/post/unicode-torture/'))
 const custom = read(withBase('/cn/legacy/custom-route/'))
+const about = read(withBase('/about/'))
+const listFiles = (directory) => readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+  const path = `${directory}/${entry.name}`
+  return entry.isDirectory() ? listFiles(path) : [path]
+})
+const generatedText = listFiles(root)
+  .filter((path) => /\.(?:html|js|json|xml|txt)$/i.test(path))
+  .map((path) => [path, readFileSync(path, 'utf8')])
+const demoOnly = /Aurora Demo|Mira Chen|aurora-demo-(?:avatar|comment|link)|demo-(?:markdown-fundamentals|code-showcase|rich-markdown|math|media)|yanpuzhen\.github\.io\/astro-theme-aurora|github\.com\/yanpuzhen\/astro-theme-aurora/i
+for (const [path, text] of generatedText) assert.doesNotMatch(text, demoOnly, `Demo-only identity/data leaked into ordinary build: ${path}`)
 
 assert.match(post, /This fixture proves that the post body is rendered at build time\./)
 assert.match(post, /<link rel="canonical" href="https:\/\/example\.com\//)
@@ -52,7 +62,8 @@ assert.ok(read(withBase('/categories/engineering/frontend/')).includes('Legacy M
 assert.ok(read(withBase('/cn/tags/c-plus-plus/')).includes('C++'))
 assert.ok(read(withBase('/cn/tags/c-sharp/')).includes('C#'))
 assert.ok(read(withBase('/archives/')).includes('Legacy Markdown parity'))
-assert.ok(read(withBase('/about/')).includes('Aurora 3.0'))
+assert.match(about, /About Aurora 3/)
+assert.doesNotMatch(about, /Source repository|Documentation|Aurora Demo/)
 const expectedSmokeUid = createHash('md5').update('post_uid___Architecture smoke post').digest('hex')
 assert.equal(manifest.find((entry) => entry.id === 'architecture-smoke').legacyUid, expectedSmokeUid)
 assert.equal(existsSync(`${root}/pagefind/pagefind.js`), true)
@@ -63,8 +74,11 @@ assert.equal(existsSync(`${root}/sitemap.xml`), true)
 assert.equal(existsSync(`${root}/robots.txt`), true)
 assert.equal(existsSync(`${root}/favicon.svg`), true)
 assert.equal(existsSync(`${root}/api/search.json`), false)
-assert.match(readFileSync(`${root}/sitemap.xml`, 'utf8'), /unicode-torture/)
-assert.match(readFileSync(`${root}/cn/rss.xml`, 'utf8'), /中文 Test 🚀 café 日本語/)
+assert.doesNotMatch(readFileSync(`${root}/sitemap.xml`, 'utf8'), /unicode-torture|architecture-smoke|legacy-compatibility|legacy-rich-markdown/)
+assert.match(readFileSync(`${root}/rss.xml`, 'utf8'), /<language>en-US<\/language>/)
+assert.match(readFileSync(`${root}/cn/rss.xml`, 'utf8'), /<language>zh-CN<\/language>/)
+assert.match(read(withBase('/about/')), new RegExp(`href="${withBase('/rss.xml')}"`), 'English RSS alternate must target the actual feed file')
+assert.match(read(withBase('/about/')), new RegExp(`href="${withBase('/cn/rss.xml')}"`), 'Chinese RSS alternate must target the actual feed file')
 if (base !== '/') {
   assert.match(post, new RegExp(`href="${base}`))
   assert.doesNotMatch(post, /href="\/post\/architecture-smoke\//)

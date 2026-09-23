@@ -1,4 +1,4 @@
-interface ShikiElement { properties: Record<string, unknown> }
+import type { ShikiConfig } from 'astro'
 
 function metadata(raw: string): Record<string, unknown> {
   const result: Record<string, unknown> = {}
@@ -11,11 +11,10 @@ function metadata(raw: string): Record<string, unknown> {
 }
 
 /** Preserve the most common legacy fence metadata while keeping Shiki as the sole highlighter. */
-export const shikiAuroraTransformer = {
+export const shikiAuroraTransformer: NonNullable<ShikiConfig['transformers']>[number] = {
   name: 'aurora-fence-metadata',
-  pre(this: { options: { meta?: { __raw?: unknown } } }, node: ShikiElement) {
+  pre(node) {
     const raw = this.options.meta?.__raw
     if (typeof raw === 'string') Object.assign(node.properties, metadata(raw))
-    return node
   },
 }

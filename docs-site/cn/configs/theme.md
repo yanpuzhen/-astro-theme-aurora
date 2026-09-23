@@ -1,18 +1,18 @@
 # 主题
 
-Aurora 有三种有效的外观状态：浅色、深色和系统偏好回退。首次加载时，head 中的脚本读取系统偏好；Theme island 会把明确选择保存在 `localStorage` 的 `aurora-theme` 中。
+在仓库根目录 `_config.yml` 中设置支持的主题字段：
 
-当前默认值位于 `src/lib/config.ts`：
-
-```ts
-theme: {
-  feature: true,
-  darkMode: true,
-  profileShape: 'diamond',
-  colors: ['#24c6dc', '#5433ff', '#ff0099'],
-}
+```yaml
+theme:
+  feature: true
+  dark_mode: true # 初始外观；访客仍可切换并保存选择
+  profile_shape: diamond # circle | diamond | rounded
+  gradient:
+    color_1: '#24c6dc'
+    color_2: '#5433ff'
+    color_3: '#ff0099'
 ```
 
-`darkMode` 和 `profileShape` 属于类型化配置面；当前公开 shell 提供浅色/深色切换与 Aurora 渐变系统。切换属于增强功能，生成后的内容和导航不依赖它。
+`feature` 控制现有首页文章选择模式。`dark_mode` 设置初始外观；访客明确选择优先级更高，并保存在浏览器本地。`profile_shape` 同时用于侧栏和页脚头像。三个十六进制颜色会写入 Aurora 渐变 CSS 变量。
 
-响应式布局覆盖首页网格、文章、taxonomy 卡片、归档、搜索和移动导航。主题选择只保存在当前浏览器，不会发送到服务器。
+外观切换属于增强功能；禁用 JavaScript 后静态内容和导航仍然可读。主题选择只保存在浏览器，不会发送到服务器。

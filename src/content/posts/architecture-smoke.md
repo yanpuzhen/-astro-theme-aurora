@@ -1,4 +1,6 @@
 ---
+rss: false
+sitemap: false
 title: Architecture smoke post
 date: 2026-09-19
 tags: [astro, migration]

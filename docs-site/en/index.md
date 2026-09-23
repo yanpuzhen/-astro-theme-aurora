@@ -28,10 +28,10 @@ features:
     details: Local search indexes English and Chinese pages without third-party credentials.
   - icon: 🌗
     title: Theme
-    details: Light and dark themes with system preference fallback and persistent choice.
+    details: Configurable initial light or dark theme with a persistent visitor choice.
   - icon: 💬
     title: Comments
-    details: Optional Gitalk, Valine, Twikoo, and Waline adapters with stable identity inputs.
+    details: giscus, Waline, and Twikoo first-class runtimes; Valine legacy runtime.
   - icon: 🌍
     title: Bilingual
     details: English and Chinese documentation mirror the same Aurora 3 implementation.

@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto'
 import { legacyUid } from '../src/lib/legacy-identity.ts'
 import { normalizeLegacyData, slugify } from '../src/lib/content.ts'
 import { commentIdentity, commentIdentityAliases, normalizeCommentPath } from '../src/lib/comments.ts'
+import { legacyGitalkIdentity, legacyGitalkIdentityAliases } from '../src/lib/migration/gitalk.ts'
 import { assertNoRouteCollisions } from '../src/lib/routing.ts'
 import { paginate } from '../src/lib/posts.ts'
 
@@ -23,12 +24,12 @@ assert.deepEqual(paginate([], 0, 0), { items: [], page: 1, pageSize: 1, pageCoun
 const input = { legacyUid: 'legacy-uid', canonicalPath: '/aurora/post/new/', legacyPath: 'https://example.com/post/old/?x=1' }
 assert.equal(normalizeCommentPath(input.legacyPath), '/post/old/')
 assert.equal(normalizeCommentPath(input.legacyPath, false), '/post/old')
-assert.equal(commentIdentity('gitalk', input), 'legacy-uid')
-assert.equal(commentIdentity('gitalk', { ...input, providerId: 'pathname' }), '/post/old/')
+assert.equal(legacyGitalkIdentity(input), 'legacy-uid')
+assert.equal(legacyGitalkIdentity(input, 'pathname'), '/post/old/')
 assert.equal(commentIdentity('valine', input), '/post/old')
 assert.equal(commentIdentity('twikoo', input), '/post/old/')
 assert.equal(commentIdentity('waline', input), '/post/old/')
-assert.deepEqual(commentIdentityAliases('gitalk', input), ['legacy-uid', '/post/old/', '/aurora/post/new/'])
+assert.deepEqual(legacyGitalkIdentityAliases(input), ['legacy-uid', '/post/old/', '/aurora/post/new/'])
 assert.deepEqual(commentIdentityAliases('valine', input), ['/post/old', '/post/old/', '/aurora/post/new/', 'legacy-uid'])
 
 const routePost = (id, overrides = {}) => ({ id, data: {

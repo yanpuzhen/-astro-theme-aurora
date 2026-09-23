@@ -16,14 +16,14 @@ const messages: Record<AuroraLocale, { welcome: string; body: string[]; search: 
     welcome: 'Hi, I am Dia. I am here to help you~',
     body: ['Take your time and enjoy the aurora glow.', 'A static page can still feel alive.', 'The archive is waiting for you.'],
     search: 'Try the search when you know what you are looking for!',
-    link: 'Enjoy reading: {text}', author: 'Here is a short profile of the Aurora Demo.',
+    link: 'Enjoy reading: {text}', author: 'Here is a short profile of Aurora.',
     language: 'This blog speaks more than one language.', theme: 'Click here to switch between light and dark mode.',
   },
   'zh-CN': {
     welcome: '你好，我是 Dia，很高兴遇见你～',
     body: ['慢慢阅读，享受 Aurora 的光芒吧。', '静态页面也可以拥有鲜活的细节。', '归档正在等你探索。'],
     search: '没有找到文章时，可以试试搜索哦～',
-    link: '希望你会喜欢这篇文章：{text}', author: '这里是 Aurora Demo 的简介。',
+    link: '希望你会喜欢这篇文章：{text}', author: '这里是 Aurora 的简介。',
     language: 'Aurora 支持不止一种语言。', theme: '点击这里就可以切换明暗主题啦。',
   },
 }

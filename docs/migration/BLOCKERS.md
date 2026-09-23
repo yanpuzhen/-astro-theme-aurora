@@ -1,11 +1,7 @@
-# Migration blockers and evidence
+# Comment migration boundaries
 
-## Gitalk OAuth secret boundary (site configuration blocker)
+Gitalk is removed from Aurora 3 runtime selection. Aurora 2 root `gitalk` settings only produce a warning and are discarded without reading values. Canonical `comments.provider: gitalk` fails with bilingual guidance to move GitHub-hosted comments to giscus. No browser OAuth secret, proxy, or fork is provided.
 
-Status: open only when the migrated site enables Gitalk.
+Existing Gitalk Issues can be converted to GitHub Discussions. The migration-only UID/pathname helper can identify historical keys, but converted Discussion titles and the chosen giscus mapping must be checked against real records. Aurora cannot promise continuity without those records. See `MIGRATION.md` and the bilingual Aurora 2 upgrade guides.
 
-The legacy component passes Gitalk's `clientSecret` to the browser-side constructor. ADR 005 requires that secrets never enter Astro page props. A static Astro page has no server-side OAuth proxy in this repository, so a production Gitalk deployment cannot both use the legacy constructor unchanged and satisfy the ADR.
-
-Minimal resolution: configure a trusted OAuth/proxy endpoint outside the static site, or keep Gitalk disabled until such a proxy exists. The current island preserves UID/path identity and does not serialize a client secret; Valine, Twikoo and Waline use their public client settings when configured.
-
-This does not block static content, routing, Pagefind, lightbox, Dia, or the other comment identity work. Existing provider records still require a real-site verification before release.
+Production backend verification for giscus, Waline, Twikoo, and Valine remains site-specific. Local mocks establish client integration only.

@@ -1,3 +1,7 @@
+> Current-head note (2026-09-24): giscus, Waline, and Twikoo are first-class runtimes; Valine is legacy; Gitalk is removed from active configuration and exists only in migration tooling. The older architecture text below records the pre-replacement state.
+
+> Status note: the current runtime classification is Waline/Twikoo first-class, Valine legacy runtime, and Gitalk identity/migration compatibility only.
+
 # Aurora 3.0 target architecture
 
 Aurora 3.0 is an Astro site with Astro Content Collections as the only content source and Astro file routes as the only public routing system. Vue remains an enhancement layer for interaction. The visual language, class names, gradients, assets, and content presentation are migrated from Aurora 2.x unless an Astro constraint requires a change.
@@ -79,7 +83,7 @@ Use Pagefind by default: it is static-hosting friendly, has no runtime API, inde
 
 ## Comments and identity
 
-`CommentIsland` receives `{ provider, canonicalPath, legacyUid, title, excerpt, enabled }`. Provider adapters cover Gitalk, Valine, Twikoo, and Waline, matching current configuration. Identity policy is explicit per provider: Gitalk defaults to the preserved legacy UID and supports a verified pathname alias; Valine/Twikoo/Waline preserve the historical pathname key. During migration, emit aliases or provider-specific migration configuration for entries whose old path differs from the new canonical path. Never silently switch an existing provider from UID to pathname. Secrets stay server/build configuration and are never serialized into page props.
+`CommentIsland` receives only the selected runtime provider and its serializable public settings. Runtime adapters cover Valine, Twikoo, and Waline; Gitalk is not bundled. Identity policy remains explicit: the migration helper preserves Gitalk legacy UID by default and its pathname mode; Valine/Twikoo/Waline preserve their historical pathname keys. Aurora 2 Gitalk migration recognition retains only safe identity fields. Never silently switch an existing provider from UID to pathname or serialize OAuth secrets into page props.
 
 ## I18N and state
 

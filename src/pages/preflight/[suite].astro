@@ -1,0 +1,40 @@
+---
+import CommentIsland from '../../islands/CommentIsland.vue'
+import RecentCommentsIsland from '../../islands/RecentCommentsIsland.vue'
+import { config } from '../../lib/config'
+import { messagesFor } from '../../lib/i18n'
+
+export function getStaticPaths() {
+  return process.env.ASTRO_PREFLIGHT_TESTS === 'true' ? [{ params: { suite: 'comments' } }] : []
+}
+const labels = messagesFor('en')
+const identity = { legacyUid: 'preflight-legacy-uid', canonicalPath: '/post/preflight/', legacyPath: '/post/preflight/' }
+const providerSettings = {
+  giscus: { repo: 'example/comments', repoId: 'R_test', category: 'General', categoryId: 'DIC_test', mapping: 'pathname', term: '', strict: false, reactionsEnabled: true, emitMetadata: false, inputPosition: 'bottom', theme: 'auto', lang: 'auto', loading: 'eager' },
+  giscusSpecific: { repo: 'example/comments', repoId: 'R_test', category: 'General', categoryId: 'DIC_test', mapping: 'specific', term: '{legacyUid}', strict: false, reactionsEnabled: true, emitMetadata: false, inputPosition: 'bottom', theme: 'auto', lang: 'auto', loading: 'eager' },
+  giscusUnsafeTerm: { repo: 'example/comments', repoId: 'R_test', category: 'General', categoryId: 'DIC_test', mapping: 'specific', term: '<img src=x onerror=alert(1)>', strict: false, reactionsEnabled: true, emitMetadata: false, inputPosition: 'bottom', theme: 'auto', lang: 'auto', loading: 'eager' },
+  valine: { appId: 'preflight-app-id', appKey: 'preflight-public-app-key', avatar: 'mp', placeholder: 'Mock', visitor: false, avatarForce: false, meta: ['nick'], requiredFields: ['nick'] },
+  twikoo: { envId: 'https://twikoo.example', region: '', language: 'en' },
+  waline: { serverUrl: 'https://waline.example', language: 'en', reaction: false, login: 'disable', meta: ['nick'], requiredMeta: ['nick'], commentSorting: 'latest', wordLimit: 0, pageSize: 10 },
+}
+const providerLabels = { loading: labels.commentLoading, setupMissing: labels.commentSetupMissing, loadError: labels.commentLoadError }
+const recentSettings = { twikoo: config.comments.twikoo, waline: config.comments.waline }
+---
+<html lang="en">
+  <head><meta charset="utf-8" /><title>Preflight provider mocks</title></head>
+  <body>
+    <main>
+      <h1>Preflight provider mocks</h1>
+      <div data-provider-test="giscus"><CommentIsland client:load provider="giscus" {...identity} title="Preflight giscus" locale="en" settings={providerSettings.giscus} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div>
+      <div data-provider-test="giscus-zh"><CommentIsland client:load provider="giscus" {...identity} title="预检 giscus" locale="zh-CN" settings={providerSettings.giscus} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div>
+      <div data-provider-test="giscus-specific"><CommentIsland client:load provider="giscus" {...identity} title="Preflight stable term" locale="en" settings={providerSettings.giscusSpecific} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div>
+      <div data-provider-test="giscus-escaped-term"><CommentIsland client:load provider="giscus" {...identity} title="Preflight escaped term" locale="en" settings={providerSettings.giscusUnsafeTerm} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div>
+      <div data-provider-test="valine"><CommentIsland client:load provider="valine" {...identity} title="Preflight Valine" locale="en" settings={providerSettings.valine} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div>
+      <div data-provider-test="twikoo"><CommentIsland client:load provider="twikoo" {...identity} title="Preflight Twikoo" locale="en" settings={providerSettings.twikoo} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div>
+      <div data-provider-test="waline"><CommentIsland client:load provider="waline" {...identity} title="Preflight Waline" locale="en" settings={providerSettings.waline} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div>
+      <div data-provider-test="incomplete"><CommentIsland client:load provider="waline" {...identity} title="Incomplete Waline" locale="en" settings={{ serverUrl: '' }} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div>
+      <section aria-label="Twikoo recent comments"><RecentCommentsIsland client:load provider="twikoo" settings={recentSettings} count={3} base={import.meta.env.BASE_URL} siteOrigin={config.site.url} locale="en" emptyText={labels.noRecentComments} loadingText={labels.recentCommentsLoading} errorText={labels.recentCommentsLoadError} /></section>
+      <section aria-label="Waline recent comments"><RecentCommentsIsland client:load provider="waline" settings={recentSettings} count={3} base={import.meta.env.BASE_URL} siteOrigin={config.site.url} locale="en" emptyText={labels.noRecentComments} loadingText={labels.recentCommentsLoading} errorText={labels.recentCommentsLoadError} /></section>
+    </main>
+  </body>
+</html>

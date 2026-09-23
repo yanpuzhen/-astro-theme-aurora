@@ -41,6 +41,8 @@ export interface NormalizedPostData {
   draft: boolean
   rawHtml: boolean
   demo: boolean
+  rss: boolean
+  sitemap: boolean
   preview?: number
   extras: Record<string, unknown>
 }
@@ -50,7 +52,7 @@ const KNOWN_FIELDS = new Set([
   'abstracts', 'preview', 'keywords', 'author', 'feature', 'sticky', 'pinned', 'slug',
   'permalink', 'permalinkMode', 'uid', 'legacyUid', 'legacyPermalink', 'legacyPermalinks',
   'aliases', 'photos', 'toc', 'comment', 'comments', 'commentId', 'commentPath', 'lang', 'translationKey',
-  'hidden', 'published', 'draft', 'rawHtml', 'allowHtml', 'type', 'categoryMode', 'data', 'demo',
+  'hidden', 'published', 'draft', 'rawHtml', 'allowHtml', 'type', 'categoryMode', 'data', 'demo', 'rss', 'sitemap',
 ])
 
 export function asStringList(value: unknown): string[] {
@@ -137,7 +139,7 @@ export function normalizeLegacyData(
     translationKey: firstString(raw.translationKey),
     hidden: asBoolean(raw.hidden, false), published: asBoolean(raw.published, true),
     draft: asBoolean(raw.draft, false), rawHtml: asBoolean(raw.rawHtml ?? raw.allowHtml, true),
-    demo: asBoolean(raw.demo, false),
+    demo: asBoolean(raw.demo, false), rss: asBoolean(raw.rss, true), sitemap: asBoolean(raw.sitemap, true),
     preview: typeof raw.preview === 'number' ? raw.preview : undefined, extras,
   }
 }
@@ -149,6 +151,14 @@ export function isPublicPost(post: { data: Pick<NormalizedPostData, 'hidden' | '
   // builds prevents a theme consumer from publishing Aurora's showcase data
   // or its deterministic profile/statistics by accident.
   return post.data.published && !post.data.hidden && !post.data.draft && (demoBuild ? demo : !demo)
+}
+
+export function isFeedPost<T extends { data: Pick<NormalizedPostData, 'hidden' | 'published' | 'draft' | 'demo' | 'rss'> }>(post: T): boolean {
+  return isPublicPost(post) && post.data.rss
+}
+
+export function isSitemapPost<T extends { data: Pick<NormalizedPostData, 'hidden' | 'published' | 'draft' | 'demo' | 'sitemap'> }>(post: T): boolean {
+  return isPublicPost(post) && post.data.sitemap
 }
 
 export function isLocale<T extends { data: { lang: string } }>(post: T, locale: AuroraLocale): boolean {
@@ -164,7 +174,9 @@ export function translationFor<T extends { data: { lang: string; translationKey?
 }
 
 export function excerptFromBody(body: string, limit = 160): string {
-  const text = body.replace(/```[\s\S]*?```/g, ' ').replace(/<[^>]*>/g, ' ')
+  const text = body.replace(/```[\s\S]*?```/g, ' ')
+    .replace(/<(script|style|iframe)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, ' ')
+    .replace(/<[^>]*>/g, ' ')
     .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
     .replace(/[#>*_`~]/g, ' ').replace(/\s+/g, ' ').trim()
   return text.length > limit ? `${text.slice(0, limit).trimEnd()}…` : text

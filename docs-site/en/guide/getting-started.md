@@ -16,6 +16,14 @@ pnpm install --frozen-lockfile
 
 ## Develop and preview
 
+Edit `_config.yml` at the repository root for the site title, author, theme, menu, socials, comments, footer, friend links, and SEO defaults. It is the routine user configuration interface; do not edit `src/lib/config.ts`. The YAML is parsed and validated during the build. Effective precedence is **environment overrides > `_config.yml` > Aurora defaults**. A missing file falls back to defaults; malformed or invalid values fail the build.
+
+Set your public origin and deployment base in `_config.yml` for a stable deployment. Environment values remain useful for CI and platform-specific builds:
+
+```sh
+ASTRO_SITE=https://example.com ASTRO_BASE=/blog/ pnpm build
+```
+
 Run the Aurora site locally:
 
 ```sh
@@ -52,15 +60,7 @@ Write in Markdown.
 
 Pages live in `src/content/pages/`. The existing `about.md` becomes `/about/`; additional page entries become `/page/<id>/` and can be linked from the menu.
 
-## Site and base
-
-Set the public origin and deployment prefix at build time:
-
-```sh
-ASTRO_SITE=https://example.com ASTRO_BASE=/blog/ pnpm build
-```
-
-Use `/` for a root deployment. A GitHub Pages project site must include its repository prefix and trailing slash. All internal links and generated assets are composed from this value.
+Use `/` for a root deployment. A GitHub Pages project site base must include its repository prefix and trailing slash. All internal links, RSS, sitemap, and robots URLs are composed from the same normalized base. See [General Configuration](/configs/general) for fields and validation.
 
 ## GitHub Pages Demo
 

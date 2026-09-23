@@ -1,0 +1,14 @@
+site:
+  title: giscus Configuration Smoke
+  url: https://example.test
+  base: /giscus-smoke/
+comments:
+  provider: giscus
+  giscus:
+    repo: example/comments
+    repo_id: R_test
+    category: General
+    category_id: DIC_test
+    mapping: pathname
+    theme: auto
+    lang: auto

@@ -1,3 +1,7 @@
+> Current-head note (2026-09-24): the giscus replacement supersedes the older Gitalk identity-compatibility classification below. Gitalk is removed from active runtime/configuration and retained only for migration checks.
+
+> Status note: the Gitalk runtime blocker described in older audit snapshots is superseded by the accepted migration-only classification on 2026-09-23.
+
 # Aurora 3.0 implementation status
 
 This is the implementation ledger for Phase 2. It records work in the repository; the accepted ADRs remain the architecture source of truth.
@@ -13,7 +17,7 @@ This is the implementation ledger for Phase 2. It records work in the repository
 | Archives | `generators/post.js` archive pagination | Static archive routes | Implemented | Date-sorted list and static pagination; archive page 1 is sliced before grouping. | Generated archive routes and build |
 | Markdown containers and highlighting | `filters/afterPostRender/quote.js`, `highlighter/index.js` | Astro Markdown pipeline and build-time transforms | Implemented, parity review pending | One Remark/Rehype/Shiki pipeline, Aurora containers, tables, heading IDs and inert scripts; fence title/line metadata needs review, while copy is a separate small island. | Rich Markdown fixture in `dist` |
 | Search | `generators/search.js`, `SearchModal.vue` | Pagefind build output and search island | Implemented | Pagefind indexes rendered canonical HTML; no legacy full-content JSON endpoint. | Pagefind output and Chinese language index |
-| Comments | `Comment.vue`, `utils/comments/*` | Comment identity adapter and island | Implemented, provider verification pending | Gitalk, Valine, Twikoo and Waline identity modes are explicit; secrets are not serialized. Gitalk OAuth proxy is documented as a blocker when enabled. | Manifest identity assertions; real provider records pending |
+| Comments | `Comment.vue`, `utils/comments/*` | Comment identity adapter and focused runtime islands | Implemented; bundled provider production checks remain site-specific | Waline/Twikoo are first-class runtimes; Valine is legacy runtime; Gitalk is identity/migration compatibility only and never a runtime selection. | Unit/config/browser-mock checks; provider records not supplied |
 | Lightbox | `useLightBox.ts`, `VueEasyLightbox` | Small Vue island over static image links | Implemented | Static image remains present; only the dialog/listener logic hydrates. | Rich Markdown output and island bundle |
 | Dia | `Dia.vue`, `utils/aurora-dia/*` | Optional Vue island | Implemented | Opt-in `PUBLIC_AURORA_DIA=true`; locale/tip are serializable props. | Bundle inspection and build |
 | SEO and feeds | `injector/index.js`, route metadata | Base layout, RSS, sitemap, robots | Implemented | Metadata and feed URLs derive from `site` plus `base`; JSON-LD is emitted server-side. | Generated HTML/feed checks |
@@ -24,7 +28,7 @@ This is the implementation ledger for Phase 2. It records work in the repository
 - The existing smoke post is retained alongside legacy-shaped compatibility fixtures.
 - The upstream legacy repositories referenced by `LEGACY_AUDIT.md` were inspected at their current shallow HEADs on 2026-09-19. Their source is not copied into the Astro repository.
 - Exact provider-side comment records cannot be proven from theme source alone; the implementation exposes an explicit migration manifest and marks site-specific values for operator verification.
-- The current static Gitalk integration intentionally omits `clientSecret`; a trusted OAuth/proxy endpoint is required before enabling Gitalk in production. See `docs/migration/BLOCKERS.md`.
+- Gitalk is intentionally not a bundled runtime in Aurora 3; its upstream browser-visible secret requirement is an accepted product boundary, not a Stable Preflight blocker. See `docs/migration/BLOCKERS.md`.
 
 ## Verification convention
 

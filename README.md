@@ -54,10 +54,10 @@ Aurora 3.0 is the Astro implementation of Aurora. The original Aurora project wa
 - Pagefind search - _Build-time local search supports the generated English and Chinese pages._
 - Bilingual content - _Static labels and content can use English or `zh-CN`._
 - Responsive design - _Home, articles, taxonomies, archives, search, and mobile navigation adapt to small screens._
-- Light, dark, and system appearance - _Theme choice persists locally and does not gate content readability._
+- Light and dark appearance - _Theme choice persists locally and does not gate content readability._
 - Tags, categories, and archives - _Static taxonomy pages and pagination are generated from public posts._
-- RSS, sitemap, robots, SEO, and JSON-LD - _Site metadata is generated from `ASTRO_SITE` and `ASTRO_BASE`._
-- Optional comments - _Focused adapters exist for Gitalk, Valine, Twikoo, and Waline; Demo recent comments are local-only showcase fixtures and never enter a provider._
+- RSS, sitemap, robots, SEO, and JSON-LD - _Generated from the validated site configuration and deployment base._
+- Optional comments - _giscus, Waline, and Twikoo first-class integrations, Valine legacy runtime, and deterministic Demo recent-comment fixtures._
 - Build-time Markdown math - _GFM is provided by `remark-gfm`; inline/display equations are rendered by KaTeX._
 - Lightbox, code copy, Dia, and mobile menu - _Interactive islands enhance ordinary static HTML._
 - Custom permalinks and legacy identity - _The route manifest preserves explicit paths, UID inputs, and compatibility aliases._
@@ -72,17 +72,23 @@ Aurora 3.0 is the Astro implementation of Aurora. The original Aurora project wa
 
 ### 🛠 Configuration
 
-```sh
-# Root deployment
-ASTRO_SITE=https://example.com ASTRO_BASE=/ pnpm build
+Edit the root `_config.yml` for routine theme settings. Aurora parses and validates it at build time; invalid YAML, unknown canonical keys, and invalid values fail with a useful field path. Precedence is **environment overrides > `_config.yml` > Aurora defaults**.
 
-# GitHub Pages project site
+```sh
+# Install, configure, and run locally
+pnpm install --frozen-lockfile
+${EDITOR:-vi} _config.yml
+pnpm dev
+
+# Deployment-only origin/base overrides (optional when configured in YAML)
 ASTRO_SITE=https://yanpuzhen.github.io \
 ASTRO_BASE=/astro-theme-aurora/ \
 pnpm build
 ```
 
-Create posts in `src/content/posts/` and pages in `src/content/pages/`. See the [Getting Started guide](https://yanpuzhen.github.io/astro-theme-aurora/guide/getting-started) for frontmatter, migration, and deployment details, and the [Internationalization guide](https://yanpuzhen.github.io/astro-theme-aurora/guide/internationalization) for English/简体中文 content pairs.
+Never put private credentials in `_config.yml` or `PUBLIC_*` variables; static build values are visible to site visitors. Gitalk runtime is removed; use giscus for GitHub Discussions after following the migration guide. See the [Getting Started guide](https://yanpuzhen.github.io/astro-theme-aurora/guide/getting-started), [configuration reference](https://yanpuzhen.github.io/astro-theme-aurora/configs/general), [Aurora 2 migration guide](https://yanpuzhen.github.io/astro-theme-aurora/upgrade/from-aurora-2), and [Internationalization guide](https://yanpuzhen.github.io/astro-theme-aurora/guide/internationalization).
+
+Create posts in `src/content/posts/` and pages in `src/content/pages/`. The Demo publishes English and Chinese RSS at `/astro-theme-aurora/demo/rss.xml` and `/astro-theme-aurora/demo/cn/rss.xml`; its sitemap and robots file are also under the `/demo/` base.
 
 ### 🚫 Current architecture boundaries
 

@@ -1,6 +1,6 @@
 ---
 import packageInfo from '../../package.json'
-import { config } from '../lib/config'
+import { config, profileShapeClass } from '../lib/config'
 import { localizedSitePath, publicAssetPath } from '../lib/routing'
 import { demoFooter, demoProfile, isDemoBuild, runningDays } from '../lib/showcase'
 import { messagesFor, type AuroraLocale } from '../lib/i18n'
@@ -13,29 +13,29 @@ const demo = isDemoBuild()
 const profile = demo ? demoProfile[locale] : undefined
 const startedDate = demo ? demoFooter.startedDate : config.site.startedDate
 const days = runningDays(startedDate)
-const pageViews = demo ? demoFooter.pageViews : config.statistics.pageViews
-const uniqueVisitors = demo ? demoFooter.uniqueVisitors : config.statistics.uniqueVisitors
+const pageViews = demo ? demoFooter.pageViews : config.footer.statistics.pageViews
+const uniqueVisitors = demo ? demoFooter.uniqueVisitors : config.footer.statistics.uniqueVisitors
 const currentYear = new Date().getFullYear()
 const startYear = startedDate ? new Date(`${startedDate}T00:00:00Z`).getUTCFullYear() : currentYear
 const avatar = profile?.avatar || config.site.avatar
-const policeLink = safeExternalUrl(config.beian.policeLink)
-const beianLink = safeExternalUrl(config.beian.link)
+const policeLink = safeExternalUrl(config.footer.beian.policeLink)
+const beianLink = safeExternalUrl(config.footer.beian.link)
 ---
 <footer class="site-footer" id="footer">
   <div class="site-footer__rule" aria-hidden="true"></div>
   <div class="site-footer__inner">
     <div class="site-footer__copy">
       <p>Copyright © {startYear} - {currentYear} <strong>{demo ? profile?.name : config.site.author}</strong>. {messages.rightsReserved}</p>
-      <p>{messages.poweredBy} <a href="https://astro.build/">Astro</a> &amp; {messages.themedBy} <a href={localizedSitePath('/', locale)}>Aurora v{packageInfo.version}</a>.</p>
+      <p>{messages.poweredBy} <a href="https://astro.build/">Astro</a> &amp; {messages.themedBy} <a href={localizedSitePath('/', locale)}>Aurora{config.footer.showVersion ? ` v${packageInfo.version}` : ''}</a>.</p>
       <p class="footer-attribution">{messages.originalVisualSystem} <a href="https://github.com/auroral-ui/hexo-theme-aurora">Auroral-UI</a> under the MIT License.</p>
-      {config.beian.policeNumber && policeLink && <p class="footer-beian">{messages.policeFiling}: <a href={policeLink}>{config.beian.policeNumber}</a></p>}
-      {config.beian.number && beianLink && <p class="footer-beian">{messages.filing}: <a href={beianLink}>{config.beian.number}</a></p>}
+      {config.footer.beian.policeNumber && policeLink && <p class="footer-beian">{messages.policeFiling}: <a href={policeLink}>{config.footer.beian.policeNumber}</a></p>}
+      {config.footer.beian.number && beianLink && <p class="footer-beian">{messages.filing}: <a href={beianLink}>{config.footer.beian.number}</a></p>}
     </div>
     <div class="site-footer__middle">
       <div class="site-footer__links">
-        <a href={localizedSitePath('/archives/', locale)}>{messages.archives}</a>
-        <a href={localizedSitePath('/tags/', locale)}>{messages.tags}</a>
-        <a href={localizedSitePath('/links/', locale)}>{messages.links}</a>
+        {config.menu.archives && <a href={localizedSitePath('/archives/', locale)}>{messages.archives}</a>}
+        {config.menu.tags && <a href={localizedSitePath('/tags/', locale)}>{messages.tags}</a>}
+        {config.menu.links && <a href={localizedSitePath('/links/', locale)}>{messages.links}</a>}
       </div>
       {(pageViews || uniqueVisitors || days !== undefined) && <dl class="footer-stats" aria-label={messages.siteRunningFor}>
         {pageViews && <div><dt><span aria-hidden="true">◉</span> {messages.pageViews}</dt><dd>{pageViews}</dd></div>}
@@ -44,6 +44,6 @@ const beianLink = safeExternalUrl(config.beian.link)
       </dl>}
       {demo && <small class="footer-fixture-note">{messages.demoStats}</small>}
     </div>
-    {avatar ? <img class="footer-avatar diamond-avatar" src={publicAssetPath(avatar)} alt={demo ? profile?.name : ''} loading="lazy" /> : <span class="footer-avatar footer-avatar--mark" aria-hidden="true">✦</span>}
+    {config.footer.showAvatar && (avatar ? <img class:list={["footer-avatar", profileShapeClass()]} src={publicAssetPath(avatar)} alt={demo ? profile?.name : ''} loading="lazy" /> : <span class="footer-avatar footer-avatar--mark" aria-hidden="true">✦</span>)}
   </div>
 </footer>
