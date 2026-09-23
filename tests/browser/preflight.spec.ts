@@ -126,6 +126,11 @@ test('giscus uses local iframe mocks, updates theme, and fits responsive widths'
   const iframe = page.locator('[data-provider-test="giscus"] giscus-widget iframe')
   await expect(iframe).toHaveCount(1)
   await expect(page.frameLocator('[data-provider-test="giscus"] giscus-widget iframe').locator('html')).toHaveAttribute('data-theme', 'dark')
+  await page.locator('html').evaluate((element) => { delete element.dataset.theme })
+  await page.emulateMedia({ colorScheme: 'light' })
+  await expect(widget).toHaveAttribute('theme', 'light')
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await expect(widget).toHaveAttribute('theme', 'dark')
   await page.evaluate(() => {
     window.postMessage({ giscus: { error: 'untrusted message' } }, location.origin)
   })

@@ -21,7 +21,13 @@ const repo = computed(() => props.settings.repo as `${string}/${string}`)
 const term = computed(() => props.settings.mapping === 'specific' && props.settings.term === '{legacyUid}'
   ? props.legacyUid : props.settings.term)
 let themeObserver: MutationObserver | undefined
+let systemTheme: MediaQueryList | undefined
 let timeout: number | undefined
+
+function syncTheme() {
+  const choice = document.documentElement.dataset.theme
+  isDark.value = choice === 'dark' || (choice !== 'light' && Boolean(systemTheme?.matches))
+}
 
 // The official Vue wrapper mounts the official web component. Updating its
 // reflected attribute also covers wrapper versions that do not forward a later
@@ -48,10 +54,11 @@ function onGiscusMessage(event: MessageEvent) {
 }
 
 onMounted(() => {
-  const syncTheme = () => { isDark.value = document.documentElement.dataset.theme === 'dark' }
+  systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
   syncTheme()
   themeObserver = new MutationObserver(syncTheme)
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+  systemTheme.addEventListener('change', syncTheme)
 
   // A loaded iframe can still be Chrome's network-error page. Wait for an
   // authenticated-by-origin giscus message rather than the iframe load event.
@@ -63,6 +70,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   themeObserver?.disconnect()
+  systemTheme?.removeEventListener('change', syncTheme)
   window.removeEventListener('message', onGiscusMessage)
   if (timeout) window.clearTimeout(timeout)
 })
