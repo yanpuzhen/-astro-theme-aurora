@@ -41,6 +41,11 @@ test('validated YAML settings reach the rendered static UI and none loads no pro
   await expect(page.locator('.footer-attribution')).toBeVisible()
   await expect(page.locator('.site-footer__copy a[href="/config-smoke/"]')).toHaveText('Aurora')
   expect(providerRequests).toEqual([])
+  await page.goto(route('/search/'))
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+  await expect(page.locator('h1.page-heading')).toHaveText('Search')
+  await page.getByRole('searchbox', { name: 'Search' }).fill('architecture')
+  await expect(page.locator('.search-result').first()).toHaveAttribute('href', `${base}/post/architecture-smoke/`)
 })
 
 test('supported comment clients and Recent Comments render safely from deterministic mocks', async ({ page }) => {

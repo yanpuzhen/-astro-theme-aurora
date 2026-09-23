@@ -2,6 +2,7 @@ site:
   title: Config UI Smoke
   subtitle: Visible subtitle from YAML
   author: Ada Example
+  language: zh-CN # Search under the unprefixed English route must remain English.
   description: User configuration reaches the rendered page.
   avatar: /fixtures/aurora-placeholder.svg
   started_date: '2020-01-01'
