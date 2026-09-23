@@ -6,7 +6,8 @@ import { config } from '../lib/config'
 interface Props { enabled: boolean; provider: CommentProvider; legacyUid: string; canonicalPath: string; commentPath: string; title: string; locale?: 'en' | 'zh-CN' }
 const { enabled, provider, legacyUid, canonicalPath, commentPath, title, locale = config.site.language } = Astro.props
 const messages = messagesFor(locale)
-const settings = provider === 'valine' ? config.comments.valine
+const settings = provider === 'giscus' ? config.comments.giscus
+    : provider === 'valine' ? config.comments.valine
     : provider === 'twikoo' ? config.comments.twikoo
       : provider === 'waline' ? config.comments.waline : undefined
 ---

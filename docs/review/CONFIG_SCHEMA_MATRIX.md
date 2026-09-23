@@ -23,9 +23,9 @@ This matrix describes the canonical root `_config.yml` interface implemented by 
 | `menu.home/tags/categories/archives/about` | `true` | Boolean | Localized built-in navigation |
 | `menu.links` | `false` | Boolean | Friend-link navigation |
 | `socials[]` | `[]` | Up to 32; nonempty label <=40; HTTP(S), `mailto:`, or `tel:`; icon `github` or `link` | Sidebar fallback socials |
-| `comments.provider` | `none` | `none`, `waline`, `twikoo`, `valine`; Gitalk selection fails with localized guidance | Article comments/recent capability |
+| `comments.provider` | `none` | `none`, `giscus`, `waline`, `twikoo`, `valine`; Gitalk selection fails with localized migration guidance | Article comments/recent capability |
 | `comments.recent_comments.enabled/count` | `true` / `5` | Boolean; integer 1–20 | Twikoo/Waline sidebar widget |
-| `comments.gitalk.id` | `uid` | `uid` or `pathname`; identity metadata only | Legacy Gitalk identity and migration comparison; no runtime settings are accepted |
+| `comments.giscus.*` | empty public IDs, `pathname`, auto theme/locale, eager loading | Validated GitHub `owner/repo`, required `repo_id` and conditional `category_id`; six mapping enums; required `term` for `specific`/`number`; boolean/options enums | Official Vue giscus widget |
 | `comments.valine.*` | public IDs empty; documented UI defaults | Avatar enum; booleans; locale; bounded placeholder and field lists | Valine init and legacy identity |
 | `comments.twikoo.*` | empty/`auto` | Public environment ID <=500, region <=80, locale | Twikoo init and Recent Comments |
 | `comments.waline.*` | empty/`auto`/false/disable/default field lists/latest/0/10 | HTTP(S) server URL; locale/login/sort enums; booleans; word limit 0–10000; page size 1–100 | Waline init and Recent Comments |
@@ -38,12 +38,10 @@ This matrix describes the canonical root `_config.yml` interface implemented by 
 
 ## Environment overrides
 
-`ASTRO_SITE`, `ASTRO_BASE`; `PUBLIC_AURORA_TITLE`, `SUBTITLE`, `AUTHOR`, `DESCRIPTION`, `LOCALE`, `AVATAR`, `LOGO`, `STARTED_DATE`, `DIA`, `PAGE_VIEWS`, `UNIQUE_VISITORS`, `BEIAN_NUMBER`, `BEIAN_LINK`, `POLICE_BEIAN_NUMBER`, `POLICE_BEIAN_LINK`; `PUBLIC_COMMENT_PROVIDER`, `PUBLIC_GITALK_ID_MODE`, `PUBLIC_VALINE_APP_ID`, `PUBLIC_VALINE_APP_KEY`, `PUBLIC_TWIKOO_ENV_ID`, `PUBLIC_TWIKOO_REGION`, `PUBLIC_WALINE_SERVER_URL` override the corresponding supported config values. `PUBLIC_*` are public build inputs, not secret storage. Legacy `PUBLIC_GITALK_CLIENT_ID`, `PUBLIC_GITALK_OWNER`, `PUBLIC_GITALK_REPO`, and `PUBLIC_GITALK_PROXY` are ignored with warnings and do not select or configure a Gitalk runtime. Gitalk OAuth client-secret environment variables are rejected before the build continues; values are never logged or serialized.
+`ASTRO_SITE`, `ASTRO_BASE`; `PUBLIC_AURORA_TITLE`, `SUBTITLE`, `AUTHOR`, `DESCRIPTION`, `LOCALE`, `AVATAR`, `LOGO`, `STARTED_DATE`, `DIA`, `PAGE_VIEWS`, `UNIQUE_VISITORS`, `BEIAN_NUMBER`, `BEIAN_LINK`, `POLICE_BEIAN_NUMBER`, `POLICE_BEIAN_LINK`; `PUBLIC_COMMENT_PROVIDER`, `PUBLIC_VALINE_APP_ID`, `PUBLIC_VALINE_APP_KEY`, `PUBLIC_TWIKOO_ENV_ID`, `PUBLIC_TWIKOO_REGION`, and `PUBLIC_WALINE_SERVER_URL` override supported values. giscus uses `_config.yml` only; no giscus credential or environment override exists. Obsolete Gitalk environment names are ignored without reading values, and never select a runtime. `PUBLIC_*` inputs are public, not secret storage.
 
 `ASTRO_DEMO_BUILD`, `ASTRO_PREFLIGHT_TESTS`, and `ASTRO_CONFIG_FILE` control isolated builds/tests. GFM, Math/KaTeX, and Shiki are always-on and are intentionally not represented by false configuration toggles.
 
 ## Selected Aurora 2 aliases
 
-The loader normalizes `site.startedDate`; menu keys `Home/Tags/Categories/Archives/About/Friends`; selected camelCase provider keys; old provider root sections and enable flags; `comments.gitalkIdMode`; `aurora_bot` to `dia`; `site.beian`/`police_beian` to `footer.beian`; `site_meta` to supported `site`/`seo` fields; and object-shaped `socials` to a constrained link list. Legacy Gitalk `enable: true` never selects a runtime. Only the UID/pathname identity selector is retained; credentials and runtime fields are discarded with warnings and are never serialized. Canonical Gitalk credential fields are rejected without echoing their values. Unknown keys in the canonical schema fail rather than being silently discarded.
-
-The deterministic matrix is exercised by `scripts/verify-config.mjs`; the rendered consumer path is checked with `tests/fixtures/config-ui.yml` and `tests/browser/preflight.spec.ts`.
+The loader normalizes `site.startedDate`; menu keys `Home/Tags/Categories/Archives/About/Friends`; selected camelCase Valine/Twikoo/Waline keys and root sections; `aurora_bot` to `dia`; `site.beian`/`police_beian` to `footer.beian`; `site_meta` to supported `site`/`seo` fields; and object-shaped `socials` to a constrained link list. Aurora 2 root `gitalk` is detected and discarded without inspecting field values. Canonical `comments.gitalk` is rejected as unknown, and `comments.provider: gitalk` receives localized migration guidance. Unknown keys fail validation instead of disappearing silently.

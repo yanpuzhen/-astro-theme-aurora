@@ -1,3 +1,5 @@
+> Current-head note (2026-09-24): giscus, Waline, and Twikoo are first-class runtimes; Valine is legacy; Gitalk is removed from active configuration and exists only in migration tooling. The older architecture text below records the pre-replacement state.
+
 > Status note: the current runtime classification is Waline/Twikoo first-class, Valine legacy runtime, and Gitalk identity/migration compatibility only.
 
 # Aurora 3.0 target architecture

@@ -42,7 +42,6 @@ function normalizeLocale(value: unknown) {
 
 function warnUnsupportedProviderFields(provider: string, settings: RecordValue, warn: (message: string) => void) {
   const unsupported: Record<string, string[]> = {
-    gitalk: ['autoExpand', 'auto_expand'],
     valine: ['admin'],
     twikoo: [],
     waline: ['imageUploader', 'image_uploader'],
@@ -58,6 +57,12 @@ function warnUnsupportedProviderFields(provider: string, settings: RecordValue, 
 function normalizeLegacyConfig(input: unknown, warn: (message: string) => void): unknown {
   if (!isRecord(input)) return input ?? {}
   const raw = { ...input }
+  // Discard legacy credentials before any early return for malformed sections.
+  // Only the presence of the old section is relevant to migration guidance.
+  if (own(raw, 'gitalk')) {
+    delete raw.gitalk
+    warn('Legacy Aurora 2 Gitalk configuration detected and ignored. Migrate GitHub Issues to Discussions and configure giscus; see MIGRATION.md.')
+  }
   // Do not coerce malformed canonical sections to empty objects during legacy normalization.
   // Preserve them so Zod can report the original field path instead of silently defaulting.
   for (const key of ['site', 'i18n', 'theme', 'menu', 'comments', 'dia', 'footer', 'seo']) {
@@ -70,7 +75,7 @@ function normalizeLegacyConfig(input: unknown, warn: (message: string) => void):
     for (const key of ['statistics', 'beian']) if (own(raw.footer, key) && !isRecord(raw.footer[key])) return raw
   }
   if (isRecord(raw.comments)) {
-    for (const key of ['recent_comments', 'gitalk', 'valine', 'twikoo', 'waline']) {
+    for (const key of ['recent_comments', 'giscus', 'valine', 'twikoo', 'waline']) {
       if (own(raw.comments, key) && !isRecord(raw.comments[key])) return raw
     }
   }
@@ -173,46 +178,14 @@ function normalizeLegacyConfig(input: unknown, warn: (message: string) => void):
   if (own(dia, 'locale')) dia.locale = normalizeLocale(dia.locale)
 
   const comments = isRecord(raw.comments) ? { ...raw.comments } : {}
-  const legacyGitalk = isRecord(raw.gitalk) ? { ...raw.gitalk } : undefined
-  const legacyGitalkEnabled = Boolean(legacyGitalk && (legacyGitalk.enable === true || legacyGitalk.enabled === true))
-  if (legacyGitalkEnabled) {
-    warn('Aurora 2 Gitalk runtime is not bundled in Aurora 3 for security reasons; only UID/pathname identity settings are retained for migration.')
-  }
   const enabledLegacyProviders = ['waline', 'twikoo', 'valine'].filter((provider) =>
     isRecord(raw[provider]) && ((raw[provider] as RecordValue).enable === true || (raw[provider] as RecordValue).enabled === true),
   )
-  const legacyGitalkMode = comments.gitalk_id_mode ?? comments.gitalkIdMode
-  delete comments.gitalk_id_mode
-  delete comments.gitalkIdMode
   const providerConfigs: Record<string, RecordValue> = {}
-  for (const provider of ['gitalk', 'valine', 'twikoo', 'waline']) {
+  for (const provider of ['valine', 'twikoo', 'waline']) {
     const current = isRecord(comments[provider]) ? { ...comments[provider] } : {}
-    const legacy = provider === 'gitalk' ? legacyGitalk : isRecord(raw[provider]) ? { ...raw[provider] } : undefined
-    if (provider === 'gitalk' && (own(current, 'clientSecret') || own(current, 'client_secret'))) {
-      throw new Error('Aurora configuration error:\ncomments.gitalk: OAuth credentials are not accepted. Gitalk is migration-only in Aurora 3; remove credential fields and select Waline or Twikoo for runtime comments. No credential value was read or included in this error.')
-    }
-    if (provider === 'gitalk' && legacy) {
-      let removedLegacySecret = false
-      for (const secretKey of ['clientSecret', 'client_secret']) {
-        if (own(legacy, secretKey)) {
-          delete legacy[secretKey]
-          removedLegacySecret = true
-        }
-      }
-      if (removedLegacySecret) warn('Aurora 2 Gitalk credential fields were ignored and removed during migration; Aurora 3 does not bundle Gitalk runtime for security reasons.')
-    }
+    const legacy = isRecord(raw[provider]) ? { ...raw[provider] } : undefined
     const merged = { ...(legacy || {}), ...current }
-    if (provider === 'gitalk') {
-      // Only the historical identity selector affects migration. Never carry
-      // OAuth credentials or other runtime options into normalized config.
-      const id = firstDefined(current.id, legacy?.id, legacyGitalkMode)
-      providerConfigs[provider] = id === undefined ? {} : { id }
-      if (legacy && own(legacy, 'proxy')) {
-        warn('Aurora 2 Gitalk runtime settings were not imported; Aurora 3 does not bundle a Gitalk runtime for security reasons.')
-      }
-      if (legacy) delete raw.gitalk
-      continue
-    }
     const aliases: Record<string, string> = provider === 'valine' ? {
       appId: 'app_id', appKey: 'app_key', avatarForce: 'avatar_force', requiredFields: 'required_fields',
     } : provider === 'twikoo' ? {
@@ -223,7 +196,6 @@ function normalizeLegacyConfig(input: unknown, warn: (message: string) => void):
     }
     const normalized = camelToSnakeKeys(merged, { ...aliases, recentComment: 'recent_comment' })
     warnUnsupportedProviderFields(provider, normalized, warn)
-    if (provider === 'gitalk' && legacyGitalkMode !== undefined) setIfMissing(normalized, 'id', legacyGitalkMode)
     if (normalized.lang !== undefined && normalized.language === undefined) normalized.language = normalizeLocale(normalized.lang)
     delete normalized.lang
     providerConfigs[provider] = normalized
@@ -275,10 +247,8 @@ function envBoolean(value: string, name: string): boolean {
 }
 
 function applyEnvironmentOverrides(raw: unknown, env: NodeJS.ProcessEnv, warn: (message: string) => void): unknown {
-  for (const variable of ['PUBLIC_GITALK_CLIENT_SECRET', 'GITALK_CLIENT_SECRET']) {
-    if (env[variable] !== undefined && env[variable] !== '') {
-      throw new Error(`Aurora configuration error\nGitalk OAuth client secrets are not accepted in environment variables (${variable}); remove the variable. Secret values are never logged or serialized.`)
-    }
+  if (Object.keys(env).some((key) => key.startsWith('PUBLIC_GITALK_') || key.startsWith('GITALK_'))) {
+    warn('Obsolete Gitalk environment settings were ignored. Configure giscus in _config.yml; no values were read or serialized.')
   }
   if (!isRecord(raw)) return raw
   const root = raw
@@ -289,7 +259,7 @@ function applyEnvironmentOverrides(raw: unknown, env: NodeJS.ProcessEnv, warn: (
     for (const key of ['statistics', 'beian']) if (own(root.footer, key) && !isRecord(root.footer[key])) return root
   }
   if (isRecord(root.comments)) {
-    for (const key of ['recent_comments', 'gitalk', 'valine', 'twikoo', 'waline']) {
+    for (const key of ['recent_comments', 'giscus', 'valine', 'twikoo', 'waline']) {
       if (own(root.comments, key) && !isRecord(root.comments[key])) return root
     }
   }
@@ -312,16 +282,6 @@ function applyEnvironmentOverrides(raw: unknown, env: NodeJS.ProcessEnv, warn: (
   })) if (value !== undefined && value !== '') site[key] = value
   if (env.PUBLIC_AURORA_DIA !== undefined && env.PUBLIC_AURORA_DIA !== '') dia.enabled = envBoolean(env.PUBLIC_AURORA_DIA, 'PUBLIC_AURORA_DIA')
   if (env.PUBLIC_COMMENT_PROVIDER !== undefined && env.PUBLIC_COMMENT_PROVIDER !== '') comments.provider = env.PUBLIC_COMMENT_PROVIDER
-  for (const variable of ['PUBLIC_GITALK_CLIENT_ID', 'PUBLIC_GITALK_OWNER', 'PUBLIC_GITALK_REPO', 'PUBLIC_GITALK_PROXY']) {
-    if (env[variable] !== undefined && env[variable] !== '') {
-      warn(`${variable} is ignored: Gitalk is identity/migration compatibility only and has no Aurora 3 runtime.`)
-    }
-  }
-  if (env.PUBLIC_GITALK_ID_MODE !== undefined && env.PUBLIC_GITALK_ID_MODE !== '') {
-    const gitalk = isRecord(comments.gitalk) ? { ...comments.gitalk } : {}
-    gitalk.id = env.PUBLIC_GITALK_ID_MODE
-    comments.gitalk = gitalk
-  }
   for (const [key, variable] of Object.entries({ page_views: 'PUBLIC_AURORA_PAGE_VIEWS', unique_visitors: 'PUBLIC_AURORA_UNIQUE_VISITORS' })) {
     if (env[variable] !== undefined && env[variable] !== '') statistics[key] = env[variable]
   }
@@ -373,7 +333,9 @@ export function loadAuroraConfig(options: LoaderOptions = {}): AuroraConfig {
     try { parsed = parseYaml(text, { uniqueKeys: true, maxAliasCount: 20 }) ?? {} } catch (error) {
       const location = isRecord(error) && Array.isArray(error.linePos) && isRecord(error.linePos[0])
         ? ` (line ${error.linePos[0].line}, column ${error.linePos[0].col})` : ''
-      throw new Error(`Aurora configuration error\nUnable to parse ${configPath}${location}:\n${error instanceof Error ? error.message : String(error)}`)
+      // YAML parser messages include source excerpts. Never echo configuration
+      // text here because a malformed legacy file may contain OAuth secrets.
+      throw new Error(`Aurora configuration error\nUnable to parse ${configPath}${location}: invalid YAML syntax.`)
     }
   }
   const warn = (message: string) => (options.onWarning || console.warn)(`Aurora configuration warning: ${message}`)
@@ -384,8 +346,8 @@ export function loadAuroraConfig(options: LoaderOptions = {}): AuroraConfig {
     const site = isRecord(overridden) && isRecord(overridden.site) ? overridden.site : {}
     const chinese = site.language === 'zh-CN'
     const message = chinese
-      ? 'Aurora 配置错误：\ncomments.provider: Gitalk 1.8 的 OAuth/客户端流程要求浏览器可见的客户端密钥。Aurora 3 刻意不暴露该密钥。Gitalk UID/pathname identity 兼容仅为迁移保留；运行时评论请改用 Waline 或 Twikoo。'
-      : 'Aurora configuration error:\ncomments.provider: Gitalk 1.8 requires a browser-visible client secret for its OAuth/client flow. Aurora 3 intentionally does not expose that secret. Gitalk UID/pathname identity compatibility is retained for migration only; choose Waline or Twikoo for runtime comments.'
+      ? 'Aurora 配置错误：\ncomments.provider: gitalk 已不受 Aurora 3 支持。上游浏览器运行时依赖 Aurora 不会暴露的 OAuth 客户端密钥。GitHub 评论请迁移到 giscus；也可使用 Waline、Twikoo 或 Valine。参见 MIGRATION.md。'
+      : 'Aurora configuration error:\ncomments.provider: gitalk is no longer supported in Aurora 3. Its upstream browser runtime requires an OAuth client secret that Aurora does not expose. For GitHub-hosted comments, migrate to giscus; Waline, Twikoo, and Valine are also available. See MIGRATION.md.'
     throw new Error(message)
   }
   const result = AuroraConfigSchema.safeParse(overridden)

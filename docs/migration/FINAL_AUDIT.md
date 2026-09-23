@@ -1,3 +1,5 @@
+> Historical migration audit. Statements below about enabling Gitalk or its runtime blocker describe the old Hexo/Aurora 2 state. Aurora 3 current HEAD removes Gitalk runtime and adds first-class giscus; see `docs/review/GISCUS_REPLACEMENT_IMPLEMENTATION.md`.
+
 # Aurora 3.0 final architecture and migration audit
 
 **Audit date:** 2026-09-19  

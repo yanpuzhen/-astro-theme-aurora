@@ -57,7 +57,7 @@ Aurora 3.0 is the Astro implementation of Aurora. The original Aurora project wa
 - Light and dark appearance - _Theme choice persists locally and does not gate content readability._
 - Tags, categories, and archives - _Static taxonomy pages and pagination are generated from public posts._
 - RSS, sitemap, robots, SEO, and JSON-LD - _Generated from the validated site configuration and deployment base._
-- Optional comments - _Valine, Twikoo, and Waline client integrations plus migration identities for Gitalk; Demo recent comments are deterministic local fixtures._
+- Optional comments - _giscus, Waline, and Twikoo first-class integrations, Valine legacy runtime, and deterministic Demo recent-comment fixtures._
 - Build-time Markdown math - _GFM is provided by `remark-gfm`; inline/display equations are rendered by KaTeX._
 - Lightbox, code copy, Dia, and mobile menu - _Interactive islands enhance ordinary static HTML._
 - Custom permalinks and legacy identity - _The route manifest preserves explicit paths, UID inputs, and compatibility aliases._
@@ -86,7 +86,7 @@ ASTRO_BASE=/astro-theme-aurora/ \
 pnpm build
 ```
 
-Never put private credentials in `_config.yml` or `PUBLIC_*` variables; static build values are visible to site visitors. In particular, Aurora does not serialize Gitalk's OAuth client secret. See the [Getting Started guide](https://yanpuzhen.github.io/astro-theme-aurora/guide/getting-started), [configuration reference](https://yanpuzhen.github.io/astro-theme-aurora/configs/general), [Aurora 2 migration guide](https://yanpuzhen.github.io/astro-theme-aurora/upgrade/from-aurora-2), and [Internationalization guide](https://yanpuzhen.github.io/astro-theme-aurora/guide/internationalization).
+Never put private credentials in `_config.yml` or `PUBLIC_*` variables; static build values are visible to site visitors. Gitalk runtime is removed; use giscus for GitHub Discussions after following the migration guide. See the [Getting Started guide](https://yanpuzhen.github.io/astro-theme-aurora/guide/getting-started), [configuration reference](https://yanpuzhen.github.io/astro-theme-aurora/configs/general), [Aurora 2 migration guide](https://yanpuzhen.github.io/astro-theme-aurora/upgrade/from-aurora-2), and [Internationalization guide](https://yanpuzhen.github.io/astro-theme-aurora/guide/internationalization).
 
 Create posts in `src/content/posts/` and pages in `src/content/pages/`. The Demo publishes English and Chinese RSS at `/astro-theme-aurora/demo/rss.xml` and `/astro-theme-aurora/demo/cn/rss.xml`; its sitemap and robots file are also under the `/demo/` base.
 

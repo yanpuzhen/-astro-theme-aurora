@@ -31,7 +31,7 @@ features:
     details: 可配置浅色或深色初始主题，并保存访客选择。
   - icon: 💬
     title: 评论适配器
-    details: Waline/Twikoo 一等运行时、Valine legacy runtime，以及 Gitalk 仅保留 identity/migration compatibility。
+    details: giscus、Waline、Twikoo 一等运行时；Valine 旧版运行时。
   - icon: 🌍
     title: 双语文档
     details: 中英文文档使用相同的 Aurora 3 实现作为事实来源。

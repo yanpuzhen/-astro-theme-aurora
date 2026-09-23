@@ -170,60 +170,81 @@ aurora_bot:
   throwsWith(() => load('site:\n  base: ../unsafe\n'), /site\.base/)
   throwsWith(() => load('', { PUBLIC_AURORA_DIA: 'sometimes' }), /PUBLIC_AURORA_DIA must be true or false/)
 
+  const giscusYaml = (overrides = '') => `comments:\n  provider: giscus\n  giscus:\n    repo: example/comments\n    repo_id: R_test\n    category: General\n    category_id: DIC_test\n${overrides}`
+  const giscus = load(giscusYaml('    mapping: pathname\n'))
+  assert.equal(giscus.comments.provider, 'giscus')
+  assert.equal(giscus.comments.giscus.repo, 'example/comments')
+  assert.equal(giscus.comments.giscus.repoId, 'R_test')
+  assert.equal(giscus.comments.giscus.categoryId, 'DIC_test')
+  assert.equal(giscus.comments.giscus.mapping, 'pathname')
+  assert.equal(giscus.comments.giscus.theme, 'auto')
+  assert.equal(giscus.comments.giscus.lang, 'auto')
+  assert.equal(giscus.comments.giscus.loading, 'eager')
+  assert.equal(giscus.comments.giscus.reactionsEnabled, true)
+  for (const mapping of ['url', 'pathname', 'title', 'og:title']) {
+    assert.equal(load(giscusYaml(`    mapping: ${mapping}\n`)).comments.giscus.mapping, mapping)
+  }
+  assert.equal(load(giscusYaml('    mapping: specific\n    term: stable-post-key\n')).comments.giscus.term, 'stable-post-key')
+  assert.equal(load(giscusYaml('    mapping: number\n    term: "42"\n')).comments.giscus.term, '42')
+  throwsWith(() => load(giscusYaml('    mapping: specific\n')), /comments\.giscus\.term/)
+  throwsWith(() => load(giscusYaml('    mapping: number\n')), /comments\.giscus\.term/)
+  throwsWith(() => load(giscusYaml('    mapping: number\n    term: "0"\n')), /comments\.giscus\.term/)
+  throwsWith(() => load(giscusYaml('    mapping: bogus\n')), /comments\.giscus\.mapping/)
+  throwsWith(() => load(giscusYaml('    theme: https:\/\/evil.example\/theme.css\n')), /comments\.giscus\.theme/)
+  throwsWith(() => load(giscusYaml().replace('repo: example/comments', 'repo: javascript:alert(1)')), /comments\.giscus\.repo/)
+  throwsWith(() => load('comments:\n  provider: giscus\n'), /comments\.giscus\.(?:repo|repo_id|category_id)/)
+  throwsWith(() => load('comments:\n  provider: giscus\n  giscus:\n    repo: example/comments\n    repo_id: R_test\n'), /comments\.giscus\.category_id/)
+  assert.equal(load('comments:\n  provider: giscus\n  giscus:\n    repo: example/comments\n    repo_id: R_test\n    mapping: number\n    term: "7"\n').comments.giscus.mapping, 'number')
+
   const gitalkWarnings = []
   const gitalkPath = resolve(temporaryRoot, 'legacy-gitalk.yml')
   const sentinel = 'NEVER-SERIALIZE-GITALK-CREDENTIAL-7f9c'
-  writeFileSync(gitalkPath, `gitalk:\n  enable: true\n  id: pathname\n  clientId: legacy-id\n  owner: legacy-owner\n  repo: legacy-repo\n  clientSecret: ${sentinel}\n  client_secret: second-${sentinel}\n  proxy: https://cors.example\n`, 'utf8')
-  const legacyGitalk = loadAuroraConfig({
-    configPath: gitalkPath, cwd: temporaryRoot, env: {}, onWarning: (message) => gitalkWarnings.push(message),
-  })
-  assert.equal(legacyGitalk.comments.provider, 'none', 'legacy Gitalk enable must not select a runtime')
-  assert.equal(legacyGitalk.comments.gitalk.id, 'pathname', 'safe identity mode remains available')
-  assert.deepEqual(Object.keys(legacyGitalk.comments.gitalk), ['id'], 'only identity mapping may survive migration')
-  assert.ok(gitalkWarnings.some((warning) => warning.includes('runtime is not bundled') && warning.includes('security reasons')))
-  assert.ok(gitalkWarnings.some((warning) => warning.includes('credential fields were ignored and removed')))
-  assert.ok(gitalkWarnings.some((warning) => warning.includes('runtime settings were not imported')))
+  writeFileSync(gitalkPath, `gitalk:\n  enable: true\n  id: pathname\n  clientSecret: ${sentinel}\n  client_secret: second-${sentinel}\n`, 'utf8')
+  const legacyGitalk = loadAuroraConfig({ configPath: gitalkPath, cwd: temporaryRoot, env: {}, onWarning: (message) => gitalkWarnings.push(message) })
+  assert.equal(legacyGitalk.comments.provider, 'none')
+  assert.equal('gitalk' in legacyGitalk.comments, false)
+  assert.ok(gitalkWarnings.some((warning) => warning.includes('Legacy Aurora 2 Gitalk configuration detected')))
   assert.doesNotMatch(JSON.stringify(legacyGitalk), new RegExp(sentinel))
-  assert.ok(gitalkWarnings.every((warning) => !warning.includes(sentinel)), 'migration warnings must never echo credential values')
-
-  throwsWith(() => load('comments:\n  provider: gitalk\n'), /Gitalk 1\.8.*browser-visible client secret.*intentionally does not expose.*identity compatibility is retained.*Waline or Twikoo/i)
-  throwsWith(() => load('site:\n  language: zh-CN\ncomments:\n  provider: gitalk\n'), /Gitalk 1\.8.*浏览器可见的客户端密钥.*刻意不暴露.*迁移.*Waline 或 Twikoo/)
-  throwsWith(() => load(`comments:\n  gitalk:\n    clientSecret: ${sentinel}\n`), (error) => {
-    assert.match(error.message, /OAuth credentials are not accepted/)
+  assert.ok(gitalkWarnings.every((warning) => !warning.includes(sentinel)))
+  const malformedSectionPath = resolve(temporaryRoot, 'legacy-gitalk-malformed-section.yml')
+  writeFileSync(malformedSectionPath, `gitalk:\n  clientSecret: ${sentinel}\ncomments: invalid\n`, 'utf8')
+  throwsWith(() => loadAuroraConfig({ configPath: malformedSectionPath, cwd: temporaryRoot, env: {}, onWarning: (message) => gitalkWarnings.push(message) }), (error) => {
     assert.doesNotMatch(error.message, new RegExp(sentinel))
     return true
   })
-  throwsWith(() => load('', { PUBLIC_COMMENT_PROVIDER: 'gitalk', PUBLIC_AURORA_LOCALE: 'zh-CN' }), /Gitalk 1\.8.*浏览器可见的客户端密钥.*Aurora 3 刻意不暴露.*Waline 或 Twikoo/)
-
+  const malformedLegacyPath = resolve(temporaryRoot, 'malformed-legacy-gitalk.yml')
+  writeFileSync(malformedLegacyPath, `gitalk:\n  clientSecret: ${sentinel}\n  broken: [\n`, 'utf8')
+  throwsWith(() => loadAuroraConfig({ configPath: malformedLegacyPath, cwd: temporaryRoot, env: {} }), (error) => {
+    assert.match(error.message, /Unable to parse/)
+    assert.doesNotMatch(error.message, new RegExp(sentinel))
+    return true
+  })
+  throwsWith(() => load('comments:\n  provider: gitalk\n'), /comments\.provider: gitalk is no longer supported.*giscus.*Waline.*Twikoo.*Valine/s)
+  throwsWith(() => load('site:\n  language: zh-CN\ncomments:\n  provider: gitalk\n'), /comments\.provider: gitalk.*giscus.*Waline.*Twikoo.*Valine/s)
+  throwsWith(() => load(`comments:\n  gitalk:\n    clientSecret: ${sentinel}\n`), (error) => {
+    assert.match(error.message, /comments: unknown key: gitalk/)
+    assert.doesNotMatch(error.message, new RegExp(sentinel))
+    return true
+  })
+  throwsWith(() => load('', { PUBLIC_COMMENT_PROVIDER: 'gitalk' }), /comments\.provider: gitalk is no longer supported/)
   const ignoredEnvWarnings = []
-  const identityEnv = loadAuroraConfig({
+  const ignoredEnv = loadAuroraConfig({
     configPath: resolve(temporaryRoot, 'missing-env.yml'), cwd: temporaryRoot,
-    env: { PUBLIC_GITALK_CLIENT_ID: 'legacy-id', PUBLIC_GITALK_OWNER: 'legacy-owner', PUBLIC_GITALK_REPO: 'legacy-repo', PUBLIC_GITALK_PROXY: 'https://cors.example', PUBLIC_GITALK_ID_MODE: 'pathname' },
+    env: { PUBLIC_GITALK_CLIENT_SECRET: sentinel, PUBLIC_GITALK_ID_MODE: 'pathname' },
     onWarning: (message) => ignoredEnvWarnings.push(message),
   })
-  assert.equal(identityEnv.comments.provider, 'none')
-  assert.equal(identityEnv.comments.gitalk.id, 'pathname')
-  assert.equal('clientId' in identityEnv.comments.gitalk, false)
-  assert.ok(ignoredEnvWarnings.some((warning) => warning.includes('PUBLIC_GITALK_CLIENT_ID is ignored')))
-  assert.ok(ignoredEnvWarnings.some((warning) => warning.includes('PUBLIC_GITALK_PROXY is ignored')))
-
-  for (const variable of ['PUBLIC_GITALK_CLIENT_SECRET', 'GITALK_CLIENT_SECRET']) {
-    throwsWith(() => loadAuroraConfig({
-      configPath: resolve(temporaryRoot, `missing-${variable}.yml`), cwd: temporaryRoot,
-      env: { [variable]: sentinel },
-    }), (error) => {
-      assert.match(error.message, /Gitalk OAuth client secrets are not accepted in environment variables/)
-      assert.doesNotMatch(error.message, new RegExp(sentinel))
-      return true
-    })
-  }
+  assert.equal(ignoredEnv.comments.provider, 'none')
+  assert.equal('gitalk' in ignoredEnv.comments, false)
+  assert.ok(ignoredEnvWarnings.some((warning) => warning.includes('Obsolete Gitalk environment settings were ignored')))
+  assert.ok(ignoredEnvWarnings.every((warning) => !warning.includes(sentinel)))
+  assert.doesNotMatch(JSON.stringify(ignoredEnv), new RegExp(sentinel))
 
   const envExample = readFileSync('.env.example', 'utf8')
   const exampleConfig = readFileSync('_config.yml', 'utf8')
   assert.doesNotMatch(envExample, /CLIENT_SECRET|clientSecret|client_secret/i)
   assert.doesNotMatch(exampleConfig, /CLIENT_SECRET|clientSecret|client_secret/i)
 
-  console.log('Verified Aurora config defaults, YAML errors, schema paths, environment precedence, safe Gitalk migration identity, provider rejection, and credential non-disclosure.')
+  console.log('Verified Aurora config defaults, YAML errors, schema paths, environment precedence, giscus validation, Gitalk rejection, and credential non-disclosure.')
 } finally {
   rmSync(temporaryRoot, { recursive: true, force: true })
 }

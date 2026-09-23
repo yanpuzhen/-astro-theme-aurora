@@ -1,3 +1,5 @@
+> Historical RC validation snapshot. The later giscus replacement supersedes this document’s Gitalk provider classification; current implementation evidence is in `docs/review/GISCUS_REPLACEMENT_IMPLEMENTATION.md`.
+
 # Aurora 3.0 RC validation
 
 **Validation date:** 2026-09-19

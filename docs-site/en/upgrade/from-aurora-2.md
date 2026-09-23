@@ -34,9 +34,16 @@ comments:
     server_url: https://comments.example.com
 ```
 
-### Gitalk security difference
+### Gitalk → giscus
 
-Aurora retains Gitalk's legacy UID/pathname identity calculation, aliases, Aurora 2 migration recognition, and historical data mapping only. Upstream Gitalk 1.8 requires a browser-visible client secret for its OAuth/client flow. Aurora 3 intentionally does not expose that secret, bundle Gitalk, build an OAuth backend, or fork Gitalk. A legacy root `gitalk.enable: true` does not select a provider; only safe identity fields are normalized and runtime/credential fields are ignored or rejected with warnings. Canonical `comments.provider: gitalk` fails with localized configuration guidance recommending Waline or Twikoo. This accepted legacy-compatibility role is not a Stable Preflight blocker.
+Gitalk is removed from the Aurora 3 runtime. Upstream Gitalk requires a browser-side OAuth client secret; Aurora does not expose one or provide a proxy. A stale `comments.provider: gitalk` fails with a migration error. Aurora 2 root `gitalk` settings are detected for a warning, then discarded without reading or serializing field values. The migration-only `legacyGitalkIdentity()` helper can calculate historical UID or pathname keys for comparison; it is not a provider.
+
+1. Back up and identify the old Gitalk Issues and their page identities.
+2. Enable GitHub Discussions and install the giscus App on the target public repository.
+3. Convert representative Issues to Discussions using GitHub's conversion action. Conversion alone does not establish a page match.
+4. On [giscus.app](https://giscus.app), obtain `repo_id` and `category_id`, then configure `comments.provider: giscus` as shown in [Integrations](/configs/integrations).
+5. Match converted Discussion titles to your chosen mapping. `pathname` includes the deployed base and locale; changing `ASTRO_BASE` or a permalink changes the key. Use `specific` with `term: "{legacyUid}"` for per-page stable UIDs only if converted Discussion titles match. A literal `specific` term or global `number` makes every page share one Discussion; use those only deliberately.
+6. Verify several old posts and translations against real Discussions before cutover. Keep old Issues until this check succeeds. Aurora cannot automatically turn Gitalk UID/pathname keys into giscus Discussions.
 
 ## Content and verification
 

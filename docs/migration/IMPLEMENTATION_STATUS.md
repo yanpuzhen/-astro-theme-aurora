@@ -1,3 +1,5 @@
+> Current-head note (2026-09-24): the giscus replacement supersedes the older Gitalk identity-compatibility classification below. Gitalk is removed from active runtime/configuration and retained only for migration checks.
+
 > Status note: the Gitalk runtime blocker described in older audit snapshots is superseded by the accepted migration-only classification on 2026-09-23.
 
 # Aurora 3.0 implementation status

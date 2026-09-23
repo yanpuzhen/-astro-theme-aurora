@@ -36,12 +36,24 @@ menu:
 socials: [] # Example: [{ label: GitHub, href: 'https://github.com/you', icon: github }]
 
 comments:
-  provider: none # none | waline | twikoo | valine
+  provider: none # none | giscus | waline | twikoo | valine
   recent_comments:
     enabled: true
     count: 5
-  gitalk:
-    id: uid # legacy identity mapping only; Gitalk is not a runtime provider
+  giscus:
+    repo: '' # GitHub owner/repository; enable Discussions and install the giscus App first.
+    repo_id: '' # Opaque ID from https://giscus.app
+    category: ''
+    category_id: '' # Required unless mapping is number.
+    mapping: pathname # pathname | url | title | og:title | specific | number
+    term: '' # Required for specific or number mapping.
+    strict: false
+    reactions_enabled: true
+    emit_metadata: false
+    input_position: bottom
+    theme: auto # auto follows Aurora Light/Dark/System.
+    lang: auto # auto | en | zh-CN
+    loading: eager # Aurora already hydrates comments when visible.
   valine:
     app_id: ''
     app_key: ''

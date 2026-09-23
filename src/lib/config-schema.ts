@@ -82,8 +82,20 @@ const socialsSchema = z.array(z.object({
   icon: z.enum(['github', 'link']).default('link'),
 }).strict()).max(32).default([])
 
-const gitalkSchema = z.object({
-  id: z.enum(['uid', 'pathname']).default('uid'),
+const giscusSchema = z.object({
+  repo: z.string().trim().default(''),
+  repo_id: z.string().trim().default(''),
+  category: z.string().trim().default(''),
+  category_id: z.string().trim().default(''),
+  mapping: z.enum(['pathname', 'url', 'title', 'og:title', 'specific', 'number']).default('pathname'),
+  term: z.string().trim().max(500).default(''),
+  strict: z.boolean().default(false),
+  reactions_enabled: z.boolean().default(true),
+  emit_metadata: z.boolean().default(false),
+  input_position: z.enum(['top', 'bottom']).default('bottom'),
+  theme: z.enum(['auto', 'light', 'dark', 'dark_dimmed']).default('auto'),
+  lang: z.enum(['auto', 'en', 'zh-CN']).default('auto'),
+  loading: z.enum(['eager', 'lazy']).default('eager'),
 }).strict().default({})
 
 const valineSchema = z.object({
@@ -117,17 +129,32 @@ const walineSchema = z.object({
 }).strict().default({})
 
 const commentsSchema = z.object({
-  // Gitalk remains an identity/migration concept, not an Aurora 3 runtime provider.
-  provider: z.enum(['valine', 'twikoo', 'waline', 'none']).default('none'),
+  provider: z.enum(['giscus', 'valine', 'twikoo', 'waline', 'none']).default('none'),
   recent_comments: z.object({
     enabled: z.boolean().default(true),
     count: z.number().int().min(1).max(20).default(5),
   }).strict().default({}),
-  gitalk: gitalkSchema,
+  giscus: giscusSchema,
   valine: valineSchema,
   twikoo: twikooSchema,
   waline: walineSchema,
-}).strict().default({})
+}).strict().superRefine((comments, context) => {
+  if (comments.provider !== 'giscus') return
+  const settings = comments.giscus
+  if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})\/[A-Za-z0-9._-]{1,100}$/.test(settings.repo)) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ['giscus', 'repo'], message: 'must be a GitHub owner/repository identifier' })
+  }
+  if (!settings.repo_id) context.addIssue({ code: z.ZodIssueCode.custom, path: ['giscus', 'repo_id'], message: 'is required for giscus' })
+  if (settings.mapping !== 'number' && !settings.category_id) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ['giscus', 'category_id'], message: 'is required to create discussions' })
+  }
+  if (settings.mapping === 'specific' && !settings.term) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ['giscus', 'term'], message: 'is required when mapping is specific' })
+  }
+  if (settings.mapping === 'number' && !/^[1-9]\d*$/.test(settings.term)) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ['giscus', 'term'], message: 'must be a positive discussion number when mapping is number' })
+  }
+}).default({})
 
 const diaSchema = z.object({
   enabled: z.boolean().default(false),
@@ -202,9 +229,15 @@ export const AuroraConfigSchema = inputSchema.transform((value) => ({
   comments: {
     provider: value.comments.provider,
     enabled: value.comments.provider !== 'none',
-    gitalkIdMode: value.comments.gitalk.id,
     recentComments: value.comments.recent_comments,
-    gitalk: { id: value.comments.gitalk.id },
+    giscus: {
+      repo: value.comments.giscus.repo, repoId: value.comments.giscus.repo_id,
+      category: value.comments.giscus.category, categoryId: value.comments.giscus.category_id,
+      mapping: value.comments.giscus.mapping, term: value.comments.giscus.term,
+      strict: value.comments.giscus.strict, reactionsEnabled: value.comments.giscus.reactions_enabled,
+      emitMetadata: value.comments.giscus.emit_metadata, inputPosition: value.comments.giscus.input_position,
+      theme: value.comments.giscus.theme, lang: value.comments.giscus.lang, loading: value.comments.giscus.loading,
+    },
     valine: {
       appId: value.comments.valine.app_id, appKey: value.comments.valine.app_key, avatar: value.comments.valine.avatar,
       placeholder: value.comments.valine.placeholder, visitor: value.comments.valine.visitor,

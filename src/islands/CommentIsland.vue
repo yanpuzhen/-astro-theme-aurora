@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { commentIdentity, commentIdentityAliases, type CommentProvider } from '../lib/comments'
 import { loadProviderClient } from '../lib/comment-adapters'
+import GiscusComment from './GiscusComment.vue'
 
 interface ProviderSettings { [key: string]: string | number | boolean | readonly string[] | undefined }
 interface Labels { loading: string; setupMissing: string; loadError: string }
@@ -31,6 +32,7 @@ const providerLanguage = computed(() => props.settings.language === 'auto' || !p
 
 function hasRequiredSettings(): boolean {
   switch (props.provider) {
+    case 'giscus': return true // Required settings are validated at build time.
     case 'valine': return Boolean(props.settings.appId && props.settings.appKey)
     case 'twikoo': return Boolean(props.settings.envId)
     case 'waline': return Boolean(props.settings.serverUrl)
@@ -38,6 +40,7 @@ function hasRequiredSettings(): boolean {
 }
 
 onMounted(async () => {
+  if (props.provider === 'giscus') return
   if (!host.value) return
   status.value = props.labels.loading
   if (!hasRequiredSettings()) {
@@ -92,6 +95,7 @@ onBeforeUnmount(() => valineThemeObserver?.disconnect())
     <p v-if="status" class="comment-status" role="status">{{ status }}</p>
     <p class="comment-page-title">{{ title }}</p>
     <noscript><p class="comment-status">{{ noScriptText }}</p></noscript>
-    <div ref="host" class="comment-provider-host"></div>
+    <GiscusComment v-if="provider === 'giscus'" :settings="settings" :legacy-uid="legacyUid" :locale="locale" :loading-text="labels.loading" :error-text="labels.loadError" />
+    <div v-else ref="host" class="comment-provider-host"></div>
   </div>
 </template>

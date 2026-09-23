@@ -34,9 +34,16 @@ comments:
     server_url: https://comments.example.com
 ```
 
-### Gitalk 安全差异
+### 从 Gitalk 迁移到 giscus
 
-Aurora 仅保留 Gitalk legacy UID/pathname identity 计算、aliases、Aurora 2 migration recognition 和历史数据映射。上游 Gitalk 1.8 的 OAuth/client 流程要求浏览器可见的 client secret。Aurora 3 刻意不暴露该 secret、不打包 Gitalk、不构建 OAuth 后端，也不 fork Gitalk。Aurora 2 根级 `gitalk.enable: true` 不会选择 provider；只规范化安全 identity 字段，并通过 warning 忽略或拒绝 runtime/credential 字段。canonical `comments.provider: gitalk` 会给出本地化配置错误，推荐 Waline 或 Twikoo。此 migration-only 定位已被接受，不是 Stable Preflight blocker。
+Aurora 3 已移除 Gitalk 运行时。上游 Gitalk 需要浏览器端 OAuth client secret；Aurora 不暴露密钥，也不提供代理。旧的 `comments.provider: gitalk` 会报明确的迁移错误。Aurora 2 根级 `gitalk` 配置只触发提示，随后整体丢弃；字段值不会被读取或序列化。仅迁移工具 `legacyGitalkIdentity()` 可计算旧 UID/pathname 供人工核对，它不是 provider。
+
+1. 备份并辨认旧 Gitalk Issues 与对应页面身份。
+2. 在目标公开仓库启用 GitHub Discussions 并安装 giscus App。
+3. 用 GitHub 的转换操作将代表性 Issues 转为 Discussions；仅转换本身不能保证页面匹配。
+4. 在 [giscus.app](https://giscus.app) 获取 `repo_id`、`category_id`，按[集成配置](/cn/configs/integrations)设置 `comments.provider: giscus`。
+5. 核对已转换 Discussion 的标题与 mapping。`pathname` 包含部署 base 和语言路径；更改 `ASTRO_BASE` 或 permalink 会改变 key。只有已转换 Discussion 标题匹配时，才用 `specific` 与 `term: "{legacyUid}"` 取得逐页稳定 UID。字面量 `specific` term 或全局 `number` 会让所有页面共用一个 Discussion，务必谨慎。
+6. 切换前在真实 Discussions 核对多篇旧文章和译文。完成验证前保留原 Issues；Aurora 不会自动把 Gitalk UID/pathname 转成 giscus Discussion。
 
 ## 内容与验证
 

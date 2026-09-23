@@ -27,7 +27,7 @@ Each page self-canonicalizes and emits `lang="en"` or `lang="zh-CN"`. Paired pag
 
 Pagefind generates separate `en` and `zh-cn` indexes. Each search island receives its locale explicitly and does not merge the other language index. Result URLs therefore remain inside the current base and locale.
 
-Translated articles receive independent comment identities by default. An English article retains its legacy identity; a Chinese translation gets a locale-scoped identity. Gitalk is migration-only in Aurora 3: compare its preserved UID/pathname mapping with historical records before changing providers; no Gitalk runtime is bundled. Continuity for Valine, Twikoo, or Waline still requires checking that provider's external records.
+Translated articles receive independent comment identities by default. An English article retains its legacy identity; a Chinese translation gets a locale-scoped identity. For Gitalk → giscus migration, compare historical UID/pathname keys with converted Discussions; Aurora 3 has no Gitalk runtime. Continuity for Valine, Twikoo, or Waline still requires checking that provider's external records.
 
 ## Adding a translation
 

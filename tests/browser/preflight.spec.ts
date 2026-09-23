@@ -19,6 +19,10 @@ async function mockProviderAssets(page: import('@playwright/test').Page, brokenT
   await page.route('https://unpkg.com/@waline/client@3.15.2/dist/waline.js', (route) => route.fulfill({
     status: 200, contentType: 'application/javascript', headers: { 'access-control-allow-origin': '*' }, body: walineModule,
   }))
+  await page.route('https://giscus.app/**', (route) => route.fulfill({
+    status: 200, contentType: 'text/html', headers: { 'access-control-allow-origin': '*' },
+    body: '<!doctype html><html><body><script>document.documentElement.dataset.theme=new URL(location.href).searchParams.get("theme")||"";parent.postMessage({giscus:{resizeHeight:120}},new URL(location.href).searchParams.get("origin"));window.addEventListener("message",event=>{const next=event.data&&event.data.giscus&&event.data.giscus.setConfig&&event.data.giscus.setConfig.theme;if(next)document.documentElement.dataset.theme=next})</script><p>Local giscus mock</p></body></html>',
+  }))
 }
 
 test('validated YAML settings reach the rendered static UI and none loads no provider assets', async ({ page }) => {
@@ -60,11 +64,11 @@ test('supported comment clients and Recent Comments render safely from determini
   for (const provider of ['valine', 'twikoo', 'waline']) {
     await expect(page.locator(`[data-provider-test="${provider}"] [data-client-mock="${provider}"]`)).toBeVisible()
   }
-  const gitalkIdentity = page.locator('[data-provider-test="gitalk-identity"]')
-  await expect(gitalkIdentity).toContainText('identity compatibility is retained for migration only')
-  await expect(gitalkIdentity).toHaveAttribute('data-runtime-bundled', 'false')
-  await expect(gitalkIdentity).toHaveAttribute('data-comment-id', 'preflight-legacy-uid')
-  await expect(gitalkIdentity.locator('[data-pathname-comment-id]')).toHaveAttribute('data-pathname-comment-id', '/post/preflight/')
+  await expect(page.locator('[data-provider-test="giscus"] giscus-widget')).toHaveAttribute('repo', 'example/comments')
+  await expect(page.locator('[data-provider-test="giscus"] giscus-widget')).toHaveAttribute('mapping', 'pathname')
+  await expect(page.locator('[data-provider-test="giscus"] giscus-widget')).toHaveAttribute('lang', 'en')
+  await expect(page.locator('[data-provider-test="giscus-zh"] giscus-widget')).toHaveAttribute('lang', 'zh-CN')
+  await expect(page.locator('[data-provider-test="giscus-specific"] giscus-widget')).toHaveAttribute('term', 'preflight-legacy-uid')
   await expect(page.locator('[data-provider-test="incomplete"]')).toContainText('not fully configured')
   await expect(page.locator('section[aria-label="Twikoo recent comments"]')).toContainText('Twikoo Reader')
   await expect(page.locator('section[aria-label="Twikoo recent comments"]')).toContainText('Welcome reader')
@@ -95,8 +99,38 @@ test('supported comment clients and Recent Comments render safely from determini
   await expect(valineHost).not.toHaveClass(/night/)
   await page.locator('html').evaluate((element) => { element.dataset.theme = 'dark' })
   await expect(valineHost).toHaveClass(/night/)
+  await expect(page.locator('[data-provider-test="giscus"] giscus-widget')).toHaveAttribute('theme', 'dark')
   await page.locator('html').evaluate((element) => { element.dataset.theme = 'light' })
   await expect(valineHost).not.toHaveClass(/night/)
+  await expect(page.locator('[data-provider-test="giscus"] giscus-widget')).toHaveAttribute('theme', 'light')
+})
+
+test('giscus uses local iframe mocks, updates theme, and fits responsive widths', async ({ page }) => {
+  await mockProviderAssets(page)
+  const errors: string[] = []
+  page.on('pageerror', (error) => errors.push(error.message))
+  await page.goto(route('/preflight/comments/'))
+  const widget = page.locator('[data-provider-test="giscus"] giscus-widget')
+  await expect(widget).toHaveAttribute('theme', 'light')
+  await expect(widget).toHaveAttribute('reactionsenabled', '1')
+  await expect(widget).toHaveAttribute('strict', '0')
+  await expect(widget).toHaveAttribute('loading', 'eager')
+  await expect(page.locator('[data-provider-test="giscus"] .giscus-comment-host > .comment-status')).toHaveCount(0)
+  for (const width of [1440, 1024, 768, 390, 375]) {
+    await page.setViewportSize({ width, height: 900 })
+    expect(await widget.evaluate((element) => element.getBoundingClientRect().right <= innerWidth + 1)).toBe(true)
+  }
+  await page.locator('html').evaluate((element) => { element.dataset.theme = 'dark' })
+  await expect(widget).toHaveAttribute('theme', 'dark')
+  await expect(widget).toHaveCount(1)
+  const iframe = page.locator('[data-provider-test="giscus"] giscus-widget iframe')
+  await expect(iframe).toHaveCount(1)
+  await expect(page.frameLocator('[data-provider-test="giscus"] giscus-widget iframe').locator('html')).toHaveAttribute('data-theme', 'dark')
+  await page.evaluate(() => {
+    window.postMessage({ giscus: { error: 'untrusted message' } }, location.origin)
+  })
+  await expect(page.locator('[data-provider-test="giscus"] .giscus-comment-host > .comment-status')).toHaveCount(0)
+  expect(errors).toEqual([])
 })
 
 test('a blocked provider asset produces a localized status without an Aurora page error', async ({ page }) => {
@@ -105,5 +139,15 @@ test('a blocked provider asset produces a localized status without an Aurora pag
   page.on('pageerror', (error) => pageErrors.push(error.message))
   await page.goto(route('/preflight/comments/'))
   await expect(page.locator('[data-provider-test="twikoo"]')).toContainText('Comments could not be loaded')
+  expect(pageErrors).toEqual([])
+})
+
+test('a failed giscus iframe leaves article content and shows a localized status', async ({ page }) => {
+  await mockProviderAssets(page)
+  await page.route('https://giscus.app/**', (request) => request.abort())
+  const pageErrors: string[] = []
+  page.on('pageerror', (error) => pageErrors.push(error.message))
+  await page.goto(route('/preflight/comments/'))
+  await expect(page.locator('[data-provider-test="giscus"]')).toContainText('Comments could not be loaded', { timeout: 20000 })
   expect(pageErrors).toEqual([])
 })

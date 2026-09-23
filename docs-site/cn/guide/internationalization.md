@@ -27,7 +27,7 @@ translationKey: welcome-aurora-3
 
 Pagefind 分别生成 `en` 与 `zh-cn` 索引。搜索 island 显式接收当前语言，不合并另一套索引，因此结果链接会留在当前 base 和语言下。
 
-翻译文章默认使用独立评论身份。英文文章保留 legacy identity；中文译文使用带语言作用域的 identity。Gitalk 在 Aurora 3 中仅用于迁移：切换 provider 前，应将保留的 UID/pathname 映射与历史记录对照；Aurora 3 不打包 Gitalk runtime。Valine、Twikoo 或 Waline 的连续性仍需核对对应服务商的外部记录。
+翻译文章默认使用独立评论身份。英文文章保留 legacy identity；中文译文使用带语言作用域的 identity。从 Gitalk 迁到 giscus 时，应将旧 UID/pathname 与已转换的 Discussions 核对；Aurora 3 不提供 Gitalk 运行时。Valine、Twikoo 或 Waline 的连续性仍需核对对应服务商的外部记录。
 
 ## 添加译文
 

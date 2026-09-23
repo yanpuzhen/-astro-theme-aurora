@@ -16,6 +16,10 @@ export interface CommentAdapter {
 
 /** Exact upstream client versions are centralized here and never user-overridable. */
 export const commentAdapters: Readonly<Record<CommentProvider, CommentAdapter>> = Object.freeze({
+  giscus: Object.freeze({
+    provider: 'giscus', version: '3.1.1', styleUrls: Object.freeze([]),
+    identityMode: 'pathname', supportsRecentComments: false, supportsCommentCount: false, runtimeStatus: 'ready',
+  }),
   valine: Object.freeze({
     provider: 'valine', version: '1.5.3',
     scriptUrl: 'https://unpkg.com/valine@1.5.3/dist/Valine.min.js',
@@ -129,7 +133,7 @@ function loadModule(url: string): Promise<Record<string, unknown>> {
 }
 
 export async function loadProviderClient(
-  provider: Exclude<CommentProvider, 'none'>,
+  provider: Exclude<CommentProvider, 'none' | 'giscus'>,
   options: { twikooEnvId?: string } = {},
 ): Promise<Record<string, unknown>> {
   const adapter = adapterFor(provider)

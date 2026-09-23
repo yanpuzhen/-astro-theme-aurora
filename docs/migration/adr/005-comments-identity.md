@@ -1,3 +1,5 @@
+> Decision history: later Aurora 3 giscus replacement moved Gitalk identity calculation into migration-only tooling and removed Gitalk from active provider/configuration APIs.
+
 # ADR 005: Comment providers receive stable identity aliases
 
 - **Status:** ACCEPTED

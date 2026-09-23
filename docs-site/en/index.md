@@ -31,7 +31,7 @@ features:
     details: Configurable initial light or dark theme with a persistent visitor choice.
   - icon: 💬
     title: Comments
-    details: Waline and Twikoo first-class runtimes, Valine legacy runtime, and Gitalk identity/migration compatibility only.
+    details: giscus, Waline, and Twikoo first-class runtimes; Valine legacy runtime.
   - icon: 🌍
     title: Bilingual
     details: English and Chinese documentation mirror the same Aurora 3 implementation.

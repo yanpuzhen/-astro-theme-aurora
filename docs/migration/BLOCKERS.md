@@ -1,9 +1,7 @@
-# Migration blockers and accepted limitations
+# Comment migration boundaries
 
-## Gitalk is migration-only (accepted scope; not a Stable Preflight blocker)
+Gitalk is removed from Aurora 3 runtime selection. Aurora 2 root `gitalk` settings only produce a warning and are discarded without reading values. Canonical `comments.provider: gitalk` fails with bilingual guidance to move GitHub-hosted comments to giscus. No browser OAuth secret, proxy, or fork is provided.
 
-Aurora 3 retains Gitalk identity mapping and Aurora 2 migration recognition, but does not bundle a Gitalk browser runtime. Upstream Gitalk 1.8 requires a browser-visible client secret for its OAuth/client flow. Aurora intentionally does not expose that secret, build an OAuth backend, or fork Gitalk.
+Existing Gitalk Issues can be converted to GitHub Discussions. The migration-only UID/pathname helper can identify historical keys, but converted Discussion titles and the chosen giscus mapping must be checked against real records. Aurora cannot promise continuity without those records. See `MIGRATION.md` and the bilingual Aurora 2 upgrade guides.
 
-Canonical `comments.provider: gitalk` fails with localized configuration guidance recommending Waline or Twikoo. Legacy root Gitalk configuration never selects a runtime; only safe identity fields are retained, while credentials/runtime options are ignored or rejected without echoing values. Preserve UID/pathname mapping and test historical data against the old site when migrating.
-
-This is an accepted provider classification, not an implementation blocker. Production backend verification is not applicable for Gitalk because no Gitalk runtime is provided. Site-specific continuity checks remain relevant for bundled providers and existing records.
+Production backend verification for giscus, Waline, Twikoo, and Valine remains site-specific. Local mocks establish client integration only.

@@ -1,23 +1,57 @@
 # Integrations
 
-Routine integration settings belong in `_config.yml`; optional public ENV values are deployment overrides. Never put private credentials in YAML or `PUBLIC_*` variables.
+Routine integration settings belong in `_config.yml`. All browser settings are public; never put private credentials in YAML or `PUBLIC_*` variables.
 
 ## Comments
 
-Select one provider with `comments.provider`. The snippets below are public client configuration, not private credentials:
+First-class providers are **giscus, Waline, and Twikoo**. Valine remains a legacy runtime. `none` disables the comment island and loads no provider assets. Gitalk is removed from Aurora 3 runtime selection; see the [migration guide](/upgrade/from-aurora-2).
+
+### giscus setup
+
+1. Enable GitHub Discussions on a public repository and install the [giscus GitHub App](https://github.com/apps/giscus) for that repository.
+2. Use [giscus.app](https://giscus.app) to obtain the repository and category IDs. Choose a category that accepts new discussions.
+3. Add the public identifiers to `_config.yml`:
 
 ```yaml
 comments:
-  provider: waline # none | waline | twikoo | valine
+  provider: giscus
+  giscus:
+    repo: example/blog-comments
+    repo_id: R_example
+    category: General
+    category_id: DIC_example
+    mapping: pathname
+    term: ''
+    strict: false
+    reactions_enabled: true
+    emit_metadata: false
+    input_position: bottom
+    theme: auto
+    lang: auto
+    loading: eager
+```
+
+`repo`, `repo_id`, and `category_id` are required for automatic discussion creation. With `mapping: number`, a positive discussion number in `term` selects an existing discussion and `category_id` may be omitted. `mapping: specific` requires a nonempty `term`. Other supported mappings are `url`, `title`, and `og:title`. The default `pathname` uses the browser's deployed path: changing `ASTRO_BASE`, a custom permalink, or a locale route can create a different Discussion. For a planned migration, use `specific` with `term: "{legacyUid}"` for a per-page stable UID after confirming converted Discussion titles, or use a literal term for a single shared discussion. A global `number` term points every page to that one Discussion. There is no automatic Gitalk Issue match.
+
+`theme: auto` follows Aurora Light/Dark/System changes without reloading the page. Explicit themes are `light`, `dark`, and `dark_dimmed`; arbitrary CSS URLs are rejected. `lang: auto` maps Aurora routes to `en` or `zh-CN`; explicit `en` and `zh-CN` are supported. Aurora hydrates the comment island when visible, so `loading: eager` is the default inside it; `lazy` remains available. The giscus iframe is hosted by giscus.app and GitHub authorization occurs in giscus, with no site OAuth secret or PAT. If you set a CSP, allow giscus.app for frames and the connections required by giscus. The iframe content remains outside Aurora's CSS and DOM.
+
+### Other providers and capability
+
+| Provider | Role | Client | Recent Comments | Production backend |
+| --- | --- | --- | --- | --- |
+| giscus | FIRST-CLASS | Official `@giscus/vue` 3.1.1, GitHub Discussions | No theme API | Configure your repository; not verified by local mocks |
+| Waline | FIRST-CLASS | Pinned 3.15.2 | Yes | Configure a reachable server |
+| Twikoo | FIRST-CLASS | Pinned 2.0.8 | Yes | Configure a reachable service |
+| Valine | LEGACY RUNTIME | Pinned 1.5.3 | No theme API | Public App ID/key; never admin credentials |
+
+```yaml
+comments:
+  provider: waline # or twikoo, valine, giscus, none
   waline:
     server_url: https://comments.example.com
-    language: auto # auto | en | zh-CN
-    reaction: false
-    login: disable # enable | disable | force
-    page_size: 10
+    language: auto
   twikoo:
     env_id: https://comments.example.com
-    region: ''
     language: auto
   valine:
     app_id: ''
@@ -25,16 +59,7 @@ comments:
     language: auto
 ```
 
-| Provider | Role | Runtime bundled | Identity compatibility | Secure OAuth runtime | Reason / production backend verification |
-| --- | --- | --- | --- | --- | --- |
-| Waline | FIRST-CLASS RUNTIME | YES — 3.15.2 | YES — trailing-slash pathname | NOT APPLICABLE | Requires a reachable configured server; production backend is not verified here. |
-| Twikoo | FIRST-CLASS RUNTIME | YES — 2.0.8 | YES — trailing-slash pathname | NOT APPLICABLE | Supports `getRecentComments`; requires a configured service; production backend is not verified here. |
-| Valine | LEGACY RUNTIME | YES — 1.5.3 | YES — pathname without trailing slash | NOT APPLICABLE | No theme Recent Comments API; App ID/key are public client values, never admin/master credentials. |
-| Gitalk | LEGACY IDENTITY / MIGRATION COMPATIBILITY | NO | YES — legacy UID and pathname | NOT PROVIDED | Upstream browser client requires `clientSecret`; Aurora does not expose it or provide an OAuth backend/fork. Production backend verification: NOT APPLICABLE. |
-
-The three bundled client versions and initialization shapes are centralized in `src/lib/comment-adapters.ts`; Gitalk is absent from runtime adapters and exists only for identity/migration compatibility. Scripts and required CSS are loaded only by an enabled integration; failures show a localized status and do not remove the article. `none` loads no provider assets. Theme Recent Comments are supported only for Twikoo and Waline. Gitalk selection is rejected with localized configuration guidance recommending Waline or Twikoo. Provider responses are reduced to plain text, same-origin/base-aware links, safe avatars, and timestamps; arbitrary HTML is never rendered.
-
-The browser suite uses deterministic local mocks for bundled clients and verifies the adapter-to-island initialization boundary; Gitalk has identity-only regression coverage and no runtime mock or initialization claim. This is **client integration verification**, not backend verification. No production provider credentials or comment records were supplied; real backend availability and record continuity remain **not externally verified**. Demo recent comments are fixed local showcase data and never query or write to a live provider.
+The Sidebar shows live Recent Comments only for Waline and Twikoo. With giscus it shows the normal empty/unavailable state; Demo uses deterministic local fixtures. Local browser mocks verify the integration boundary without posting to GitHub. Live service availability and old-record continuity require a site-specific check.
 
 ## Search, media, and utilities
 

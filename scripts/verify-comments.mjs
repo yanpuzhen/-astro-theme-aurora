@@ -3,10 +3,14 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { commentAdapters, twikooUsesCloudBase } from '../src/lib/comment-adapters.ts'
 import { commentIdentity, commentIdentityAliases } from '../src/lib/comments.ts'
+import { legacyGitalkIdentity, legacyGitalkIdentityAliases } from '../src/lib/migration/gitalk.ts'
 import { normalizeRecentComments } from '../src/lib/recent-comments.ts'
 
-assert.deepEqual(Object.keys(commentAdapters).sort(), ['none', 'twikoo', 'valine', 'waline'])
+assert.deepEqual(Object.keys(commentAdapters).sort(), ['giscus', 'none', 'twikoo', 'valine', 'waline'])
 assert.equal('gitalk' in commentAdapters, false, 'Gitalk must not be represented as a bundled adapter')
+assert.equal(commentAdapters.giscus.version, '3.1.1')
+assert.equal(commentAdapters.giscus.supportsRecentComments, false)
+assert.equal(commentAdapters.giscus.supportsCommentCount, false)
 assert.equal(commentAdapters.valine.runtimeStatus, 'ready')
 assert.equal(commentAdapters.twikoo.runtimeStatus, 'ready')
 assert.equal(commentAdapters.waline.runtimeStatus, 'ready')
@@ -24,14 +28,15 @@ assert.equal(commentAdapters.none.styleUrls.length, 0)
 assert.equal(commentAdapters.none.runtimeStatus, 'disabled')
 
 const identity = { legacyUid: 'legacy-uid', canonicalPath: '/cn/post/a/', legacyPath: '/post/a.html', providerId: 'uid' }
-assert.equal(commentIdentity('gitalk', identity), 'legacy-uid')
-assert.equal(commentIdentity('gitalk', { ...identity, providerId: 'pathname' }), '/post/a.html/')
+assert.equal(legacyGitalkIdentity(identity), 'legacy-uid')
+assert.equal(legacyGitalkIdentity(identity, 'pathname'), '/post/a.html/')
+assert.equal(commentIdentity('giscus', identity), '/cn/post/a/')
 assert.equal(commentIdentity('valine', identity), '/post/a.html')
 assert.equal(commentIdentity('twikoo', identity), '/post/a.html/')
 assert.equal(commentIdentity('waline', identity), '/post/a.html/')
-assert.ok(commentIdentityAliases('gitalk', identity).includes('legacy-uid'))
+assert.ok(legacyGitalkIdentityAliases(identity).includes('legacy-uid'))
 assert.ok(commentIdentityAliases('waline', identity).includes('legacy-uid'))
-for (const provider of ['gitalk', 'valine', 'twikoo', 'waline']) {
+for (const provider of ['giscus', 'valine', 'twikoo', 'waline']) {
   assert.equal(commentIdentity(provider, { ...identity, canonicalPath: '/cn/über/a/', legacyPath: '/über/a.html' }).includes('javascript:'), false)
 }
 
@@ -72,4 +77,4 @@ for (const directory of ['dist', '.pages-dist/demo']) {
     assert.doesNotMatch(content, /gitalk(?:@1\.8|\.min\.js|\.css)/i, `${path} must not load Gitalk runtime assets`)
   }
 }
-console.log('Verified runtime provider classification, pinned adapters, legacy Gitalk identities, safe recent-comment normalization, and no Gitalk secret/runtime exposure in published assets.')
+console.log('Verified runtime providers, migration-only Gitalk identities, recent-comment normalization, and no Gitalk secret/runtime exposure in published assets.')

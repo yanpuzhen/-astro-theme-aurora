@@ -1,3 +1,5 @@
+> Historical implementation snapshot at PR #6 head `440ad608`. The later giscus replacement supersedes its comment-provider classification; see [GISCUS_REPLACEMENT_IMPLEMENTATION.md](GISCUS_REPLACEMENT_IMPLEMENTATION.md). The earlier Astra review remains historical evidence only.
+
 # Aurora 3 Stable Preflight — Implementation and Evidence Boundaries
 
 ## Scope
