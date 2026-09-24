@@ -24,7 +24,7 @@ if (mode === 'cn') {
   assert.ok(!existsSync('dist/_astro/vendor/twikoo/2.0.8'), 'EN build must not copy Twikoo runtime assets')
 }
 const notices = readFileSync('dist/THIRD_PARTY_NOTICES.txt', 'utf8')
-for (const name of ['valine@1.5.3', 'twikoo@2.0.8', '@waline/client@3.15.2', 'leancloud-storage@3.15.0', 'prismjs@1.28.0', '@cap.js/widget@0.1.58', '@cap.js/wasm@0.0.8', 'pako@2.1.0', '@fortawesome/fontawesome-free@7.3.1']) {
+for (const name of ['valine@1.5.3', 'twikoo@2.0.8', '@waline/client@3.15.2', 'leancloud-storage@3.15.0', 'prismjs@1.28.0', '@cap.js/widget@0.1.58', '@cap.js/wasm@0.0.8', 'pako@2.1.0', '@fortawesome/fontawesome-free@7.3.1', '@twikoojs/shared@2.0.8', '@waline/api@1.1.2', 'autosize@4.0.4', 'marked@4.3.0', 'md5@2.3.0']) {
   assert.ok(notices.includes(name), `${name} distribution notice missing`)
   const line = notices.split('\n').find((line) => line.startsWith(`${name} | `))
   assert.ok(line, `${name} notice entry missing`)

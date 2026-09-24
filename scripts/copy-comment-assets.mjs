@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, realpathSync, writeFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { parse } from 'yaml'
 import { localTwikooAssets, twikooAssetDirectory } from './local-twikoo-assets.mjs'
@@ -33,6 +33,7 @@ const packages = [
   ['pako', '2.1.0', 'LICENSE'],
   ['@fortawesome/fontawesome-free', '7.3.1', 'LICENSE.txt'],
 ]
+const recorded = new Set()
 const lines = [
   'Aurora 3.0.0 third-party distribution notices',
   '===========================================',
@@ -52,6 +53,32 @@ for (const [name, version, filename] of packages) {
   const target = `_licenses/${name.replaceAll('/', '__')}@${version}/${filename}`
   copy(`node_modules/${name}/${filename}`, target)
   lines.push(`${name}@${version} | ${metadata.license || 'see license file'} | ${target}`)
+  recorded.add(`${name}@${version}`)
+}
+
+// Upstream provider bundles contain helper packages as well as the named
+// clients. Copy the installed direct dependency notices conservatively; this
+// also covers dependencies that a bundler inlines into a provider chunk.
+for (const provider of ['valine', 'twikoo', '@waline/client', 'leancloud-storage']) {
+  const source = realpathSync(resolve(root, 'node_modules', provider, 'package.json'))
+  const manifest = JSON.parse(readFileSync(source, 'utf8'))
+  const depth = manifest.name.startsWith('@') ? 2 : 1
+  const nodeModules = resolve(dirname(source), ...Array(depth).fill('..'))
+  for (const name of Object.keys(manifest.dependencies || {}).sort()) {
+    const dependency = realpathSync(resolve(nodeModules, name, 'package.json'))
+    const metadata = JSON.parse(readFileSync(dependency, 'utf8'))
+    const identifier = `${metadata.name}@${metadata.version}`
+    if (recorded.has(identifier)) continue
+    const directory = dirname(dependency)
+    const licenseFile = readdirSync(directory).find((file) => /^(?:licen[cs]e|copying|notice)(?:\.|$)/i.test(file))
+    const filename = licenseFile || 'package.json'
+    const target = `_licenses/${metadata.name.replaceAll('/', '__')}@${metadata.version}/${filename}`
+    const destination = resolve(dist, target)
+    mkdirSync(dirname(destination), { recursive: true })
+    copyFileSync(resolve(directory, filename), destination)
+    lines.push(`${identifier} | ${metadata.license || 'undeclared'} | ${target}${licenseFile ? '' : ' (installed package has no license file; original metadata copied)'}`)
+    recorded.add(identifier)
+  }
 }
 const wasm = JSON.parse(readFileSync(resolve(root, 'node_modules/@cap.js/wasm/package.json'), 'utf8'))
 if (wasm.version !== '0.0.8' || wasm.license !== 'Apache-2.0') throw new Error('Unexpected @cap.js/wasm license metadata')
