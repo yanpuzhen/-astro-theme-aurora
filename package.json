@@ -28,7 +28,7 @@
   "packageManager": "pnpm@11.19.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro check && astro build && node scripts/copy-prism-components.mjs && pagefind --site dist",
+    "build": "astro check && astro build && node scripts/copy-prism-assets.mjs && pagefind --site dist",
     "demo:build": "ASTRO_SITE=https://yanpuzhen.github.io ASTRO_BASE=/astro-theme-aurora/demo/ ASTRO_DEMO_BUILD=true PUBLIC_AURORA_DIA=true pnpm build",
     "docs:dev": "vitepress dev docs-site",
     "docs:build": "vitepress build docs-site",

@@ -11,7 +11,7 @@ Baseline: `origin/main` and `origin/dev` at `57dab0cae5a8d67d2e1183e469c9f6be089
 | Valine 1.5.3 | Aurora-selected comment client | unpkg | same-origin lazy Vite chunk |
 | LeanCloud SDK 3.15.0 | Valine runtime dependency | Valine's existing jsDelivr loader | same-origin Vite chunk, initialized before Valine |
 | Twikoo 2.0.8 HTTP / CloudBase | Aurora-selected comment client | existing jsDelivr standard / all scripts | same-origin hashed official standard / all scripts |
-| Prism 1.28.0 components | Optional Twikoo code highlighting | Twikoo's existing jsDelivr default | official npm package files copied into CN build; `prismCdn` points under the configured base |
+| Prism 1.28.0 components and themes | Optional Twikoo code highlighting | Twikoo's existing jsDelivr default | official npm package directories copied into CN build; `prismCdn` points under the configured base |
 | Waline 3.15.2 JS / CSS | Aurora-selected comment client | existing unpkg module / stylesheet | lazy Vite chunk / same-origin CSS |
 | Waline default emoji pack | Waline optional static dependency | upstream default | disabled: official pack is GPL-3.0-or-later and cannot be bundled in this GPL-2.0-only repository |
 | giscus Vue client | Aurora-selected comment client | Vite bundle | same Vite bundle |
@@ -39,3 +39,15 @@ The source audit found no Aurora-owned Google Fonts, cdnjs, esm.sh, skypack, Boo
 - `git diff --check` and focused credential-pattern scan of added runtime code, fixtures and audit: passed; no credentials introduced.
 
 Local provider chunks are emitted by Vite but are not requested on the home page or by `none`/giscus. CN provider preflight requests only the selected same-origin client assets. EN provider preflight requests only the pinned public-CDN assets. Generated HTML has no public-CDN script or stylesheet tags.
+
+## PR #9 delayed Prism resource correction
+
+An independent Astra review found that the CN build copied Prism language components but omitted theme CSS. Sol reproduced the finding on the previous PR head (`cbe5dd0`): a mocked Twikoo `GET_CONFIG` response with `HIGHLIGHT=true`, `HIGHLIGHT_THEME=okaidia`, and `HIGHLIGHT_PLUGIN=none`, plus a rendered `language-python` comment, requested `prism-python.min.js` with HTTP 200 and `prism-okaidia.min.css` with HTTP 404.
+
+Twikoo 2.0.8 sets Prism autoloader `languages_path` to `${prismCdn}/components/` and appends `/themes/prism-<theme>.min.css` (or `/themes/prism.min.css` for `default`). The two supported `HIGHLIGHT_PLUGIN` values, `showLanguage` and `copyButton`, load code bundled in the Twikoo client; they do not append a `plugins/` path to `prismCdn`. Aurora's CN `prismCdn` retains `import.meta.env.BASE_URL`. The build now copies `components/` and `themes/` from the installed official `prismjs@1.28.0` npm package to `dist/_astro/prismjs/1.28.0/`, only for CN. Its declared license is MIT. No replacement asset source or dependency upgrade was added.
+
+The CN browser regression initializes the real Twikoo HTTP client, supplies a Python comment and highlight config, waits for the delayed requests, and asserts same-origin HTTP 200 for both resources, CSS content type and nonempty recognizable CSS, no forbidden public CDN request, and no uncaught page error. Root `/`, nested `/aurora/`, deep `/blog/theme/`, and Pages-style `/astro-theme-aurora/` builds each passed artifact verification and the browser test. The artifact verifier checks representative default, okaidia, and tomorrow CSS files.
+
+`pubstatic.b0.upaiyun.com/?_upnode` originates in Valine 1.5.3's bundled `recordIPFn`: it requests a remote address for comment metadata. It is an upstream service call, not an Aurora-owned static JS/CSS/font dependency; the same Valine code runs in EN and CN. CN localization keeps Valine's backend options and uses a local `leancloud-storage@3.15.0` client initialized with the existing app ID and key and the wrapper's existing `avoscloud.com` region mapping. The default Waline emoji resource is `//unpkg.com/@waline/emojis@1.1.0/weibo`; that package declares `GPL-3.0-or-later`. CN passes `emoji: false`, so the default remote emoji pack is not requested; EN retains the upstream default. This records package metadata and delivery behavior, without a legal conclusion.
+
+The previous Astra verdict remains REQUEST CHANGES and its review stopped at the first finding. A fresh independent review is required on the new head; this implementation document does not claim approval.

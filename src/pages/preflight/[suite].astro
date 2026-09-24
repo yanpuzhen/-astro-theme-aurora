@@ -5,7 +5,7 @@ import { config } from '../../lib/config'
 import { messagesFor } from '../../lib/i18n'
 
 export function getStaticPaths() {
-  return process.env.ASTRO_PREFLIGHT_TESTS === 'true' ? [{ params: { suite: 'comments' } }, { params: { suite: 'cloudbase' } }] : []
+  return process.env.ASTRO_PREFLIGHT_TESTS === 'true' ? [{ params: { suite: 'comments' } }, { params: { suite: 'cloudbase' } }, { params: { suite: 'twikoo-highlight' } }] : []
 }
 const labels = messagesFor('en')
 const identity = { legacyUid: 'preflight-legacy-uid', canonicalPath: '/post/preflight/', legacyPath: '/post/preflight/' }
@@ -26,7 +26,7 @@ const recentSettings = { twikoo: config.comments.twikoo, waline: config.comments
   <body>
     <main>
       <h1>Preflight provider mocks</h1>
-      {Astro.params.suite === 'cloudbase' ? <div data-provider-test="twikoo-cloudbase"><CommentIsland client:load provider="twikoo" {...identity} title="Preflight Twikoo CloudBase" locale="en" cdnMode={config.siteMeta.cdn} settings={providerSettings.twikooCloud} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div> : <>
+      {Astro.params.suite === 'cloudbase' ? <div data-provider-test="twikoo-cloudbase"><CommentIsland client:load provider="twikoo" {...identity} title="Preflight Twikoo CloudBase" locale="en" cdnMode={config.siteMeta.cdn} settings={providerSettings.twikooCloud} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div> : Astro.params.suite === 'twikoo-highlight' ? <div data-provider-test="twikoo"><CommentIsland client:load provider="twikoo" {...identity} title="Preflight Twikoo Highlight" locale="en" cdnMode={config.siteMeta.cdn} settings={providerSettings.twikoo} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div> : <>
       <div data-provider-test="giscus"><CommentIsland client:load provider="giscus" {...identity} title="Preflight giscus" locale="en" cdnMode={config.siteMeta.cdn} settings={providerSettings.giscus} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div>
       <div data-provider-test="giscus-zh"><CommentIsland client:load provider="giscus" {...identity} title="预检 giscus" locale="zh-CN" cdnMode={config.siteMeta.cdn} settings={providerSettings.giscus} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div>
       <div data-provider-test="giscus-specific"><CommentIsland client:load provider="giscus" {...identity} title="Preflight stable term" locale="en" cdnMode={config.siteMeta.cdn} settings={providerSettings.giscusSpecific} labels={providerLabels} noScriptText={labels.commentsRequireJavaScript} /></div>

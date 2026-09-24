@@ -55,3 +55,45 @@ test('CN provider static clients are same-origin and lazy', async ({ page }) => 
   expect(requests.some((url) => /\/twikoo\.min\.[^/]+\.js$/.test(url))).toBe(false)
   expect(requests.filter((url) => forbidden.test(url))).toEqual([])
 })
+
+test('CN Twikoo delayed Prism component and theme use the configured base', async ({ page }) => {
+  const responses = new Map<string, { status: number; contentType: string; body: string }>()
+  const requests: string[] = []
+  const pageErrors: string[] = []
+  const component = `${base}/_astro/prismjs/1.28.0/components/prism-python.min.js`
+  const theme = `${base}/_astro/prismjs/1.28.0/themes/prism-okaidia.min.css`
+  page.on('request', (request) => requests.push(request.url()))
+  page.on('pageerror', (error) => pageErrors.push(error.message))
+  page.on('response', async (response) => {
+    const pathname = new URL(response.url()).pathname
+    if (pathname === component || pathname === theme) {
+      responses.set(pathname, {
+        status: response.status(),
+        contentType: response.headers()['content-type'] || '',
+        body: await response.text(),
+      })
+    }
+  })
+  await page.route('https://twikoo.example/**', (route) => {
+    const event = route.request().postDataJSON()?.event
+    const payload = event === 'GET_CONFIG'
+      ? { code: 0, config: { HIGHLIGHT: 'true', HIGHLIGHT_THEME: 'okaidia', HIGHLIGHT_PLUGIN: 'none' } }
+      : event === 'COMMENT_GET'
+        ? { code: 0, data: [{ _id: 'python-comment', nick: 'Tester', comment: '<pre><code class="language-python">print(123)</code></pre>', created: Date.now(), replies: [], likes: [], dislikes: [], url: '/post/preflight/' }], count: 1, more: false }
+        : { code: 0, data: [] }
+    return route.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(payload) })
+  })
+  await page.goto(`${base}/preflight/twikoo-highlight/`)
+  await expect(page.locator('[data-provider-test="twikoo"] code.language-python')).toContainText('print(123)')
+  await expect.poll(() => responses.has(component)).toBe(true)
+  await expect.poll(() => responses.has(theme)).toBe(true)
+  expect(responses.get(component)?.status).toBe(200)
+  expect(responses.get(theme)?.status).toBe(200)
+  expect(responses.get(theme)?.contentType).toContain('text/css')
+  expect(responses.get(theme)?.body).toMatch(/\.token|\.language-python/)
+  expect([component, theme].every((path) => requests.includes(new URL(path, page.url()).href))).toBe(true)
+  expect(requests.filter((url) => /prismjs/i.test(url)).every((url) => new URL(url).origin === new URL(page.url()).origin)).toBe(true)
+  expect(requests.filter((url) => /\/_astro\/(?:valine|waline)[^/]*\.(?:js|css)$/.test(url))).toEqual([])
+  expect(requests.filter((url) => forbidden.test(url))).toEqual([])
+  expect(pageErrors).toEqual([])
+})

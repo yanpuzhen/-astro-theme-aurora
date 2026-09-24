@@ -15,6 +15,11 @@ assert.ok(assets.some((name) => /^twikoo\.min\.[^.]+\.js$/.test(name)))
 assert.ok(assets.some((name) => /^waline\.[^.]+\.css$/.test(name)))
 if (mode === 'cn') {
   assert.ok(existsSync('dist/_astro/prismjs/1.28.0/components/prism-javascript.min.js'))
+  for (const theme of ['prism.min.css', 'prism-okaidia.min.css', 'prism-tomorrow.min.css']) {
+    assert.ok(existsSync(`dist/_astro/prismjs/1.28.0/themes/${theme}`), `${theme} missing`)
+  }
+} else {
+  assert.ok(!existsSync('dist/_astro/prismjs/1.28.0'), 'EN build must not copy Prism runtime assets')
 }
 const html = readFileSync('dist/index.html', 'utf8')
 assert.doesNotMatch(html, /<(?:script|link)[^>]+(?:src|href)=["']https?:\/\/(?:unpkg\.com|cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com|fonts\.googleapis\.com)/i)
