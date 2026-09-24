@@ -1,0 +1,5 @@
+site:
+  language: en
+  url: https://example.com
+site_meta:
+  cdn: cn
