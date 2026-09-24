@@ -5,7 +5,11 @@ const forbidden = /(?:unpkg\.com|cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com|fonts
 
 test('CN provider static clients are same-origin and lazy', async ({ page }) => {
   const requests: string[] = []
+  const missingLocalAssets: string[] = []
   page.on('request', (request) => requests.push(request.url()))
+  page.on('response', (response) => {
+    if (response.status() === 404 && new URL(response.url()).pathname.startsWith(`${base}/_astro/`)) missingLocalAssets.push(response.url())
+  })
   await page.route(/https:\/\/(?:twikoo|waline)\.example\/.*/, (route) => {
     const request = route.request()
     const recentTwikoo = request.postDataJSON()?.event === 'GET_RECENT_COMMENTS'
@@ -50,10 +54,13 @@ test('CN provider static clients are same-origin and lazy', async ({ page }) => 
     walineInit: 'function', walineRecent: 'function',
   })
   requests.length = 0
+  await page.route('https://preflight-cloudbase-env.api.tcloudbasegateway.com/**', (route) => route.fulfill({ status: 401, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: '{"code":"MOCK_AUTH_BOUNDARY"}' }))
   await page.goto(`${base}/preflight/cloudbase/`)
   await expect.poll(() => requests.some((url) => /\/twikoo\.all\.min\.[^/]+\.js$/.test(url))).toBe(true)
+  await expect.poll(() => requests.some((url) => url.includes('preflight-cloudbase-env.api.tcloudbasegateway.com/auth/v1/signin/anonymously'))).toBe(true)
   expect(requests.some((url) => /\/twikoo\.min\.[^/]+\.js$/.test(url))).toBe(false)
   expect(requests.filter((url) => forbidden.test(url))).toEqual([])
+  expect(missingLocalAssets).toEqual([])
 })
 
 test('CN Twikoo delayed Prism component and theme use the configured base', async ({ page }) => {
