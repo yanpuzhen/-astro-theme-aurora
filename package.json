@@ -1,6 +1,6 @@
 {
   "name": "aurora-3",
-  "version": "3.0.0-rc.2",
+  "version": "3.0.0",
   "description": "Aurora 3.0, an Astro-based evolution of the Aurora theme.",
   "private": true,
   "type": "module",

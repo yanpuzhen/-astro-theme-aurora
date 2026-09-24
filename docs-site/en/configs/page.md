@@ -9,6 +9,6 @@ Taxonomy and archive pages are generated from public posts:
 - `/archives/` and paginated archive pages
 - `/search/`
 
-Custom page navigation is explicit: add a menu item pointing to the generated path. There is no author-page route in the current Aurora 3 RC, and the old page-sidebar schema is not currently supported.
+Custom page navigation is explicit: add a menu item pointing to the generated path. Aurora 3.0 has no author-page route, and the old page-sidebar schema is not supported.
 
 Pages use the same static layout, metadata, base-path helpers, Markdown pipeline, and no-JavaScript readability guarantees as posts.

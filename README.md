@@ -33,8 +33,6 @@
 
 Aurora 3.0 is a static-first Astro theme for expressive publishing. It keeps Aurora's gradient-led visual identity while moving content, routing, metadata, and search into a build-time pipeline. Vue is used only for focused interactions.
 
-> The Pages URLs become authoritative after the `dev → main` pull request is reviewed, merged, and the Pages workflow completes successfully.
-
 ![Home Page](./previews/home-page.png)
 
 ![Article Section](./previews/article-section.png)

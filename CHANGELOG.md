@@ -2,15 +2,30 @@
 
 ## Unreleased
 
-- Replaced Aurora 3 active Gitalk configuration/identity entry points with first-class giscus using pinned official `@giscus/vue` 3.1.1; added validated Discussions mapping, locale/theme integration, bilingual migration guidance, and local iframe browser mocks. Gitalk remains only in historical migration tooling/docs.
+## [3.0.0] - 2026-09-24
 
-- Added a validated root `_config.yml` pipeline with strict schema paths, defaults, environment-over-YAML precedence, selected Aurora 2 aliases, and visible consumer/UI coverage; documentation now separates routine config from deployment/test environment variables.
-- Added pinned Waline/Twikoo first-class runtime and Valine legacy-runtime adapters, identity regressions, localized states, and normalized Twikoo/Waline Recent Comments. At that earlier preflight head, Gitalk was classified as identity/migration only; the new giscus replacement supersedes that classification.
-- Added ordinary/Demo RSS filtering, language-specific metadata, canonical sitemap/robots composition, XML/security assertions, and base-aware feed verification. Internal fixtures opt out of ordinary feeds and sitemap entries.
-- Added config, comment, feed, and dedicated browser preflight verification plus bilingual configuration, provider limitation, feed topology, and Aurora 2 migration documentation.
-- Completed the bilingual Aurora Demo Showcase with exactly ten primary posts across five translation pairs, deterministic remote covers, richer taxonomy, profile/social data, categorized project links, About content, and local-only recent comment fixtures.
-- Added GFM tables/task lists/strikethrough, build-time KaTeX math, a full Markdown fixture matrix, restored Dia's auroral character and contextual interactions, and expanded Footer version/statistics/running-day behavior.
-- Isolated `demo: true` content and showcase fixtures from ordinary builds; ordinary statistics and comments remain provider/configuration driven.
+Aurora 3.0 is the Stable Astro release of Aurora. It preserves the auroral visual system while rendering content, routes, search indexes, and metadata at build time. Focused Vue islands provide interaction without making article content depend on JavaScript.
+
+### Experience and publishing
+
+- Restored responsive Aurora layouts across Home, articles, Links, About, taxonomy, archives, pagination, light/dark themes, Dia, and Footer. The Footer can display the package version, manual statistics, and running days.
+- Added static English (`en`, unprefixed) and Simplified Chinese (`zh-CN`, `/cn/`) routes, translated UI and content, locale switching, and locale-aware search and metadata.
+- Added Pagefind search and one Markdown pipeline with GFM, build-time KaTeX, and Shiki. The bilingual Demo Showcase includes isolated `demo: true` content and fixtures; ordinary builds exclude them.
+- Generated English/Chinese RSS, sitemap, robots, canonical and alternate-language metadata with explicit site origin and base-path handling. Root and nested-base deployments, including the combined GitHub Pages Docs/Demo artifact, are supported.
+
+### Configuration and comments
+
+- Added a validated root `_config.yml` with Zod schema errors and selected Aurora 2 aliases. Effective priority is environment overrides > `_config.yml` > defaults.
+- Made giscus, Waline, and Twikoo first-class comment integrations. Valine remains a legacy runtime. Waline and Twikoo can populate Recent Comments when their services are configured.
+- Removed the Gitalk runtime and its browser secret flow. Bilingual Gitalk-to-giscus guidance covers Discussion mapping and verification; comment records do not migrate automatically.
+- Hardened provider configuration, comment identity, giscus term handling, feed output, and generated static assets through release checks.
+
+### Migrating from Aurora 2
+
+- Aurora 2's Hexo/Vue runtime is replaced by Astro's static architecture. The root `_config.yml` remains familiar in concept but uses a different validated schema; review unsupported legacy fields before moving settings.
+- Preserve and compare old URLs, permalinks, title-hash identities, and comment records before cutover. Gitalk Issue-to-Discussion conversion requires mapping verification; historical comment continuity is not guaranteed automatically.
+- Set the site origin and deployment base explicitly, especially for GitHub Pages or nested paths. Use internal locale identifiers `en` and `zh-CN` when migrating translated content.
+- Follow the bilingual [migration guide](docs-site/en/upgrade/from-aurora-2.md) and [configuration reference](docs-site/en/configs/general.md) for deployment details.
 
 ## 3.0.0-rc.2
 
