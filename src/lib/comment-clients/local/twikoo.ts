@@ -1,5 +1,3 @@
-// Twikoo's npm entry point is UMD and its ESM default resolves to init only.
-// Vite emits the official distribution as a hashed same-origin script asset.
-import scriptUrl from '../../../../node_modules/twikoo/dist/twikoo.min.js?url'
-
-export { scriptUrl }
+// The build copies a narrowly patched official UMD bundle to this fixed,
+// versioned same-origin path. The patch pins OwO and Cap to local resources.
+export const scriptUrl = `${import.meta.env.BASE_URL}_astro/vendor/twikoo/2.0.8/twikoo.min.js`

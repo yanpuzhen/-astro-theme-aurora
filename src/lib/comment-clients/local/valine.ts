@@ -8,8 +8,15 @@ export default class LocalValine {
     const appKey = String(options.appKey || '')
     const suffix = appId.slice(-9)
     const region = suffix === '-9Nh9j0Va' ? 'tab.' : suffix === '-MdYXbMMI' ? 'us.' : ''
-    AV.init({ appId, appKey, serverURLs: `https://${region}avoscloud.com` })
+    AV.init({ appId, appKey, serverURLs: `https://${region}leancloud.cn` })
     ;(globalThis as typeof globalThis & { AV?: typeof AV }).AV = AV
-    new Valine(options)
+    // Valine has no supported emoji-off option. An empty map prevents Sina
+    // image rendering in comments; removing its control prevents a dead panel.
+    new Valine({ ...options, emojiMaps: {} })
+    const host = options.el
+    if (host instanceof HTMLElement) {
+      host.querySelector('.vemoji-btn')?.remove()
+      host.querySelector('.vemojis')?.remove()
+    }
   }
 }

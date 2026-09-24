@@ -14,6 +14,12 @@ importers:
       '@astrojs/vue':
         specifier: ^5.0.0
         version: 5.1.4(@types/node@26.6.1)(astro@5.18.2(@types/node@26.6.1)(rollup@4.63.3)(sass@1.105.0)(typescript@5.9.3)(yaml@2.9.1))(rollup@4.63.3)(sass@1.105.0)(vue@3.5.43(typescript@5.9.3))(yaml@2.9.1)
+      '@cap.js/wasm':
+        specifier: 0.0.8
+        version: 0.0.8
+      '@cap.js/widget':
+        specifier: 0.1.58
+        version: 0.1.58
       '@giscus/vue':
         specifier: 3.1.1
         version: 3.1.1(vue@3.5.43(typescript@5.9.3))
@@ -26,6 +32,9 @@ importers:
       leancloud-storage:
         specifier: 3.15.0
         version: 3.15.0
+      pako:
+        specifier: 2.1.0
+        version: 2.1.0
       prismjs:
         specifier: 1.28.0
         version: 1.28.0
@@ -48,6 +57,9 @@ importers:
       '@astrojs/check':
         specifier: ^0.9.10
         version: 0.9.10(@emnapi/runtime@1.11.3)(prettier@3.9.8)(typescript@5.9.3)
+      '@fortawesome/fontawesome-free':
+        specifier: 7.3.1
+        version: 7.3.1
       '@playwright/test':
         specifier: ^1.63.0
         version: 1.63.0
@@ -361,6 +373,12 @@ packages:
   '@babel/types@7.29.8':
     resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
     engines: {node: '>=6.9.0'}
+
+  '@cap.js/wasm@0.0.8':
+    resolution: {integrity: sha512-rX+4/v2sz4GKLnygXHOS89O7c4GM2qNQcDJP6Y2cyGwoKjg83bsfWHt1TWr9GBzHpFADvju5fvLWYds21nS8sA==}
+
+  '@cap.js/widget@0.1.58':
+    resolution: {integrity: sha512-snNjlYZLx1XddDH7DPZF9uedynSXTPPeRl/nExDlMjw0pCHiu/Fm1NKjRcT4HmqpOBf0TZRvio1HhkTMWg9p9A==}
 
   '@capsizecss/unpack@4.0.1':
     resolution: {integrity: sha512-CuNiSqg7+e1cO/GjffyMOm5Tt2jUF9CWHHnvQ/UkqvtkGfHdgwEC0wpmq7fkN3gxwpRnrAN0WzO3vREKmNolMQ==}
@@ -868,6 +886,10 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@fortawesome/fontawesome-free@7.3.1':
+    resolution: {integrity: sha512-wmglKKPDIkgV3aWlZzWECCPoGIkYCulzBwxG9+w7rc5BGapZ6cPMpoPOT8k36J0Ni7PPX6c/rsoMWfS4d1MUMg==}
+    engines: {node: '>=6'}
 
   '@giscus/vue@3.1.1':
     resolution: {integrity: sha512-xgsc93MibRQ0d1glBxN1BrEREHTIf3BPYs/3R+UZHNqawFFoWBV6iJ7uVCXMqoEKZdE2c78B3aKt5gfGqo8I5A==}
@@ -2879,6 +2901,9 @@ packages:
     resolution: {integrity: sha512-XTUaK0hXMCu2jszWE584JGQT7y284TmMV9l/HX3rnG5uo3rHI/uHU56XTyyyPFjeWEBxECbAi0CaFDJOONtG0Q==}
     hasBin: true
 
+  pako@2.1.0:
+    resolution: {integrity: sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==}
+
   parse-latin@7.0.0:
     resolution: {integrity: sha512-mhHgobPPua5kZ98EF4HWiH167JWBfl4pvAIXXdbaVohtK7a6YBOy56kvhCqduqyo/f3yrHFWmqmiMg/BkBkYYQ==}
 
@@ -4247,6 +4272,10 @@ snapshots:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
 
+  '@cap.js/wasm@0.0.8': {}
+
+  '@cap.js/widget@0.1.58': {}
+
   '@capsizecss/unpack@4.0.1':
     dependencies:
       fontkitten: 1.0.3
@@ -4536,6 +4565,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.27.7':
     optional: true
+
+  '@fortawesome/fontawesome-free@7.3.1': {}
 
   '@giscus/vue@3.1.1(vue@3.5.43(typescript@5.9.3))':
     dependencies:
@@ -6856,6 +6887,8 @@ snapshots:
       '@pagefind/linux-x64': 1.5.2
       '@pagefind/windows-arm64': 1.5.2
       '@pagefind/windows-x64': 1.5.2
+
+  pako@2.1.0: {}
 
   parse-latin@7.0.0:
     dependencies:

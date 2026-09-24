@@ -31,6 +31,13 @@ try {
   assert.equal(missing.siteMeta.cdn, 'en')
   assert.equal(load('site:\n  language: zh-CN\nsite_meta:\n  cdn: en\n').siteMeta.cdn, 'en')
   assert.equal(load('site:\n  language: en\nsite_meta:\n  cdn: cn\n').siteMeta.cdn, 'cn')
+  const reactionWarnings = []
+  const reactionPath = resolve(temporaryRoot, `fixture-${counter++}.yml`)
+  writeFileSync(reactionPath, 'site_meta:\n  cdn: cn\ncomments:\n  waline:\n    reaction: true\n')
+  const cnReaction = loadAuroraConfig({ configPath: reactionPath, cwd: temporaryRoot, env: {}, onWarning: (warning) => reactionWarnings.push(warning) })
+  assert.equal(cnReaction.comments.waline.reaction, false)
+  assert.match(reactionWarnings.join(' '), /reaction: true is unavailable.*cdn: cn/i)
+  assert.equal(load('site_meta:\n  cdn: en\ncomments:\n  waline:\n    reaction: true\n').comments.waline.reaction, true)
   for (const bad of ['auto', 'zh-CN']) throwsWith(() => load(`site_meta:\n  cdn: ${bad}\n`), /site_meta\.cdn/)
   throwsWith(() => load('site_meta:\n  cdn: cn\n  unknown: value\n'), /site_meta: unknown key: unknown/)
   const migrated = load('site_meta:\n  cdn: cn\n  description: Legacy description\n  keywords: one, two\n')

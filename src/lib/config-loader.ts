@@ -354,5 +354,9 @@ export function loadAuroraConfig(options: LoaderOptions = {}): AuroraConfig {
   }
   const result = AuroraConfigSchema.safeParse(overridden)
   if (!result.success) throw new Error(configError(result.error))
+  if (result.data.siteMeta.cdn === 'cn' && result.data.comments.waline.reaction) {
+    warn('comments.waline.reaction: true is unavailable with site_meta.cdn: cn; Waline reaction is disabled because its default images load from a public static CDN.')
+    result.data.comments.waline.reaction = false
+  }
   return deepFreeze(result.data)
 }

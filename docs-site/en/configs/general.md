@@ -119,7 +119,7 @@ Select one `comments.provider`: `none` (default), `giscus`, `waline`, `twikoo`, 
 | `comments.giscus.loading` | `eager` or `lazy`; `eager` | Iframe loading after the Aurora island becomes visible. |
 | `comments.waline.server_url` | HTTP(S) URL or `''`; `''` | Public Waline server endpoint. |
 | `comments.waline.language` | `auto`, `en`, `zh-CN`; `auto` | Client language. |
-| `comments.waline.reaction` | boolean; `false` | Reaction UI. |
+| `comments.waline.reaction` | boolean; `false` | Reaction UI in EN; CN warns and disables `true` because the default images are remote. |
 | `comments.waline.login` | `enable`, `disable`, `force`; `disable` | Login policy. |
 | `comments.waline.meta`, `required_meta` | lists of `nick`, `mail`, `link`; `[nick, mail]`, `[nick]` | Form fields, at most three entries each. |
 | `comments.waline.comment_sorting` | `latest`, `oldest`, `hottest`; `latest` | Sort order. |

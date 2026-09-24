@@ -119,7 +119,7 @@ GFM、KaTeX 数学公式和 Shiki 是始终启用的构建能力，不提供无�
 | `comments.giscus.loading` | `eager` 或 `lazy`；`eager` | Aurora 评论区域进入视口后的 iframe 加载方式。 |
 | `comments.waline.server_url` | HTTP(S) URL 或 `''`；`''` | 公开 Waline 服务端地址。 |
 | `comments.waline.language` | `auto`、`en`、`zh-CN`；`auto` | 客户端语言。 |
-| `comments.waline.reaction` | 布尔；`false` | 表情反应。 |
+| `comments.waline.reaction` | 布尔；`false` | EN 模式的反应按钮；CN 模式设置为 `true` 时给出警告并禁用，因为默认图片来自外部。 |
 | `comments.waline.login` | `enable`、`disable`、`force`；`disable` | 登录策略。 |
 | `comments.waline.meta`、`required_meta` | `nick`、`mail`、`link` 列表；`[nick, mail]`、`[nick]` | 表单字段，各最多 3 项。 |
 | `comments.waline.comment_sorting` | `latest`、`oldest`、`hottest`；`latest` | 排序。 |
