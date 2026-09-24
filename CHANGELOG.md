@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Restored `site_meta.cdn: en | cn`: EN keeps 3.0.0 provider delivery; CN self-hosts Aurora-managed comment clients, Waline CSS, Valine LeanCloud SDK, and Twikoo Prism assets. The GPL-3.0-only default Waline emoji pack is disabled in CN.
+
 - Completed bilingual end-user guides for configuration, content, deployment, comments, SEO/feeds, environment variables and troubleshooting; expanded navigation and schema reference.
 
 ## [3.0.0] - 2026-09-24

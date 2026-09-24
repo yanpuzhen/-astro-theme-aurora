@@ -24,6 +24,8 @@ site:
   started_date: ''
   url: https://example.com
   base: /
+site_meta:
+  cdn: en # en 保持现有公共 CDN 加载；cn 将 Aurora 运行时资源随站点托管
 i18n:
   default_locale: en
   locales: [en, zh-CN]
@@ -47,6 +49,10 @@ seo: { keywords: [] }
 ```
 
 `provider` 为 `none` 时可省略服务商专属配置；需要时再加入所选服务商的区块。切换前先[选择评论系统](/cn/comments/)并完成其部署指南。
+
+## EN/CN 静态资源交付
+
+`site_meta.cdn: en`（默认）保持 Aurora 3.0.0 的 Valine、Twikoo、Waline 公共 CDN 加载行为。`site_meta.cdn: cn` 将这些客户端的 JavaScript、Waline CSS、Valine 所需的 LeanCloud SDK 和 Twikoo 可选的 Prism 语言文件 随站点构建并由本站提供。修改后须重新构建并完整部署 `dist/`。该选项只在构建期生效，没有环境变量覆盖或自动回退。它与 `site.language`、`i18n.default_locale` 独立：`language: zh-CN` 配 `cdn: en`，以及 `language: en` 配 `cdn: cn` 都有效。站点自己的 CDN 仍可加速托管内容；Waline 默认表情包因 GPL-3.0-only 许可证与本项目 GPL-2.0-only 不兼容，在 CN 模式禁用。评论后端、giscus.app、头像及用户内容仍可能连接外部服务。
 
 ## 常用配置
 

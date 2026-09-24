@@ -14,6 +14,8 @@ site:
   started_date: '' # 可选 YYYY-MM-DD
   url: https://example.com # 仅 origin，不含路径、查询或片段
   base: / # 也可为 /aurora/、/blog/theme/ 等
+site_meta:
+  cdn: en # en | cn；静态资源交付，与语言独立
 theme:
   feature: true
   dark_mode: true
@@ -29,6 +31,7 @@ socials:
 | 区块 | 用途与校验 |
 | --- | --- |
 | `site` | 标题、副标题、作者、描述、头像/Logo、显示语言、真实 `YYYY-MM-DD`、仅 origin 的 HTTP(S) URL、安全 base 路径。 |
+| `site_meta` | `cdn: en`（默认）或 `cn`；构建期静态资源交付模式，不提供环境变量覆盖。 |
 | `i18n` | 固定英文默认语言和 `[en, zh-CN]`；不是任意语言插件接口。 |
 | `theme` | 精选逻辑、初始明暗主题、头像形状、三个十六进制渐变色。 |
 | `menu` | 六个内置路由的布尔开关；菜单标签和路由结构固定并本地化。 |
