@@ -25,7 +25,7 @@ The source audit found no Aurora-owned Google Fonts, cdnjs, esm.sh, skypack, Boo
 
 - Config tests cover default, both locale combinations, invalid values, strict unknown fields and Aurora 2 metadata migration.
 - EN browser preflight checks remote Valine, Twikoo HTTP/CloudBase, Waline JS/CSS, Recent Comments mocks, giscus and `none`.
-- CN browser test records requests from home and provider preflight pages, verifies same-origin Valine, Twikoo standard/CloudBase, Waline JS/CSS and API shapes, and rejects public static CDN hosts. It also tests a CloudBase-only page and verifies that an untouched page requests no provider client.
+- CN browser test records requests from home and provider preflight pages, verifies same-origin Valine, Twikoo standard/CloudBase, Waline JS/CSS and API shapes, renders Twikoo/Waline Recent Comments from deterministic backend responses, and rejects public static CDN hosts. It also tests a CloudBase-only page and verifies that an untouched page requests no provider client.
 - CN builds and network tests pass at `/`, `/aurora/`, `/blog/theme/` and `/astro-theme-aurora/`. Browser tests use fixture identities and unavailable test backends; they do not prove production backend credentials, comment continuity or China-side reachability of a deployed host.
 - Official package licenses inspected: Valine GPL-2.0, Twikoo MIT, Waline MIT, LeanCloud SDK MIT and Prism MIT. Waline's default emoji package is GPL-3.0-or-later, so CN deliberately disables it.
 
