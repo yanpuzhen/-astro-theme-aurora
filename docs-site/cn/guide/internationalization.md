@@ -35,3 +35,5 @@ Pagefind 分别生成 `en` 与 `zh-cn` 索引。搜索 island 显式接收当前
 2. 设置 `lang: en` 或 `lang: zh-CN`，并使用相同的 `translationKey`。
 3. 独立设计译文的 slug、permalink 和标题；不要为了配对复制 identity 字段。
 4. 发布前运行 `pnpm check`、`pnpm build` 和浏览器语言切换测试。
+
+创建内容时请参见[撰写文章与页面](/cn/guide/writing-content)与 [Frontmatter](/cn/reference/frontmatter)。

@@ -52,6 +52,6 @@ Aurora 3 已移除 Gitalk 运行时。上游 Gitalk 需要浏览器端 OAuth cli
 3. 检查 custom permalink、`.html` alias 和 base-aware 资源路径。
 4. 在 YAML 中配置 `site.url`/`site.base`，或用部署环境变量覆盖。
 5. 切换流量前比较真实 provider ID/记录；测试 fixture 无法证明生产连续性。
-6. 运行 `pnpm test`、`pnpm check`、`pnpm test:browser:preflight`、根路径及 nested-base 构建、`pnpm pages:build` 和 `pnpm test:pages`。
+6. 运行 `pnpm check`、`pnpm build`，并按需要执行迁移专用浏览器检查。按[部署指南](/cn/deploy/)发布普通 `dist/` 产物；用户博客不需要仓库维护者的 Docs/Demo Pages 脚本。
 
 Astro 负责静态路由、内容、SEO、feeds 和 HTML。Vue Router、SPA 文章状态、runtime `/api/*.json`、统计后端、不安全的 Gitalk 静态 secret 流程及自动执行 Markdown script 均不属于 Aurora 3。

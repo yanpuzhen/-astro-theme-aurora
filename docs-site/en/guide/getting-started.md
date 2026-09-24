@@ -47,29 +47,24 @@ pnpm docs:preview
 
 ## Create your first post
 
-Create a Markdown file below `src/content/posts/`. The filename is the default slug, unless frontmatter provides `slug`, `permalink`, or a legacy-compatible UID. A minimal post is:
+Create a Markdown file below `src/content/posts/`. The filename is the default slug. Set `slug` or `permalink` for another URL; `permalinkMode: uid` deliberately selects a legacy UID path. A minimal post is:
 
 ```md
 ---
 title: My first Aurora post
-date: 2026-09-20
+date: '2026-09-20'
 ---
 
 Write in Markdown.
 ```
 
-Pages live in `src/content/pages/`. The existing `about.md` becomes `/about/`; additional page entries become `/page/<id>/` and can be linked from the menu.
+Pages live in `src/content/pages/`. The existing `about.md` becomes `/about/`; additional page entries become `/page/<id>/` and can be linked from content. The built-in menu flags do not add custom page entries.
 
-Use `/` for a root deployment. A GitHub Pages project site base must include its repository prefix and trailing slash. All internal links, RSS, sitemap, and robots URLs are composed from the same normalized base. See [General Configuration](/configs/general) for fields and validation.
+Use `/` for a root deployment. A GitHub Pages project site base must include its repository prefix and trailing slash. All internal links, RSS, sitemap, and robots URLs are composed from the same normalized base. See [Configuration Guide](/guide/configuration) for the workflow and [General Configuration](/configs/general) for every field.
 
-## GitHub Pages Demo
+## Next steps
 
-The repository's public Demo build is produced by:
-
-```sh
-pnpm demo:build
-```
-
-It uses `https://yanpuzhen.github.io` as `ASTRO_SITE` and `/astro-theme-aurora/demo/` as `ASTRO_BASE`. The `pages:build` script then stages this output below the VitePress documentation output as one artifact.
-
-The demo build selects only entries with `demo: true`. Migration fixtures remain available to regression tests but are not published as Demo content.
+1. Follow the [Configuration Guide](/guide/configuration) and [Writing Posts & Pages](/guide/writing-content).
+2. Choose a [comment system](/comments/) if you need one; deploy its external service first.
+3. Select [Vercel, Cloudflare Pages or GitHub Pages](/deploy/) and set your production origin/base.
+4. Check [SEO and feeds](/reference/seo-feeds) and [Troubleshooting](/reference/troubleshooting) after deployment.

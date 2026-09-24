@@ -35,3 +35,5 @@ Translated articles receive independent comment identities by default. An Englis
 2. Set `lang` to `en` or `zh-CN` and use the same `translationKey`.
 3. Keep the translated entry's slug, permalink, and title intentional; do not copy an identity field merely to pair content.
 4. Run `pnpm check`, `pnpm build`, and the browser locale tests before publishing.
+
+For content creation, see [Writing Posts & Pages](/guide/writing-content) and [Frontmatter](/reference/frontmatter).

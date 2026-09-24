@@ -16,4 +16,4 @@ const theme = 'Aurora'
 
 行内公式使用 `$E = mc^2$`，块级公式使用独立的双美元符号区块。KaTeX 在构建阶段运行，因此关闭 JavaScript 后生成的公式仍然可读；移动端的超长公式只会在公式容器内滚动。
 
-Raw HTML 图片会自动处理 base。Markdown 中的危险标签、事件属性、不安全 URL 协议和 `<script>` 默认会被移除；任意脚本执行不是受支持的内容功能。完整支持矩阵见仓库中的 `docs/review/MARKDOWN_DEMO_MATRIX.md`。
+Raw HTML 图片会自动处理 base。Markdown 中的危险标签、事件属性、不安全 URL 协议和 `<script>` 默认会被移除；任意脚本执行不是受支持的内容功能。生成的文章图片在有 JavaScript 时可用灯箱增强；没有 JavaScript 仍可正常阅读图片和链接。本地资源放在 `public/` 下，并使用根相对路径。Markdown 脚本和事件属性不会执行。

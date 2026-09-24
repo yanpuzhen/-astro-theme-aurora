@@ -10,6 +10,10 @@ const expectedLinks = [
   'https://yanpuzhen.github.io/astro-theme-aurora/cn/',
   'https://github.com/yanpuzhen/astro-theme-aurora',
   './CHANGELOG.md',
+  'https://yanpuzhen.github.io/astro-theme-aurora/guide/configuration',
+  'https://yanpuzhen.github.io/astro-theme-aurora/deploy/',
+  'https://yanpuzhen.github.io/astro-theme-aurora/comments/',
+  'https://yanpuzhen.github.io/astro-theme-aurora/cn/guide/configuration',
 ]
 for (const link of expectedLinks) assert.ok(readme.includes(link), `README link missing: ${link}`)
 for (const preview of ['home-page.png', 'article-section.png', 'article-detail.png', 'mobile.png']) {

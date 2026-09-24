@@ -28,7 +28,7 @@ features:
     details: Local, static-hosting-friendly search with English and Chinese indexes.
   - icon: 🌗
     title: Theme persistence
-    details: Light and dark themes with a system preference fallback and no-JavaScript-readable content.
+    details: Configurable initial light or dark appearance, persistent visitor choice, and no-JavaScript-readable content.
   - icon: 💬
     title: Comment adapters
     details: giscus, Waline, and Twikoo first-class runtimes; Valine legacy runtime.
@@ -44,3 +44,10 @@ Aurora 3.0 is the Astro implementation of Aurora: a static-first theme that keep
 Read the [English guide](/guide/getting-started), [中文文档](/cn/guide/getting-started), or visit the [Live Demo](https://yanpuzhen.github.io/astro-theme-aurora/demo/).
 
 The original Aurora project was created by TriDiamond / Benny Guo. This repository is the current Aurora 3.0 implementation and keeps that attribution distinct from current project ownership.
+
+## Find your next step
+
+- [Configure `_config.yml`](/guide/configuration) and [write posts or pages](/guide/writing-content).
+- [Deploy to Vercel, Cloudflare Pages or GitHub Pages](/deploy/) and [set your domain/base](/deploy/domains-and-base).
+- [Choose a comment provider](/comments/) and read [SEO/feed behavior](/reference/seo-feeds).
+- Use [Frontmatter](/reference/frontmatter), [Environment Variables](/reference/environment) and [Troubleshooting](/reference/troubleshooting) as references.
