@@ -38,3 +38,10 @@ features:
 ---
 
 Aurora 3.0 保留 Aurora 的视觉方向，同时使用 Astro Content Collections、文件路由和聚焦型 Vue islands 替代旧的 Hexo/Vue runtime。请从[开始使用](/cn/guide/getting-started)开始，或打开[在线预览](https://yanpuzhen.github.io/astro-theme-aurora/demo/)。
+
+## 接下来做什么
+
+- [配置 `_config.yml`](/cn/guide/configuration)并[撰写文章或页面](/cn/guide/writing-content)。
+- [部署到 Vercel、Cloudflare Pages 或 GitHub Pages](/cn/deploy/)，并[设置域名与 base](/cn/deploy/domains-and-base)。
+- [选择评论服务商](/cn/comments/)，了解 [SEO 与 Feed](/cn/reference/seo-feeds)。
+- 将 [Frontmatter](/cn/reference/frontmatter)、[环境变量](/cn/reference/environment)和[故障排查](/cn/reference/troubleshooting)作为参考。

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Completed bilingual end-user guides for configuration, content, deployment, comments, SEO/feeds, environment variables and troubleshooting; expanded navigation and schema reference.
+
 ## [3.0.0] - 2026-09-24
 
 Aurora 3.0 is the Stable Astro release of Aurora. It preserves the auroral visual system while rendering content, routes, search indexes, and metadata at build time. Focused Vue islands provide interaction without making article content depend on JavaScript.

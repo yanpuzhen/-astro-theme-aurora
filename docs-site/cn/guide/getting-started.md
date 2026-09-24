@@ -47,29 +47,24 @@ pnpm docs:preview
 
 ## 创建第一篇文章
 
-在 `src/content/posts/` 下创建 Markdown 文件。没有显式 frontmatter 时，文件名会成为默认 slug；也可以使用 `slug`、`permalink` 或兼容旧站的 UID。最小文章如下：
+在 `src/content/posts/` 下创建 Markdown 文件。文件名是默认 slug。可用 `slug` 或 `permalink` 改变 URL；`permalinkMode: uid` 才会有意选用旧 UID 路径。最小文章如下：
 
 ```md
 ---
 title: 我的第一篇 Aurora 文章
-date: 2026-09-20
+date: '2026-09-20'
 ---
 
 使用 Markdown 写作。
 ```
 
-页面放在 `src/content/pages/`。已有的 `about.md` 对应 `/about/`；其他页面条目对应 `/page/<id>/`，可以从菜单链接。
+页面放在 `src/content/pages/`。已有的 `about.md` 对应 `/about/`；其他页面条目对应 `/page/<id>/`，可以从正文等位置链接；内置菜单开关不会添加自定义页面。
 
-根部署使用 `/`。GitHub Pages project site 的 base 必须包含仓库前缀和结尾斜杠。站内链接、RSS、sitemap 和 robots URL 都由同一份规范化配置组合。字段和校验规则见[基础配置](/cn/configs/general)。
+根部署使用 `/`。GitHub Pages project site 的 base 必须包含仓库前缀和结尾斜杠。站内链接、RSS、sitemap 和 robots URL 都由同一份规范化配置组合。操作流程见[配置指南](/cn/guide/configuration)，全部字段与校验规则见[基础配置](/cn/configs/general)。
 
-## GitHub Pages Demo
+## 后续步骤
 
-公开 Demo 使用：
-
-```sh
-pnpm demo:build
-```
-
-它使用 `https://yanpuzhen.github.io` 作为 `ASTRO_SITE`，使用 `/astro-theme-aurora/demo/` 作为 `ASTRO_BASE`。随后 `pages:build` 会把 Demo 放到 VitePress 文档输出的 `demo/` 下，形成一个 Pages artifact。
-
-Demo 构建只选择 `demo: true` 的条目。迁移 fixtures 仍用于回归测试，但不会发布到 Demo。
+1. 阅读[配置指南](/cn/guide/configuration)和[撰写文章与页面](/cn/guide/writing-content)。
+2. 如需评论，先选择[评论系统](/cn/comments/)并部署外部服务。
+3. 在 [Vercel、Cloudflare Pages 或 GitHub Pages](/cn/deploy/)中选择平台，设置生产源站与 base。
+4. 部署后检查 [SEO 与 Feed](/cn/reference/seo-feeds)及[故障排查](/cn/reference/troubleshooting)。

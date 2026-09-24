@@ -30,19 +30,21 @@
 
 ## 最小示例
 
-```yaml
+```md
+---
 title: 一篇 Aurora 文章
-date: 2026-09-20
+date: '2026-09-20'
 ---
 文章正文使用 Markdown。
 ```
 
 ## 扩展与自定义 permalink
 
-```yaml
+```md
+---
 title: 路由与部署
-date: 2026-09-20
-updated: 2026-09-21
+date: '2026-09-20'
+updated: '2026-09-21'
 slug: routing-deployment
 permalink: /guides/routing-deployment/
 tags: [routing, deployment]
@@ -55,3 +57,5 @@ comments: false
 ```
 
 公开 Demo 同时包含中文、英文、代码、图片和自定义 permalink 示例。
+
+全部受支持字段与公开内容条件见 [Frontmatter](/cn/reference/frontmatter)。

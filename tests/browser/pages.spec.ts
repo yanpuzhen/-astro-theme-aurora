@@ -16,7 +16,7 @@ test('documentation root, Chinese page, language switch and local search work', 
   await expect(page).toHaveURL(/\/cn\//)
   await page.goto(route('/cn/'))
   await expect(page.locator('.VPHomeHero')).toContainText('使用文档')
-  await expect(page.getByRole('button', { name: '指南' }).first()).toBeVisible()
+  await expect(page.getByRole('link', { name: '指南' }).first()).toBeVisible()
   await expect(page.getByRole('button', { name: '搜索' }).first()).toBeVisible()
   await expect(page.getByRole('button', { name: '切换语言' }).first()).toBeVisible()
   await page.goto(route('/guide/getting-started'))
@@ -33,6 +33,35 @@ test('documentation root, Chinese page, language switch and local search work', 
   await expect(search).toBeVisible()
   await search.fill('Astro')
   await expect(page.locator('.search-result, .VPLocalSearchBox')).toBeVisible()
+})
+
+test('new documentation routes, locale counterparts and mobile navigation work', async ({ page }) => {
+  test.skip(!process.env.PLAYWRIGHT_PAGES, 'This suite targets the combined Pages artifact.')
+  const sections = [
+    '/guide/configuration', '/guide/writing-content', '/deploy/', '/deploy/vercel',
+    '/deploy/cloudflare-pages', '/deploy/github-pages', '/deploy/domains-and-base',
+    '/comments/', '/comments/giscus', '/comments/waline', '/comments/twikoo',
+    '/comments/valine', '/comments/gitalk-migration', '/reference/frontmatter',
+    '/reference/environment', '/reference/seo-feeds', '/reference/troubleshooting',
+  ]
+  for (const path of sections) {
+    for (const locale of ['', '/cn']) {
+      const response = await page.request.get(route(`${locale}${path}`))
+      expect(response.ok(), `${locale || '/en'}${path}`).toBeTruthy()
+      expect(await response.text()).toContain('<h1')
+    }
+  }
+
+  await page.goto(route('/guide/configuration'))
+  await page.getByRole('button', { name: 'Change language' }).click()
+  await page.getByRole('link', { name: '中文' }).click()
+  await expect(page).toHaveURL(/\/cn\/guide\/configuration\.html/)
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.getByRole('button', { name: 'mobile navigation' }).click()
+  await expect(page.getByRole('link', { name: '部署' }).first()).toBeVisible()
+  await page.getByRole('button', { name: 'mobile navigation' }).click()
+  await page.getByRole('button', { name: '目录', exact: true }).click()
+  await expect(page.locator('a[href$="/cn/deploy/cloudflare-pages.html"]:visible').first()).toBeVisible()
 })
 
 test('Demo nested base, Pagefind, article, lightbox, theme and mobile navigation work', async ({ page }) => {

@@ -52,6 +52,6 @@ Gitalk is removed from the Aurora 3 runtime. Upstream Gitalk requires a browser-
 3. Review custom permalinks, `.html` aliases, and base-aware assets.
 4. Set `site.url`/`site.base` in YAML or override them in the deployment environment.
 5. Compare actual provider IDs/records before switching traffic. Fixtures cannot prove production continuity.
-6. Run `pnpm test`, `pnpm check`, `pnpm test:browser:preflight`, root and nested-base builds, `pnpm pages:build`, and `pnpm test:pages`.
+6. Run `pnpm check`, `pnpm build`, and any migration-specific browser checks you need. Deploy the ordinary `dist/` artifact following [Deployment](/deploy/); the repository maintainer Docs/Demo Pages scripts are not required for a user blog.
 
 Astro owns static routes, content, SEO, feeds, and HTML. Vue Router, SPA article state, runtime `/api/*.json`, analytics backends, Gitalk's unsafe static secret flow, and automatic Markdown scripts are not part of Aurora 3.

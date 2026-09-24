@@ -38,3 +38,10 @@ features:
 ---
 
 Aurora 3.0 keeps the original Aurora visual direction while replacing the legacy Hexo/Vue runtime with Astro Content Collections, filesystem routes, and focused Vue islands. Start with [Getting Started](/guide/getting-started), or open the [Live Demo](https://yanpuzhen.github.io/astro-theme-aurora/demo/).
+
+## Find your next step
+
+- [Configure `_config.yml`](/guide/configuration) and [write posts or pages](/guide/writing-content).
+- [Deploy to Vercel, Cloudflare Pages or GitHub Pages](/deploy/) and [set your domain/base](/deploy/domains-and-base).
+- [Choose a comment provider](/comments/) and read [SEO/feed behavior](/reference/seo-feeds).
+- Use [Frontmatter](/reference/frontmatter), [Environment Variables](/reference/environment) and [Troubleshooting](/reference/troubleshooting) as references.

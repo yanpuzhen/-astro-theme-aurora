@@ -30,19 +30,21 @@ Unknown legacy fields are retained in the migration adapter's `extras` value; te
 
 ## Minimal
 
-```yaml
+```md
+---
 title: A short Aurora post
-date: 2026-09-20
+date: '2026-09-20'
 ---
 The body is Markdown.
 ```
 
 ## Extended and custom permalink
 
-```yaml
+```md
+---
 title: Routing & Deployment
-date: 2026-09-20
-updated: 2026-09-21
+date: '2026-09-20'
+updated: '2026-09-21'
 slug: routing-deployment
 permalink: /guides/routing-deployment/
 tags: [routing, deployment]
@@ -55,3 +57,5 @@ comments: false
 ```
 
 Chinese content can set `lang: zh-CN`, and frontmatter values may contain Unicode and emoji. See the public Demo for English, Chinese, code, image, and custom-permalink examples.
+
+For all supported fields and public inclusion behavior, see [Frontmatter](/reference/frontmatter).

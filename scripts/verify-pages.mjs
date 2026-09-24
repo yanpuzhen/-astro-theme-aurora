@@ -8,6 +8,12 @@ const demoBase = '/astro-theme-aurora/demo/'
 const read = (relative) => readFileSync(resolve(root, relative), 'utf8')
 const requiredFiles = [
   'index.html', 'en/index.html', 'cn/index.html', 'guide/getting-started.html', 'cn/guide/getting-started.html',
+  ...[
+    'guide/configuration', 'guide/writing-content',
+    'deploy/index', 'deploy/vercel', 'deploy/cloudflare-pages', 'deploy/github-pages', 'deploy/domains-and-base',
+    'comments/index', 'comments/giscus', 'comments/waline', 'comments/twikoo', 'comments/valine', 'comments/gitalk-migration',
+    'reference/frontmatter', 'reference/environment', 'reference/seo-feeds', 'reference/troubleshooting',
+  ].flatMap((page) => [`${page}.html`, `cn/${page}.html`]),
   'demo/index.html', 'demo/pagefind/pagefind.js', 'demo/pagefind/pagefind-entry.json',
   'demo/post/demo-markdown-fundamentals/index.html',
   'demo/post/demo-math/index.html',

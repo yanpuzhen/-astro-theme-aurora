@@ -7,75 +7,125 @@ const demo = 'https://yanpuzhen.github.io/astro-theme-aurora/demo/'
 const base = '/astro-theme-aurora/'
 
 const enSidebar = [
-  {
-    text: 'Guide',
-    items: [{ text: 'Getting Started', link: '/guide/getting-started' }, { text: 'Internationalization', link: '/guide/internationalization' }],
-  },
-  {
-    text: 'Configuration',
-    items: [
-      { text: 'General', link: '/configs/general' },
-      { text: 'Menu', link: '/configs/menu' },
-      { text: 'Theme', link: '/configs/theme' },
-      { text: 'Routing', link: '/configs/routing' },
-      { text: 'Post', link: '/configs/post' },
-      { text: 'Page & Navigation', link: '/configs/page' },
-      { text: 'Social Links', link: '/configs/social' },
-      { text: 'Integrations', link: '/configs/integrations' },
-      { text: 'Site Meta', link: '/configs/site-meta' },
-      { text: 'Markdown', link: '/configs/markdown' },
-    ],
-  },
-  {
-    text: 'Upgrade',
-    items: [
-      { text: 'From Aurora 2.x', link: '/upgrade/from-aurora-2' },
-      { text: 'Aurora 3 RC', link: '/upgrade/aurora-3-rc' },
-    ],
-  },
+  { text: 'Guide', items: [
+    { text: 'Getting Started', link: '/guide/getting-started' },
+    { text: 'Configuration Guide', link: '/guide/configuration' },
+    { text: 'Writing Posts & Pages', link: '/guide/writing-content' },
+    { text: 'Internationalization', link: '/guide/internationalization' },
+  ] },
+  { text: 'Deployment', items: [
+    { text: 'Overview', link: '/deploy/' },
+    { text: 'Vercel', link: '/deploy/vercel' },
+    { text: 'Cloudflare Pages', link: '/deploy/cloudflare-pages' },
+    { text: 'GitHub Pages', link: '/deploy/github-pages' },
+    { text: 'Domains & Base Paths', link: '/deploy/domains-and-base' },
+  ] },
+  { text: 'Comments', items: [
+    { text: 'Choose a System', link: '/comments/' },
+    { text: 'giscus', link: '/comments/giscus' },
+    { text: 'Waline', link: '/comments/waline' },
+    { text: 'Twikoo', link: '/comments/twikoo' },
+    { text: 'Valine', link: '/comments/valine' },
+    { text: 'Gitalk Migration', link: '/comments/gitalk-migration' },
+  ] },
+  { text: 'Configuration Reference', items: [
+    { text: 'General', link: '/configs/general' },
+    { text: 'Menu', link: '/configs/menu' },
+    { text: 'Theme', link: '/configs/theme' },
+    { text: 'Routing', link: '/configs/routing' },
+    { text: 'Post', link: '/configs/post' },
+    { text: 'Page & Navigation', link: '/configs/page' },
+    { text: 'Social Links', link: '/configs/social' },
+    { text: 'Integrations', link: '/configs/integrations' },
+    { text: 'Site Meta', link: '/configs/site-meta' },
+    { text: 'Markdown', link: '/configs/markdown' },
+  ] },
+  { text: 'Reference', items: [
+    { text: 'Frontmatter', link: '/reference/frontmatter' },
+    { text: 'Environment Variables', link: '/reference/environment' },
+    { text: 'SEO, RSS, Sitemap & Robots', link: '/reference/seo-feeds' },
+    { text: 'Troubleshooting', link: '/reference/troubleshooting' },
+  ] },
+  { text: 'Upgrade', items: [
+    { text: 'From Aurora 2.x', link: '/upgrade/from-aurora-2' },
+    { text: 'Aurora 3 RC', link: '/upgrade/aurora-3-rc' },
+  ] },
 ]
 
 const cnSidebar = [
-  {
-    text: '使用指南',
-    items: [{ text: '开始使用', link: '/cn/guide/getting-started' }, { text: '国际化 / 多语言', link: '/cn/guide/internationalization' }],
-  },
-  {
-    text: '主题配置',
-    items: [
-      { text: '基础配置', link: '/cn/configs/general' },
-      { text: '菜单', link: '/cn/configs/menu' },
-      { text: '主题', link: '/cn/configs/theme' },
-      { text: '路由', link: '/cn/configs/routing' },
-      { text: '文章', link: '/cn/configs/post' },
-      { text: '页面 & 导航', link: '/cn/configs/page' },
-      { text: '社交链接', link: '/cn/configs/social' },
-      { text: '集成', link: '/cn/configs/integrations' },
-      { text: '网页 Meta', link: '/cn/configs/site-meta' },
-      { text: 'Markdown', link: '/cn/configs/markdown' },
-    ],
-  },
-  {
-    text: '升级',
-    items: [
-      { text: '从 Aurora 2.x 迁移', link: '/cn/upgrade/from-aurora-2' },
-      { text: 'Aurora 3 RC', link: '/cn/upgrade/aurora-3-rc' },
-    ],
-  },
+  { text: '使用指南', items: [
+    { text: '开始使用', link: '/cn/guide/getting-started' },
+    { text: '配置指南', link: '/cn/guide/configuration' },
+    { text: '撰写文章与页面', link: '/cn/guide/writing-content' },
+    { text: '国际化 / 多语言', link: '/cn/guide/internationalization' },
+  ] },
+  { text: '部署', items: [
+    { text: '概览', link: '/cn/deploy/' },
+    { text: 'Vercel', link: '/cn/deploy/vercel' },
+    { text: 'Cloudflare Pages', link: '/cn/deploy/cloudflare-pages' },
+    { text: 'GitHub Pages', link: '/cn/deploy/github-pages' },
+    { text: '域名与 Base 路径', link: '/cn/deploy/domains-and-base' },
+  ] },
+  { text: '评论', items: [
+    { text: '选择评论系统', link: '/cn/comments/' },
+    { text: 'giscus', link: '/cn/comments/giscus' },
+    { text: 'Waline', link: '/cn/comments/waline' },
+    { text: 'Twikoo', link: '/cn/comments/twikoo' },
+    { text: 'Valine', link: '/cn/comments/valine' },
+    { text: 'Gitalk 迁移', link: '/cn/comments/gitalk-migration' },
+  ] },
+  { text: '配置参考', items: [
+    { text: '基础配置', link: '/cn/configs/general' },
+    { text: '菜单', link: '/cn/configs/menu' },
+    { text: '主题', link: '/cn/configs/theme' },
+    { text: '路由', link: '/cn/configs/routing' },
+    { text: '文章', link: '/cn/configs/post' },
+    { text: '页面 & 导航', link: '/cn/configs/page' },
+    { text: '社交链接', link: '/cn/configs/social' },
+    { text: '集成', link: '/cn/configs/integrations' },
+    { text: '网页 Meta', link: '/cn/configs/site-meta' },
+    { text: 'Markdown', link: '/cn/configs/markdown' },
+  ] },
+  { text: '参考', items: [
+    { text: 'Frontmatter', link: '/cn/reference/frontmatter' },
+    { text: '环境变量', link: '/cn/reference/environment' },
+    { text: 'SEO、RSS、Sitemap 与 Robots', link: '/cn/reference/seo-feeds' },
+    { text: '故障排查', link: '/cn/reference/troubleshooting' },
+  ] },
+  { text: '升级', items: [
+    { text: '从 Aurora 2.x 迁移', link: '/cn/upgrade/from-aurora-2' },
+    { text: 'Aurora 3 RC', link: '/cn/upgrade/aurora-3-rc' },
+  ] },
 ]
 
 const enNav = [
-  { text: 'Guide', items: [{ text: 'Getting Started', link: '/guide/getting-started' }, { text: 'Internationalization', link: '/guide/internationalization' }] },
-  { text: 'Configuration', link: '/configs/general' },
-  { text: 'Upgrade', link: '/upgrade/from-aurora-2' },
+  { text: 'Guide', link: '/guide/getting-started' },
+  { text: 'Deployment', link: '/deploy/' },
+  { text: 'Comments', link: '/comments/' },
+  { text: 'Reference', items: [
+    { text: 'Configuration', link: '/configs/general' },
+    { text: 'Frontmatter', link: '/reference/frontmatter' },
+    { text: 'Environment', link: '/reference/environment' },
+    { text: 'SEO & Feeds', link: '/reference/seo-feeds' },
+    { text: 'Troubleshooting', link: '/reference/troubleshooting' },
+    { text: 'Upgrade', link: '/upgrade/from-aurora-2' },
+  ] },
   { text: 'Live Demo', link: demo },
   { text: 'GitHub', link: repository },
 ]
 
 const cnNav = [
-  { text: '指南', items: [{ text: '开始使用', link: '/cn/guide/getting-started' }, { text: '国际化 / 多语言', link: '/cn/guide/internationalization' }] },
-  { text: '配置', link: '/cn/configs/general' },
-  { text: '升级', link: '/cn/upgrade/from-aurora-2' },
+  { text: '指南', link: '/cn/guide/getting-started' },
+  { text: '部署', link: '/cn/deploy/' },
+  { text: '评论', link: '/cn/comments/' },
+  { text: '参考', items: [
+    { text: '配置', link: '/cn/configs/general' },
+    { text: 'Frontmatter', link: '/cn/reference/frontmatter' },
+    { text: '环境变量', link: '/cn/reference/environment' },
+    { text: 'SEO 与 Feed', link: '/cn/reference/seo-feeds' },
+    { text: '故障排查', link: '/cn/reference/troubleshooting' },
+    { text: '升级', link: '/cn/upgrade/from-aurora-2' },
+  ] },
   { text: '在线预览', link: demo },
   { text: 'GitHub', link: repository },
 ]
